@@ -1,0 +1,14 @@
+[
+  {
+    "field_id": "00333a5d-0d92-42f5-b4d6-2488d5768bc8",
+    "name": "e",
+    "description": "",
+    "bias": 0,
+    "f_score": 0,
+    "precision": 0,
+    "recall": 0,
+    "document_count": 0,
+    "is_custom": false,
+    "is_trained": false
+  }
+]

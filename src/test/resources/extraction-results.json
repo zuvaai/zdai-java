@@ -1,0 +1,92 @@
+{
+  "request_id": "c5e463f1qk154j5e3sjg",
+  "file_id": "c5e41av1qk1er7odm79g",
+  "results": [
+    {
+      "field_id": "292b0a57-596b-4904-acfa-c3f845eb2179",
+      "extractions": [
+        {
+          "text": "Subject to the release provision ...",
+          "spans": [
+            {
+              "start": 48246,
+              "end": 49501,
+              "pages": {
+                "start": 11,
+                "end": 11
+              },
+              "bounds": {
+                "top": 2563,
+                "left": 227,
+                "bottom": 3092,
+                "right": 1946
+              }
+            }
+          ]
+        },
+        {
+          "text": "(c) Notwithstanding anyth ...",
+          "spans": [
+            {
+              "start": 76960,
+              "end": 78395,
+              "pages": {
+                "start": 17,
+                "end": 18
+              },
+              "bounds": {
+                "top": 133,
+                "left": 223,
+                "bottom": 3117,
+                "right": 2092
+              }
+            }
+          ]
+        },
+        {
+          "text": "In the Landlord shall, ...",
+          "spans": [
+            {
+              "start": 84079,
+              "end": 85076,
+              "pages": {
+                "start": 19,
+                "end": 19
+              },
+              "bounds": {
+                "top": 1986,
+                "left": 2422,
+                "bottom": 2539,
+                "right": 297
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "field_id": "5c971bd8-fc3b-4a26-8b95-674202871dfd",
+      "extractions": [
+        {
+          "text": "(ii) any entit ...",
+          "spans": [
+            {
+              "start": 59971,
+              "end": 60408,
+              "pages": {
+                "start": 14,
+                "end": 14
+              },
+              "bounds": {
+                "top": 804,
+                "left": 314,
+                "bottom": 1130,
+                "right": 1850
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

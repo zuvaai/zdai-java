@@ -1,0 +1,8 @@
+{
+  "field_id": "2efa79d4-854d-46de-8087-f70778157dbf",
+  "name": "Test Field",
+  "description": "This field was created as part of a Postman API call",
+  "read_only": false,
+  "is_trained": true,
+  "file_ids": ["c71pmdbo2ua691f0fkog"]
+}
