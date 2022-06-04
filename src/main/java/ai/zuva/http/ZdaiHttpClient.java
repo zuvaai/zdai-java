@@ -62,7 +62,7 @@ public class ZdaiHttpClient {
     public Response<String> authorizedRequest(String method, String uri, byte[] body, int expectedStatusCode, String... contentType) throws ZdaiClientException, ZdaiApiException {
         return authorizedRequest(method, uri, HttpRequest.BodyPublishers.ofByteArray(body), expectedStatusCode, contentType);
     }
-    public Response<String> authorizedRequest(String method, String uri, Path body, int expectedStatusCode, String... contentType) throws ZdaiClientException, ZdaiApiException, FileNotFoundException {
+    public Response<String> authorizedRequest(String method, String uri, Path body, int expectedStatusCode, String... contentType) throws ZdaiClientException, ZdaiApiException, FileNotFoundException, SecurityException {
         return authorizedRequest(method, uri, HttpRequest.BodyPublishers.ofFile(body), expectedStatusCode, contentType);
     }
 

@@ -1,4 +1,4 @@
-package ai.zuva.examples;
+package ai.zuva.example;
 
 import ai.zuva.*;
 import ai.zuva.classification.ClassificationRequest;

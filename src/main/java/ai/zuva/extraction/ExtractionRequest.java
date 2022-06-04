@@ -1,14 +1,18 @@
 package ai.zuva.extraction;
 
+import ai.zuva.exception.ZdaiApiException;
+import ai.zuva.exception.ZdaiClientException;
 import ai.zuva.exception.ZdaiError;
 import ai.zuva.http.Response;
 import ai.zuva.http.ZdaiHttpClient;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.core.JsonProcessingException;
 
 public class ExtractionRequest {
     public final String fileId;
     public final String requestId;
+    public String status;
     private final ZdaiHttpClient client;
 
     static class ExtractionRequestBody {
@@ -60,28 +64,75 @@ public class ExtractionRequest {
         public ExtractionStatus[] statuses;
     }
 
-    public ExtractionRequest(ZdaiHttpClient client, String fileId, String[] fieldIds) throws Exception {
+    /**
+     * Construct and send a request to extract fields from a file
+     * <p>
+     * Given a ZdaiHttpClient, a fileId, and an array of field IDs, this
+     * constructor makes a request to the Zuva servers to asynchronously extract
+     * the specified fields from the file
+     *
+     * @param client   The client to use to make the request
+     * @param fileId   The ID of the file to analyze
+     * @param fieldIds The IDs of the fields to extract from the file
+     * @throws ZdaiApiException    Unsuccessful response code from server
+     * @throws ZdaiClientException Error preparing, sending or processing the request/response
+     */
+    public ExtractionRequest(ZdaiHttpClient client, String fileId, String[] fieldIds) throws ZdaiClientException, ZdaiApiException {
         this.client = client;
         this.fileId = fileId;
 
+        String body;
+        try {
+            body = client.mapper.writeValueAsString(new ExtractionRequestBody(new String[]{fileId}, fieldIds));
+        } catch (JsonProcessingException e) {
+            throw (new ZdaiClientException("Unable to create request body", e));
+        }
+        Response<String> response = client.authorizedRequest("POST", "/extraction", body, 202);
 
-        Response<String> response = client.authorizedRequest("POST",
-                "/extraction",
-                client.mapper.writeValueAsString(new ExtractionRequestBody(new String[]{fileId}, fieldIds)),
-                202);
-
-        ExtractionStatuses resp = client.mapper.readValue(response.getBody(), ExtractionStatuses.class);
-        this.requestId = resp.statuses[0].requestId;
+        try {
+            ExtractionStatuses resp = client.mapper.readValue(response.getBody(), ExtractionStatuses.class);
+            this.requestId = resp.statuses[0].requestId;
+            this.status = resp.statuses[0].status;
+        } catch (JsonProcessingException e) {
+            throw (new ZdaiClientException("Unable to parse response", e));
+        }
     }
 
-    public String getStatus() throws Exception {
+    /**
+     * Get status of extraction request from the Zuva server
+     * <p>
+     * Given a ZdaiHttpClient, return a String indicating the status of the
+     * request.
+     *
+     * @throws ZdaiApiException    Unsuccessful response code from server
+     * @throws ZdaiClientException Error preparing, sending or processing the request/response
+     */
+    public String getStatus() throws ZdaiClientException, ZdaiApiException {
         Response<String> response = client.authorizedRequest("GET", String.format("/extraction/%s", requestId), 200);
 
-        return client.mapper.readValue(response.getBody(), ExtractionStatus.class).status;
+        try {
+            status = client.mapper.readValue(response.getBody(), ExtractionStatus.class).status;
+            return status;
+        } catch (JsonProcessingException e) {
+            throw (new ZdaiClientException("Unable to parse response", e));
+        }
     }
 
-    public ExtractionResults[] getResults() throws Exception {
+    /**
+     * Get results of a successful extraction request from the Zuva server
+     * <p>
+     * Given a ZdaiHttpClient, return an array of ExtractionResults containing
+     * the text and location of all extractions for each field.
+     *
+     * @throws ZdaiApiException    Unsuccessful response code from server
+     * @throws ZdaiClientException Error preparing, sending or processing the request/response
+     */
+    public ExtractionResults[] getResults() throws ZdaiClientException, ZdaiApiException {
         Response<String> response = client.authorizedRequest("GET", "/extraction/" + requestId + "/results/text", 200);
+        try {
             return client.mapper.readValue(response.getBody(), ExtractionResultsBody.class).results;
+        } catch (JsonProcessingException e) {
+            throw (new ZdaiClientException("Unable to parse response", e));
+        }
     }
 }

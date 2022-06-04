@@ -31,30 +31,36 @@ public class ClassificationRequest {
     /**
      * Construct and send a request to classify the document type.
      * <p>
-     * Given a ZdaiHttpClient and an array of fileIds, this constructor
-     * makes a request to the Zuva servers to asynchronously classify
-     * the document type of each file. The created ClassificationRequest
-     * object can then be used to query the status and results of the
-     * request for each individual file.
+     * Given a ZdaiHttpClient and a fileId, this constructor makes a request
+     * to the Zuva servers to asynchronously classify the document type of
+     * the file. The created ClassificationRequest object can then be used to
+     * query the status and results of the request.
      *
      * @param client The client to use to make the request
      * @param fileId The ID of the file to classify
-     * @throws ZdaiClientException     Error performing the requested action
-     * @throws JsonProcessingException Unexpected JSON in request or response
+     * @throws ZdaiApiException    Unsuccessful response code from server
+     * @throws ZdaiClientException Error preparing, sending or processing the request/response
      */
-    public ClassificationRequest(ZdaiHttpClient client, String fileId) throws ZdaiClientException, ZdaiApiException, JsonProcessingException {
+    public ClassificationRequest(ZdaiHttpClient client, String fileId) throws ZdaiClientException, ZdaiApiException {
         this.client = client;
         this.fileId = fileId;
 
-        Response<String> response = client.authorizedRequest(
-                "POST",
-                "/classification",
-                client.mapper.writeValueAsString(new ClassificationRequestBody(new String[]{fileId})),
-                202);
+        String body;
 
+        try {
+            body = client.mapper.writeValueAsString(new ClassificationRequestBody(new String[]{fileId}));
+        } catch (JsonProcessingException e) {
+            throw (new ZdaiClientException("Error creating request body", e));
+        }
 
-        ClassificationResultsBody resp = client.mapper.readValue(response.getBody(), ClassificationResultsBody.class);
-        this.requestId = resp.results[0].requestId;
+        Response<String> response = client.authorizedRequest("POST", "/classification", body, 202);
+
+        try {
+            ClassificationResultsBody resp = client.mapper.readValue(response.getBody(), ClassificationResultsBody.class);
+            this.requestId = resp.results[0].requestId;
+        } catch (JsonProcessingException e) {
+            throw (new ZdaiClientException("Unable to parse response", e));
+        }
     }
 
     /**
@@ -81,11 +87,15 @@ public class ClassificationRequest {
      * status of the classification request for that file and the classification
      * result (if available).
      *
-     * @throws ZdaiClientException     Error performing the requested action
-     * @throws JsonProcessingException Unexpected JSON in request or response
+     * @throws ZdaiApiException    Unsuccessful response code from server
+     * @throws ZdaiClientException Error preparing, sending or processing the request/response
      */
-    public ClassificationResult getClassificationResult() throws ZdaiClientException, ZdaiApiException, JsonProcessingException {
+    public ClassificationResult getClassificationResult() throws ZdaiClientException, ZdaiApiException {
         Response<String> response = client.authorizedRequest("GET", "/classification/" + requestId, 200);
-        return client.mapper.readValue(response.getBody(), ClassificationResult.class);
+        try {
+            return client.mapper.readValue(response.getBody(), ClassificationResult.class);
+        } catch (JsonProcessingException e) {
+            throw (new ZdaiClientException("Unable to parse response", e));
+        }
     }
 }

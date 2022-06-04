@@ -75,7 +75,7 @@ if (status.equals("complete")) {
 
 ## Example
 
-A command line demo is provided in the [examples folder](src/main/java/ai/zuva/examples). The demo exercises 
+A command line demo is provided in the [examples folder](src/main/java/ai/zuva/example). The demo exercises 
 the document analysis workflow, including uploading a document, determining its document type and language, extracting text fields
 and fetching the results of OCR. The example expect certain environment variables to be set:
 
