@@ -3,7 +3,6 @@ package ai.zuva.fields;
 import ai.zuva.exception.ZdaiApiException;
 import ai.zuva.exception.ZdaiClientException;
 import ai.zuva.exception.ZdaiError;
-import ai.zuva.http.Response;
 import ai.zuva.http.ZdaiHttpClient;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -56,14 +55,14 @@ public class TrainingRequest {
             throw (new ZdaiClientException("Unable to create request body", e));
         }
 
-        Response<String> response = client.authorizedRequest("POST",
+        String response = client.authorizedRequest("POST",
                 String.format("/fields/%s/train", fieldId),
                 body,
                 202);
 
         TrainingStatus status = null;
         try {
-            status = client.mapper.readValue(response.getBody(), TrainingStatus.class);
+            status = client.mapper.readValue(response, TrainingStatus.class);
             this.requestId = status.requestId;
             this.status = status.status;
             this.error = status.error;
@@ -99,9 +98,9 @@ public class TrainingRequest {
      * @throws ZdaiClientException Error preparing, sending or processing the request/response
      */
     public String getStatus() throws ZdaiClientException, ZdaiApiException {
-        Response<String> response = client.authorizedRequest("GET", String.format("/fields/%s/train/%s", fieldId, requestId), 200);
+        String response = client.authorizedRequest("GET", String.format("/fields/%s/train/%s", fieldId, requestId), 200);
         try {
-            TrainingStatus status = client.mapper.readValue(response.getBody(), TrainingStatus.class);
+            TrainingStatus status = client.mapper.readValue(response, TrainingStatus.class);
             this.status = status.status;
             this.error = status.error;
             return this.status;

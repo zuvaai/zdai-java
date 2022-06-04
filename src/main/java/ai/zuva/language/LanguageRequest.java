@@ -2,7 +2,6 @@ package ai.zuva.language;
 
 import ai.zuva.exception.ZdaiApiException;
 import ai.zuva.exception.ZdaiClientException;
-import ai.zuva.http.Response;
 import ai.zuva.http.ZdaiHttpClient;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -56,10 +55,10 @@ public class LanguageRequest {
             throw (new ZdaiClientException("Error creating request body", e));
         }
 
-        Response<String> response = client.authorizedRequest("POST", "/language", body, 202);
+        String response = client.authorizedRequest("POST", "/language", body, 202);
 
         try {
-            LanguageResults resp = client.mapper.readValue(response.getBody(), LanguageResults.class);
+            LanguageResults resp = client.mapper.readValue(response, LanguageResults.class);
             this.requestId = resp.results[0].requestId;
         } catch (JsonProcessingException e) {
             throw (new ZdaiClientException("Unable to parse response", e));
@@ -93,9 +92,9 @@ public class LanguageRequest {
      * @throws ZdaiClientException Error preparing, sending or processing the request/response
      */
     public LanguageResult getResult() throws ZdaiClientException, ZdaiApiException {
-        Response<String> response = client.authorizedRequest("GET", "/language/" + requestId, 200);
+        String response = client.authorizedRequest("GET", "/language/" + requestId, 200);
         try {
-            return client.mapper.readValue(response.getBody(), LanguageResult.class);
+            return client.mapper.readValue(response, LanguageResult.class);
         } catch (JsonProcessingException e){
             throw(new ZdaiClientException("Unable to parse response", e));
         }

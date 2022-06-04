@@ -3,7 +3,6 @@ package ai.zuva.ocr;
 import ai.zuva.exception.ZdaiApiException;
 import ai.zuva.exception.ZdaiClientException;
 import ai.zuva.exception.ZdaiError;
-import ai.zuva.http.Response;
 import ai.zuva.http.ZdaiHttpClient;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -74,10 +73,10 @@ public class OcrRequest {
             throw (new ZdaiClientException("Unable to create request body", e));
         }
 
-        Response<String> response = client.authorizedRequest("POST", "/ocr", body, 202);
+        String response = client.authorizedRequest("POST", "/ocr", body, 202);
 
         try {
-            OcrStatuses resp = client.mapper.readValue(response.getBody(), OcrStatuses.class);
+            OcrStatuses resp = client.mapper.readValue(response, OcrStatuses.class);
             this.requestId = resp.statuses[0].requestId;
         } catch (JsonProcessingException e) {
             throw (new ZdaiClientException("Unable to parse response", e));
@@ -100,9 +99,9 @@ public class OcrRequest {
      * @throws ZdaiClientException Error preparing, sending or processing the request/response
      */
     public String getStatus() throws ZdaiClientException, ZdaiApiException {
-        Response<String> response = client.authorizedRequest("GET", "/ocr/" + requestId, 200);
+        String response = client.authorizedRequest("GET", "/ocr/" + requestId, 200);
         try {
-            return client.mapper.readValue(response.getBody(), OcrStatus.class).status;
+            return client.mapper.readValue(response, OcrStatus.class).status;
         } catch (JsonProcessingException e) {
             throw (new ZdaiClientException("Unable to parse response", e));
         }
@@ -118,9 +117,9 @@ public class OcrRequest {
      * @throws ZdaiClientException Error preparing, sending or processing the request/response
      */
     public String getText() throws ZdaiClientException, ZdaiApiException {
-        Response<String> response = client.authorizedRequest("GET", "/ocr/" + requestId + "/text", 200);
+        String response = client.authorizedRequest("GET", "/ocr/" + requestId + "/text", 200);
         try {
-            return client.mapper.readValue(response.getBody(), OcrText.class).text;
+            return client.mapper.readValue(response, OcrText.class).text;
         } catch (JsonProcessingException e) {
             throw (new ZdaiClientException("Unable to parse response", e));
         }
@@ -136,8 +135,7 @@ public class OcrRequest {
      * @throws ZdaiClientException Error preparing, sending or processing the request/response
      */
     public byte[] getImages() throws ZdaiClientException, ZdaiApiException {
-        Response<byte[]> response = client.authorizedRequest("/ocr/" + requestId + "/images", 200);
-        return response.getBody();
+        return client.authorizedRequest("/ocr/" + requestId + "/images", 200);
     }
 
     /**
@@ -150,7 +148,6 @@ public class OcrRequest {
      * @throws ZdaiClientException Error preparing, sending or processing the request/response
      */
     public byte[] getLayouts() throws ZdaiClientException, ZdaiApiException {
-        Response<byte[]> response = client.authorizedRequest("/ocr/" + requestId + "/layouts", 200);
-        return response.getBody();
+        return client.authorizedRequest("/ocr/" + requestId + "/layouts", 200);
     }
 }

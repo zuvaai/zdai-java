@@ -2,7 +2,6 @@ package ai.zuva.fields;
 
 import ai.zuva.exception.ZdaiApiException;
 import ai.zuva.exception.ZdaiClientException;
-import ai.zuva.http.Response;
 import ai.zuva.http.ZdaiHttpClient;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -17,18 +16,18 @@ public class FieldService {
     }
 
     public FieldListElement[] listFields() throws ZdaiClientException, ZdaiApiException {
-        Response<String> response = client.authorizedRequest("GET", "/fields", 200);
+        String response = client.authorizedRequest("GET", "/fields", 200);
         try {
-            return client.mapper.readValue(response.getBody(), FieldListElement[].class);
+            return client.mapper.readValue(response, FieldListElement[].class);
         } catch (JsonProcessingException e) {
             throw (new ZdaiClientException("Unable to parse response", e));
         }
     }
 
     public FieldMetadata getFieldMetadata(String fieldID) throws ZdaiClientException, ZdaiApiException {
-        Response<String> response = client.authorizedRequest("GET", String.format("/fields/%s/metadata", fieldID), 200);
+        String response = client.authorizedRequest("GET", String.format("/fields/%s/metadata", fieldID), 200);
         try {
-            return client.mapper.readValue(response.getBody(), FieldMetadata.class);
+            return client.mapper.readValue(response, FieldMetadata.class);
         } catch (JsonProcessingException e) {
             throw (new ZdaiClientException("Unable to parse response", e));
         }
@@ -56,20 +55,20 @@ public class FieldService {
     }
 
     public FieldAccuracy getFieldAccuracy(String fieldID) throws ZdaiClientException, ZdaiApiException {
-        Response<String> response = client.authorizedRequest("GET", String.format("/fields/%s/accuracy", fieldID), 200);
+        String response = client.authorizedRequest("GET", String.format("/fields/%s/accuracy", fieldID), 200);
 
         try {
-            return client.mapper.readValue(response.getBody(), FieldAccuracy.class);
+            return client.mapper.readValue(response, FieldAccuracy.class);
         } catch (JsonProcessingException e) {
             throw (new ZdaiClientException("Unable to parse response", e));
         }
     }
 
     public FieldValidation[] getFieldValidationDetails(String fieldID) throws ZdaiClientException, ZdaiApiException {
-        Response<String> response = client.authorizedRequest("GET", String.format("/fields/%s/validation-details", fieldID), 200);
+        String response = client.authorizedRequest("GET", String.format("/fields/%s/validation-details", fieldID), 200);
 
         try {
-            return client.mapper.readValue(response.getBody(), FieldValidation[].class);
+            return client.mapper.readValue(response, FieldValidation[].class);
         } catch (JsonProcessingException e) {
             throw (new ZdaiClientException("Unable to parse response", e));
         }
@@ -102,10 +101,10 @@ public class FieldService {
             throw (new ZdaiClientException("Unable to create request body", e));
         }
 
-        Response<String> response = client.authorizedRequest("POST", "/fields", body, 201);
+        String response = client.authorizedRequest("POST", "/fields", body, 201);
 
         try {
-            return client.mapper.readValue(response.getBody(), CreateFieldResponse.class).fieldId;
+            return client.mapper.readValue(response, CreateFieldResponse.class).fieldId;
         } catch (JsonProcessingException e) {
             throw (new ZdaiClientException("Unable to parse response", e));
         }

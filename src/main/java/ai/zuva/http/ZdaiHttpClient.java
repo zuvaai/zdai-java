@@ -30,7 +30,7 @@ public class ZdaiHttpClient {
         return URI.create(this.baseURL + uri);
     }
 
-    private Response<String> authorizedRequest(String method, String uri, HttpRequest.BodyPublisher body, int expectedStatusCode, String[] contentType) throws ZdaiClientException, ZdaiApiException {
+    private String authorizedRequest(String method, String uri, HttpRequest.BodyPublisher body, int expectedStatusCode, String[] contentType) throws ZdaiClientException, ZdaiApiException {
         HttpRequest.Builder requestBuilder = HttpRequest.newBuilder()
                 .uri(URI.create(this.baseURL + uri))
                 .header("Authorization", "Bearer " + token)
@@ -45,28 +45,28 @@ public class ZdaiHttpClient {
             if (response.statusCode() != expectedStatusCode) {
                 throw new ZdaiApiException(mapper, method, uri, response.statusCode(), response.body());
             }
-            return new Response<>(response.statusCode(), response.body());
+            return response.body();
         } catch (IOException | InterruptedException e) {
             throw new ZdaiClientException("Http request failed", e);
         }
     }
 
-    public Response<String> authorizedRequest(String method, String uri, int expectedStatusCode) throws ZdaiClientException, ZdaiApiException {
+    public String authorizedRequest(String method, String uri, int expectedStatusCode) throws ZdaiClientException, ZdaiApiException {
         return authorizedRequest(method, uri, noBody(), expectedStatusCode, new String[]{});
     }
 
-    public Response<String> authorizedRequest(String method, String uri, String body, int expectedStatusCode, String... contentType) throws ZdaiClientException, ZdaiApiException {
+    public String authorizedRequest(String method, String uri, String body, int expectedStatusCode, String... contentType) throws ZdaiClientException, ZdaiApiException {
         return authorizedRequest(method, uri, HttpRequest.BodyPublishers.ofString(body), expectedStatusCode, contentType);
     }
 
-    public Response<String> authorizedRequest(String method, String uri, byte[] body, int expectedStatusCode, String... contentType) throws ZdaiClientException, ZdaiApiException {
+    public String authorizedRequest(String method, String uri, byte[] body, int expectedStatusCode, String... contentType) throws ZdaiClientException, ZdaiApiException {
         return authorizedRequest(method, uri, HttpRequest.BodyPublishers.ofByteArray(body), expectedStatusCode, contentType);
     }
-    public Response<String> authorizedRequest(String method, String uri, Path body, int expectedStatusCode, String... contentType) throws ZdaiClientException, ZdaiApiException, FileNotFoundException, SecurityException {
+    public String authorizedRequest(String method, String uri, Path body, int expectedStatusCode, String... contentType) throws ZdaiClientException, ZdaiApiException, FileNotFoundException, SecurityException {
         return authorizedRequest(method, uri, HttpRequest.BodyPublishers.ofFile(body), expectedStatusCode, contentType);
     }
 
-    public Response<byte[]> authorizedRequest(String uri, int expectedStatusCode) throws ZdaiClientException, ZdaiApiException {
+    public byte[] authorizedRequest(String uri, int expectedStatusCode) throws ZdaiClientException, ZdaiApiException {
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(this.baseURL + uri))
                 .header("Authorization", "Bearer " + token)
@@ -77,7 +77,7 @@ public class ZdaiHttpClient {
             if (response.statusCode() != expectedStatusCode) {
                 throw new ZdaiApiException(mapper, "GET", uri, response.statusCode(), new String(response.body()));
             }
-            return new Response<>(response.statusCode(), response.body());
+            return response.body();
         } catch (IOException | InterruptedException e) {
             throw new ZdaiClientException("Http request failed", e);
         }

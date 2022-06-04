@@ -2,11 +2,8 @@ package ai.zuva.files;
 
 import ai.zuva.exception.ZdaiApiException;
 import ai.zuva.exception.ZdaiClientException;
-import ai.zuva.http.Response;
 import ai.zuva.http.ZdaiHttpClient;
-import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonMappingException;
 
 import java.io.FileNotFoundException;
 import java.nio.file.Path;
@@ -29,9 +26,9 @@ public class FileService {
     public SubmitFileResponse submitFile(byte[] ba, String... contentType) throws ZdaiClientException, ZdaiApiException {
         return parseResponse(client.authorizedRequest("POST", "/files", ba, 201, contentType));
     }
-    private SubmitFileResponse parseResponse (Response<String> response) throws ZdaiClientException {
+    private SubmitFileResponse parseResponse (String response) throws ZdaiClientException {
         try {
-            return client.mapper.readValue(response.getBody(), SubmitFileResponse.class);
+            return client.mapper.readValue(response, SubmitFileResponse.class);
         } catch (JsonProcessingException e) {
             throw new ZdaiClientException("Unable to parse response body", e);
         }

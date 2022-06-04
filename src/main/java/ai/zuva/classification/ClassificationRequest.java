@@ -2,7 +2,6 @@ package ai.zuva.classification;
 
 import ai.zuva.exception.ZdaiApiException;
 import ai.zuva.exception.ZdaiClientException;
-import ai.zuva.http.Response;
 import ai.zuva.http.ZdaiHttpClient;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -53,10 +52,10 @@ public class ClassificationRequest {
             throw (new ZdaiClientException("Error creating request body", e));
         }
 
-        Response<String> response = client.authorizedRequest("POST", "/classification", body, 202);
+        String response = client.authorizedRequest("POST", "/classification", body, 202);
 
         try {
-            ClassificationResultsBody resp = client.mapper.readValue(response.getBody(), ClassificationResultsBody.class);
+            ClassificationResultsBody resp = client.mapper.readValue(response, ClassificationResultsBody.class);
             this.requestId = resp.results[0].requestId;
         } catch (JsonProcessingException e) {
             throw (new ZdaiClientException("Unable to parse response", e));
@@ -91,9 +90,9 @@ public class ClassificationRequest {
      * @throws ZdaiClientException Error preparing, sending or processing the request/response
      */
     public ClassificationResult getClassificationResult() throws ZdaiClientException, ZdaiApiException {
-        Response<String> response = client.authorizedRequest("GET", "/classification/" + requestId, 200);
+        String response = client.authorizedRequest("GET", "/classification/" + requestId, 200);
         try {
-            return client.mapper.readValue(response.getBody(), ClassificationResult.class);
+            return client.mapper.readValue(response, ClassificationResult.class);
         } catch (JsonProcessingException e) {
             throw (new ZdaiClientException("Unable to parse response", e));
         }
