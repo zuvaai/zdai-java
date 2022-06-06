@@ -28,22 +28,18 @@ public class ClassificationRequest {
     }
 
     /**
-     * Construct and send a request to classify the document type.
+     * Send a request to classify the document type.
      * <p>
-     * Given a ZdaiHttpClient and a fileId, this constructor makes a request
-     * to the Zuva servers to asynchronously classify the document type of
-     * the file. The created ClassificationRequest object can then be used to
-     * query the status and results of the request.
+     * Given a ZdaiHttpClient and a fileId, make a request to the Zuva servers to
+     * asynchronously classify the document type of the file. The created ClassificationRequest
+     * object can then be used to query the status and results of the request.
      *
      * @param client The client to use to make the request
      * @param fileId The ID of the file to classify
      * @throws ZdaiApiException    Unsuccessful response code from server
      * @throws ZdaiClientException Error preparing, sending or processing the request/response
      */
-    public ClassificationRequest(ZdaiHttpClient client, String fileId) throws ZdaiClientException, ZdaiApiException {
-        this.client = client;
-        this.fileId = fileId;
-
+    public static ClassificationRequest createClassificationRequest(ZdaiHttpClient client, String fileId) throws ZdaiClientException, ZdaiApiException {
         String body;
 
         try {
@@ -56,7 +52,7 @@ public class ClassificationRequest {
 
         try {
             ClassificationResultsBody resp = client.mapper.readValue(response, ClassificationResultsBody.class);
-            this.requestId = resp.results[0].requestId;
+            return new ClassificationRequest(client, fileId, resp.results[0].requestId);
         } catch (JsonProcessingException e) {
             throw (new ZdaiClientException("Unable to parse response", e));
         }

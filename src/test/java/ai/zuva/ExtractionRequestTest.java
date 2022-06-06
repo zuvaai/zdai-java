@@ -9,7 +9,6 @@ import org.junit.jupiter.api.Test;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
 
 @WireMockTest
 public class ExtractionRequestTest {
@@ -36,7 +35,7 @@ public class ExtractionRequestTest {
                     .willReturn(aResponse().withStatus(202).withBody(postResponseBody)));
 
             ZdaiHttpClient client = new ZdaiHttpClient("http://localhost:" + port, "my-token");
-            ExtractionRequest request = new ExtractionRequest(client, fileId, fieldIds);
+            ExtractionRequest request = ExtractionRequest.createExtractionRequest(client, fileId, fieldIds);
 
             assertEquals(requestId, request.requestId);
 

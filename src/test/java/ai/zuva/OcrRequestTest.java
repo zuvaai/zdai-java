@@ -27,7 +27,7 @@ class OcrRequestTest {
 
         ZdaiHttpClient client = new ZdaiHttpClient("http://localhost:" + port, "my-token");
 
-        OcrRequest request = new OcrRequest(client, fileId);
+        OcrRequest request = OcrRequest.createOcrRequest(client, fileId);
         assertEquals(requestId, request.requestId);
 
         String getStatusResponseBody = TestHelpers.resourceAsString(this, "ocr-status-complete.json");

@@ -50,7 +50,7 @@ public class OcrRequest {
     }
 
     /**
-     * Construct and send a request to extract fields from a file
+     * send a request to extract fields from a file
      * <p>
      * Given a ZdaiHttpClient, a fileId, this constructor makes a request to
      * the Zuva servers to asynchronously perform OCR on the file, returning an
@@ -62,10 +62,7 @@ public class OcrRequest {
      * @throws ZdaiApiException    Unsuccessful response code from server
      * @throws ZdaiClientException Error preparing, sending or processing the request/response
      */
-    public OcrRequest(ZdaiHttpClient client, String fileId) throws ZdaiClientException, ZdaiApiException {
-        this.client = client;
-        this.fileId = fileId;
-
+    public static OcrRequest createOcrRequest(ZdaiHttpClient client, String fileId) throws ZdaiClientException, ZdaiApiException {
         String body;
         try {
             body = client.mapper.writeValueAsString(new OcrRequestBody(new String[]{fileId}));
@@ -77,7 +74,7 @@ public class OcrRequest {
 
         try {
             OcrStatuses resp = client.mapper.readValue(response, OcrStatuses.class);
-            this.requestId = resp.statuses[0].requestId;
+            return new OcrRequest(client, fileId, resp.statuses[0].requestId);
         } catch (JsonProcessingException e) {
             throw (new ZdaiClientException("Unable to parse response", e));
         }

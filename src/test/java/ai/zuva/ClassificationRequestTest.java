@@ -27,7 +27,7 @@ class ClassificationRequestTest {
                     .willReturn(aResponse().withStatus(202).withBody(postResponseBody)));
 
             ZdaiHttpClient client = new ZdaiHttpClient("http://localhost:" + port, "my-token");
-            ClassificationRequest request = new ClassificationRequest(client, fileId);
+            ClassificationRequest request = ClassificationRequest.createClassificationRequest(client, fileId);
 
             assertEquals(requestId, request.requestId);
 

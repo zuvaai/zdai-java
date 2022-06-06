@@ -10,9 +10,27 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 
 public class ExtractionRequest {
     public final String fileId;
+    public final String[] fieldIds;
     public final String requestId;
     public String status;
+    public ZdaiError error;
     private final ZdaiHttpClient client;
+
+    public ExtractionRequest(ZdaiHttpClient client, String requestId) {
+        this.client = client;
+        this.requestId = requestId;
+        this.fileId = null;
+        this.fieldIds = null;
+    }
+
+    private ExtractionRequest(ZdaiHttpClient client, ExtractionStatus extractionStatus) {
+        this.client = client;
+        this.fileId = extractionStatus.fileId;
+        this.fieldIds = extractionStatus.fieldIds;
+        this.requestId = extractionStatus.requestId;
+        this.status = extractionStatus.status;
+        this.error = extractionStatus.error;
+    }
 
     static class ExtractionRequestBody {
 
@@ -76,10 +94,7 @@ public class ExtractionRequest {
      * @throws ZdaiApiException    Unsuccessful response code from server
      * @throws ZdaiClientException Error preparing, sending or processing the request/response
      */
-    public ExtractionRequest(ZdaiHttpClient client, String fileId, String[] fieldIds) throws ZdaiClientException, ZdaiApiException {
-        this.client = client;
-        this.fileId = fileId;
-
+    public static ExtractionRequest createExtractionRequest(ZdaiHttpClient client, String fileId, String[] fieldIds) throws ZdaiClientException, ZdaiApiException {
         String body;
         try {
             body = client.mapper.writeValueAsString(new ExtractionRequestBody(new String[]{fileId}, fieldIds));
@@ -90,8 +105,7 @@ public class ExtractionRequest {
 
         try {
             ExtractionStatuses resp = client.mapper.readValue(response, ExtractionStatuses.class);
-            this.requestId = resp.statuses[0].requestId;
-            this.status = resp.statuses[0].status;
+            return new ExtractionRequest(client, resp.statuses[0]);
         } catch (JsonProcessingException e) {
             throw (new ZdaiClientException("Unable to parse response", e));
         }

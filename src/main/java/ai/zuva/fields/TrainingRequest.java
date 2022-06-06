@@ -30,13 +30,12 @@ public class TrainingRequest {
     }
 
     /**
-     * Construct and send a request training of a field from examples
+     * Send a request to train a field from examples
      * <p>
-     * Given a ZdaiHttpClient, a fileId, a field ID, and training examples this
-     * constructor makes a request to the Zuva servers to asynchronously train
-     * a new version of the field on the specified data. The resulting
-     * TrainingRequest object can then be used to check the status of the training
-     * process.
+     * Given a ZdaiHttpClient, a fileId, a field ID, and training examples make a request
+     * to the Zuva servers to asynchronously train a new version of the field on the specified
+     * data. The returned TrainingRequest object can then be used to check the status of the
+     * training process.
      *
      * @param client           The client to use to make the request
      * @param fieldId          The ID of the custom field to train
@@ -44,10 +43,7 @@ public class TrainingRequest {
      * @throws ZdaiApiException    Unsuccessful response code from server
      * @throws ZdaiClientException Error preparing, sending or processing the request/response
      */
-    public TrainingRequest(ZdaiHttpClient client, String fieldId, TrainingExample[] trainingExamples) throws ZdaiClientException, ZdaiApiException {
-        this.client = client;
-        this.fieldId = fieldId;
-
+    public static TrainingRequest createTrainingRequest(ZdaiHttpClient client, String fieldId, TrainingExample[] trainingExamples) throws ZdaiClientException, ZdaiApiException {
         String body;
         try {
             body = client.mapper.writeValueAsString(trainingExamples);
@@ -60,12 +56,9 @@ public class TrainingRequest {
                 body,
                 202);
 
-        TrainingStatus status = null;
         try {
-            status = client.mapper.readValue(response, TrainingStatus.class);
-            this.requestId = status.requestId;
-            this.status = status.status;
-            this.error = status.error;
+            TrainingStatus trainingStatus = client.mapper.readValue(response, TrainingStatus.class);
+            return new TrainingRequest(client, trainingStatus);
         } catch (JsonProcessingException e) {
             throw (new ZdaiClientException("Unable to parse response", e));
         }
@@ -86,6 +79,14 @@ public class TrainingRequest {
         this.client = client;
         this.fieldId = fieldId;
         this.requestId = requestId;
+    }
+
+    private TrainingRequest(ZdaiHttpClient client, TrainingStatus trainingStatus) {
+        this.client = client;
+        this.fieldId = trainingStatus.fieldId;
+        this.requestId = trainingStatus.requestId;
+        this.status = trainingStatus.status;
+        this.error = trainingStatus.error;
     }
 
     /**

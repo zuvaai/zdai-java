@@ -20,23 +20,23 @@ public class ZdaiClient {
     }
 
     public ClassificationRequest newDocClassifierRequest(String fileId) throws ZdaiClientException, ZdaiApiException {
-        return new ClassificationRequest(client, fileId);
+        return ClassificationRequest.createClassificationRequest(client, fileId);
     }
 
     public LanguageRequest newLanguageRequest(String fileId) throws ZdaiClientException, ZdaiApiException {
-        return new LanguageRequest(client, fileId);
+        return LanguageRequest.createLanguageRequest(client, fileId);
     }
 
     public OcrRequest newOcrRequest(String fileId) throws ZdaiClientException, ZdaiApiException  {
-        return new OcrRequest(client, fileId);
+        return OcrRequest.createOcrRequest(client, fileId);
     }
 
     public ExtractionRequest newExtractionRequest(String fileId, String[] fieldIds) throws ZdaiClientException, ZdaiApiException  {
-        return new ExtractionRequest(client, fileId, fieldIds);
+        return ExtractionRequest.createExtractionRequest(client, fileId, fieldIds);
     }
 
     public TrainingRequest newTrainingRequest(String fieldId, TrainingExample[] trainingExamples) throws ZdaiClientException, ZdaiApiException {
-        return new TrainingRequest(client, fieldId, trainingExamples);
+        return TrainingRequest.createTrainingRequest(client, fieldId, trainingExamples);
     }
     public FileService newFileService() {
         return new FileService(client);
