@@ -4,8 +4,7 @@ import ai.zuva.*;
 import ai.zuva.classification.ClassificationRequest;
 import ai.zuva.extraction.ExtractionRequest;
 import ai.zuva.fields.FieldService;
-import ai.zuva.files.FileService;
-import ai.zuva.files.SubmitFileResponse;
+import ai.zuva.files.ZdaiFile;
 import ai.zuva.language.LanguageRequest;
 import ai.zuva.ocr.OcrRequest;
 import ai.zuva.extraction.ExtractionData;
@@ -36,14 +35,13 @@ public class Example {
         }
 
         ZdaiClient client = new ZdaiClient(url, token);
-        FileService fileService = client.newFileService();
         FieldService fieldService = client.newFieldService();
 
-        SubmitFileResponse fileDetails = fileService.submitFile(Paths.get(documentPath));
+        ZdaiFile zdaiFile = client.submitFile(Paths.get(documentPath));
 
-        System.out.println(String.format("Uploaded file with id %s expires at %s", fileDetails.fileId, fileDetails.expiration));
+        System.out.println(String.format("Uploaded file with id %s expires at %s", zdaiFile.fileId, zdaiFile.expiration));
 
-        String[] fileIds = new String[]{fileDetails.fileId};
+        String[] fileIds = new String[]{zdaiFile.fileId};
 
         System.out.println("\nClassifying Document type:");
 
@@ -111,6 +109,6 @@ public class Example {
             }
         }
         System.out.println("\nDeleting file from server.");
-        fileService.deleteFile(fileIds[0]);
+        zdaiFile.delete();
     }
 }

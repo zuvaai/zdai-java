@@ -19,8 +19,7 @@ ZdaiClient client = new ZdaiClient(url, token);
 Create a `FileService` object and use it to submit your file, making sure to hang on to the returned file ID:
 
 ```java
-FileService fileService = client.newFileService();
-SubmitFileResponse fileDetails = fileService.submitFile(Paths.get(fileName));
+ZdaiFile zdaiFile = client.submitFile(Paths.get(fileName));
 String fileId = fileDetails.fileId;
 ```
 

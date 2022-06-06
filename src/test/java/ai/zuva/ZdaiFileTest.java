@@ -1,8 +1,7 @@
 package ai.zuva;
 
 import ai.zuva.exception.ZdaiApiException;
-import ai.zuva.files.FileService;
-import ai.zuva.files.SubmitFileResponse;
+import ai.zuva.files.ZdaiFile;
 import ai.zuva.http.ZdaiHttpClient;
 import com.github.tomakehurst.wiremock.junit5.WireMockRuntimeInfo;
 import com.github.tomakehurst.wiremock.junit5.WireMockTest;
@@ -14,7 +13,7 @@ import static com.github.tomakehurst.wiremock.client.WireMock.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @WireMockTest
-public class FileServiceTest {
+public class ZdaiFileTest {
 
 
     @Test
@@ -29,10 +28,9 @@ public class FileServiceTest {
                 .willReturn(created().withBody(responseBody)));
 
         ZdaiHttpClient zClient = new ZdaiHttpClient("http://localhost:"+ port, "my-token");
-        FileService client = new FileService(zClient);
 
         try {
-            SubmitFileResponse result = client.submitFile("Sample text", "text/plain");
+            ZdaiFile result = ZdaiFile.submitFile(zClient, "Sample text", "text/plain");
             assertEquals("c5e40jn1qk1er7odm71g", result.fileId);
             assertEquals("text/plain", result.attributes.contentType);
             assertEquals("", result.permissions[0]);
@@ -53,9 +51,9 @@ public class FileServiceTest {
                 .willReturn(created().withBody(responseBody)));
 
         ZdaiHttpClient zClient = new ZdaiHttpClient("http://localhost:"+ port, "my-token");
-        FileService client = new FileService(zClient);
+
         try {
-            SubmitFileResponse result = client.submitFile(content);
+            ZdaiFile result = ZdaiFile.submitFile(zClient, content);
             assertEquals("c5e407f1qk1er7odm6tg", result.fileId);
             assertEquals("application/pdf", result.attributes.contentType);
             assertEquals("", result.permissions[0]);
@@ -77,9 +75,9 @@ public class FileServiceTest {
                 .willReturn(created().withBody(responseBody)));
 
         ZdaiHttpClient zClient = new ZdaiHttpClient("http://localhost:"+ port, "my-token");
-        FileService client = new FileService(zClient);
+
         try {
-            SubmitFileResponse result = client.submitFile(content, "application/kiraocr");
+            ZdaiFile result = ZdaiFile.submitFile(zClient, content, "application/kiraocr");
             assertEquals("c5e40of1qk1er7odm740", result.fileId);
             assertEquals("application/kiraocr", result.attributes.contentType);
             assertEquals("", result.permissions[0]);
@@ -96,10 +94,10 @@ public class FileServiceTest {
                 .willReturn(noContent().withBody("1")));
 
         ZdaiHttpClient zClient = new ZdaiHttpClient("http://localhost:"+ port, "my-token");
-        FileService client = new FileService(zClient);
+        ZdaiFile zdaiFile = new ZdaiFile(zClient,"123");
         try {
             // Implied success if no error is thrown
-            client.deleteFile("123");
+            zdaiFile.delete();
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -114,10 +112,10 @@ public class FileServiceTest {
                 .willReturn(notFound().withBody(responseBody)));
 
         ZdaiHttpClient zClient = new ZdaiHttpClient("http://localhost:"+ port, "my-token");
-        FileService client = new FileService(zClient);
+        ZdaiFile zdaiFile = new ZdaiFile(zClient,"123");
         try {
             // Implied success if no error is thrown
-            client.deleteFile("123");
+            zdaiFile.delete();
         } catch (ZdaiApiException e) {
             assertEquals(404, e.statusCode);
             // assertEquals("file-not-found", e.code);
