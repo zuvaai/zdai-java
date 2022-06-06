@@ -13,7 +13,7 @@ import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @WireMockTest
-public class FieldServiceTest {
+public class FieldTest {
 
     @Test
     void testListFields(WireMockRuntimeInfo wmRuntimeInfo) throws IOException {
@@ -26,10 +26,9 @@ public class FieldServiceTest {
                 .willReturn(ok().withBody(responseBody)));
 
         ZdaiHttpClient client = new ZdaiHttpClient("http://localhost:" + port, "my-token");
-        FieldService fs = new FieldService(client);
 
         try {
-            FieldListElement result = fs.listFields()[0];
+            FieldListElement result = Field.listFields(client)[0];
             assertEquals("e", result.name);
         } catch (Exception e) {
             throw new RuntimeException(e);
@@ -47,10 +46,10 @@ public class FieldServiceTest {
                 .willReturn(ok().withBody(responseBody)));
 
         ZdaiHttpClient client = new ZdaiHttpClient("http://localhost:" + port, "my-token");
-        FieldService fs = new FieldService(client);
+        Field field = new Field(client, fieldId);
 
         try {
-            FieldMetadata result = fs.getFieldMetadata(fieldId);
+            FieldMetadata result = field.getMetadata();
             assertEquals("Test Field", result.name);
         } catch (Exception e) {
             throw new RuntimeException(e);
@@ -68,10 +67,10 @@ public class FieldServiceTest {
                 .willReturn(noContent().withBody("1")));
 
         ZdaiHttpClient client = new ZdaiHttpClient("http://localhost:" + port, "my-token");
-        FieldService fs = new FieldService(client);
+        Field field = new Field(client, fieldId);
 
         try {
-            fs.updateFieldMetadata(fieldId, "Updated name", "Updated description");
+            field.updateMetadata("Updated name", "Updated description");
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -88,10 +87,10 @@ public class FieldServiceTest {
                 .willReturn(ok().withBody(responseBody)));
 
         ZdaiHttpClient client = new ZdaiHttpClient("http://localhost:" + port, "my-token");
-        FieldService fs = new FieldService(client);
+        Field field = new Field(client, fieldId);
 
         try {
-            FieldAccuracy result = fs.getFieldAccuracy(fieldId);
+            FieldAccuracy result = field.getAccuracy();
             assertEquals(0.95, result.fScore, 0.0001);
             assertEquals(1.0, result.recall, 0.0001);
             assertEquals(0.9, result.precision, 0.0001);
@@ -111,10 +110,10 @@ public class FieldServiceTest {
                 .willReturn(ok().withBody(responseBody)));
 
         ZdaiHttpClient client = new ZdaiHttpClient("http://localhost:" + port, "my-token");
-        FieldService fs = new FieldService(client);
+        Field field = new Field(client, fieldId);
 
         try {
-            FieldValidation[] result = fs.getFieldValidationDetails(fieldId);
+            FieldValidation[] result = field.getValidationDetails();
             assertEquals(1, result.length);
             assertEquals("c71pmdbo2ua691f0fkog", result[0].fileId);
             assertEquals("tp", result[0].type);
@@ -137,11 +136,10 @@ public class FieldServiceTest {
                 .willReturn(created().withBody(responseBody)));
 
         ZdaiHttpClient client = new ZdaiHttpClient("http://localhost:" + port, "my-token");
-        FieldService fs = new FieldService(client);
 
         try {
-            String fieldId = fs.createField("Test Field", "Test field description");
-            assertEquals("f7d397b7-f541-4390-b8b9-0eaa6723aa9c", fieldId);
+            Field field = Field.createField(client,"Test Field", "Test field description");
+            assertEquals("f7d397b7-f541-4390-b8b9-0eaa6723aa9c", field.fieldId);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

@@ -3,7 +3,7 @@ package ai.zuva.example;
 import ai.zuva.*;
 import ai.zuva.classification.ClassificationRequest;
 import ai.zuva.extraction.ExtractionRequest;
-import ai.zuva.fields.FieldService;
+import ai.zuva.fields.Field;
 import ai.zuva.files.ZdaiFile;
 import ai.zuva.language.LanguageRequest;
 import ai.zuva.ocr.OcrRequest;
@@ -28,24 +28,18 @@ public class Example {
         }
 
         String documentPath = System.getenv("ZUVA_DEMO_DOC");
-
-        // default to looking for the demo file in the current working directory
         if (documentPath == null) {
+            // default to looking for the demo file in the current working directory
             documentPath = "CANADAGOOS-F1Securiti-2152017.PDF";
         }
 
         ZdaiClient client = new ZdaiClient(url, token);
-        FieldService fieldService = client.newFieldService();
 
         ZdaiFile zdaiFile = client.submitFile(Paths.get(documentPath));
-
         System.out.println(String.format("Uploaded file with id %s expires at %s", zdaiFile.fileId, zdaiFile.expiration));
 
-        String[] fileIds = new String[]{zdaiFile.fileId};
-
         System.out.println("\nClassifying Document type:");
-
-        ClassificationRequest classificationRequest = client.newDocClassifierRequest(fileIds[0]);
+        ClassificationRequest classificationRequest = client.newDocClassifierRequest(zdaiFile.fileId);
         System.out.println("Request ID: " + classificationRequest.requestId);
 
         String status = StatusChecker.waitForStatus(() -> classificationRequest.getClassificationResult().status, 1, 60);
@@ -57,8 +51,7 @@ public class Example {
         }
 
         System.out.println("\nDetermining Document Language:");
-
-        LanguageRequest languageRequest = client.newLanguageRequest(fileIds[0]);
+        LanguageRequest languageRequest = client.newLanguageRequest(zdaiFile.fileId);
         System.out.println("Request ID: " + languageRequest.requestId);
 
         status = StatusChecker.waitForStatus(() -> languageRequest.getResult().status, 1, 60);
@@ -76,7 +69,7 @@ public class Example {
                 "4d34c0ac-a3d4-4172-92d0-5fad8b3860a7"
         };
 
-        ExtractionRequest extractionRequest = client.newExtractionRequest(fileIds[0], fieldIds);
+        ExtractionRequest extractionRequest = client.newExtractionRequest(zdaiFile.fileId, fieldIds);
         System.out.println("Request ID: " + extractionRequest.requestId);
 
         status = StatusChecker.waitForStatus(() -> extractionRequest.getStatus(), 1, 60);
@@ -85,7 +78,7 @@ public class Example {
 
 
             for (ExtractionResults ex : extractions) {
-                FieldMetadata fm = fieldService.getFieldMetadata(ex.fieldId);
+                FieldMetadata fm = client.field(ex.fieldId).getMetadata();
                 System.out.println(String.format("%s:", fm.name));
 
                 for (ExtractionData ed : ex.extractions) {
@@ -95,8 +88,7 @@ public class Example {
         }
 
         System.out.println("\nObtaining OCR results:");
-
-        OcrRequest ocrRequest = client.newOcrRequest(fileIds[0]);
+        OcrRequest ocrRequest = client.newOcrRequest(zdaiFile.fileId);
         System.out.println("Request ID: " + ocrRequest.requestId);
 
         status = StatusChecker.waitForStatus(() -> ocrRequest.getStatus(), 1, 60);

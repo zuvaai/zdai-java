@@ -8,14 +8,16 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.JsonProcessingException;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class FieldService {
+public class Field {
     private ZdaiHttpClient client;
+    public String fieldId;
 
-    public FieldService(ZdaiHttpClient client) {
+    public Field(ZdaiHttpClient client, String fieldId) {
         this.client = client;
+        this.fieldId = fieldId;
     }
 
-    public FieldListElement[] listFields() throws ZdaiClientException, ZdaiApiException {
+    public static FieldListElement[] listFields(ZdaiHttpClient client) throws ZdaiClientException, ZdaiApiException {
         String response = client.authorizedRequest("GET", "/fields", 200);
         try {
             return client.mapper.readValue(response, FieldListElement[].class);
@@ -24,8 +26,8 @@ public class FieldService {
         }
     }
 
-    public FieldMetadata getFieldMetadata(String fieldID) throws ZdaiClientException, ZdaiApiException {
-        String response = client.authorizedRequest("GET", String.format("/fields/%s/metadata", fieldID), 200);
+    public FieldMetadata getMetadata() throws ZdaiClientException, ZdaiApiException {
+        String response = client.authorizedRequest("GET", String.format("/fields/%s/metadata", fieldId), 200);
         try {
             return client.mapper.readValue(response, FieldMetadata.class);
         } catch (JsonProcessingException e) {
@@ -33,6 +35,7 @@ public class FieldService {
         }
     }
 
+    // NameAndDescription is used to serialize an update metadata request
     static class NameAndDescription {
         public String name;
         public String description;
@@ -43,19 +46,19 @@ public class FieldService {
         }
     }
 
-    public void updateFieldMetadata(String fieldID, String name, String desc) throws ZdaiClientException, ZdaiApiException {
+    public void updateMetadata(String name, String description) throws ZdaiClientException, ZdaiApiException {
         String body;
         try {
-            body = client.mapper.writeValueAsString(new NameAndDescription(name, desc));
+            body = client.mapper.writeValueAsString(new NameAndDescription(name, description));
         } catch (JsonProcessingException e) {
             throw (new ZdaiClientException("Unable to create request body", e));
         }
 
-        client.authorizedRequest("PUT", String.format("/fields/%s/metadata", fieldID), body, 204);
+        client.authorizedRequest("PUT", String.format("/fields/%s/metadata", fieldId), body, 204);
     }
 
-    public FieldAccuracy getFieldAccuracy(String fieldID) throws ZdaiClientException, ZdaiApiException {
-        String response = client.authorizedRequest("GET", String.format("/fields/%s/accuracy", fieldID), 200);
+    public FieldAccuracy getAccuracy() throws ZdaiClientException, ZdaiApiException {
+        String response = client.authorizedRequest("GET", String.format("/fields/%s/accuracy", fieldId), 200);
 
         try {
             return client.mapper.readValue(response, FieldAccuracy.class);
@@ -64,8 +67,8 @@ public class FieldService {
         }
     }
 
-    public FieldValidation[] getFieldValidationDetails(String fieldID) throws ZdaiClientException, ZdaiApiException {
-        String response = client.authorizedRequest("GET", String.format("/fields/%s/validation-details", fieldID), 200);
+    public FieldValidation[] getValidationDetails() throws ZdaiClientException, ZdaiApiException {
+        String response = client.authorizedRequest("GET", String.format("/fields/%s/validation-details", fieldId), 200);
 
         try {
             return client.mapper.readValue(response, FieldValidation[].class);
@@ -74,7 +77,11 @@ public class FieldService {
         }
     }
 
-    class CreateFieldRequest {
+    public TrainingRequest createTrainingRequest(TrainingExample[] trainingExamples) throws ZdaiClientException, ZdaiApiException {
+        return TrainingRequest.createTrainingRequest(client, fieldId, trainingExamples);
+    }
+
+    static class CreateFieldRequest {
         @JsonProperty("field_name")
         public String name;
 
@@ -93,7 +100,7 @@ public class FieldService {
         public String fieldId;
     }
 
-    public String createField(String name, String description) throws ZdaiClientException, ZdaiApiException {
+    public static Field createField(ZdaiHttpClient client, String name, String description) throws ZdaiClientException, ZdaiApiException {
         String body;
         try {
             body = client.mapper.writeValueAsString(new CreateFieldRequest(name, description));
@@ -104,7 +111,7 @@ public class FieldService {
         String response = client.authorizedRequest("POST", "/fields", body, 201);
 
         try {
-            return client.mapper.readValue(response, CreateFieldResponse.class).fieldId;
+            return new Field(client, client.mapper.readValue(response, CreateFieldResponse.class).fieldId);
         } catch (JsonProcessingException e) {
             throw (new ZdaiClientException("Unable to parse response", e));
         }

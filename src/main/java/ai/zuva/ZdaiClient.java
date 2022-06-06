@@ -4,7 +4,8 @@ import ai.zuva.classification.ClassificationRequest;
 import ai.zuva.exception.ZdaiApiException;
 import ai.zuva.exception.ZdaiClientException;
 import ai.zuva.extraction.ExtractionRequest;
-import ai.zuva.fields.FieldService;
+import ai.zuva.fields.Field;
+import ai.zuva.fields.FieldListElement;
 import ai.zuva.fields.TrainingExample;
 import ai.zuva.fields.TrainingRequest;
 import ai.zuva.files.ZdaiFile;
@@ -54,7 +55,15 @@ public class ZdaiClient {
         return TrainingRequest.createTrainingRequest(client, fieldId, trainingExamples);
     }
 
-    public FieldService newFieldService() {
-        return new FieldService(client);
+    public Field field(String fieldId) {
+        return new Field(client, fieldId);
+    }
+
+    public FieldListElement[] listFields(ZdaiHttpClient client) throws ZdaiClientException, ZdaiApiException {
+        return Field.listFields(client);
+    }
+
+    public Field createField(String name, String description) throws ZdaiClientException, ZdaiApiException {
+        return Field.createField(client, name, description);
     }
 }
