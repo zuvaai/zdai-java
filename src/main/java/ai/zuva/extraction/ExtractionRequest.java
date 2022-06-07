@@ -5,6 +5,7 @@ import ai.zuva.exception.ZdaiClientException;
 import ai.zuva.exception.ZdaiError;
 import ai.zuva.files.ZdaiFile;
 import ai.zuva.http.ZdaiHttpClient;
+import ai.zuva.ocr.OcrRequest;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -96,9 +97,32 @@ public class ExtractionRequest {
      * @throws ZdaiClientException Error preparing, sending or processing the request/response
      */
     public static ExtractionRequest createExtractionRequest(ZdaiHttpClient client, ZdaiFile file, String[] fieldIds) throws ZdaiClientException, ZdaiApiException {
+        return createExtractionRequests(client, new ZdaiFile[]{file}, fieldIds)[0];
+    }
+
+    /**
+     * Construct and send a request to extract fields from multiple files
+     * <p>
+     * Given a ZdaiHttpClient, a fileId, and an array of field IDs, this
+     * constructor makes a request to the Zuva servers to asynchronously extract
+     * the specified fields from the file
+     *
+     * @param client   The client to use to make the request
+     * @param files   The files to analyze
+     * @param fieldIds The IDs of the fields to extract from the file
+     * @throws ZdaiApiException    Unsuccessful response code from server
+     * @throws ZdaiClientException Error preparing, sending or processing the request/response
+     */
+    public static ExtractionRequest[] createExtractionRequests(ZdaiHttpClient client, ZdaiFile[] files, String[] fieldIds) throws ZdaiClientException, ZdaiApiException {
+        String[] fileIds = new String[files.length];
+
+        for (int i = 0; i < files.length; i++) {
+            fileIds[i] = files[i].fileId;
+        }
+
         String body;
         try {
-            body = client.mapper.writeValueAsString(new ExtractionRequestBody(new String[]{file.fileId}, fieldIds));
+            body = client.mapper.writeValueAsString(new ExtractionRequestBody(fileIds, fieldIds));
         } catch (JsonProcessingException e) {
             throw (new ZdaiClientException("Unable to create request body", e));
         }
@@ -106,7 +130,11 @@ public class ExtractionRequest {
 
         try {
             ExtractionStatuses resp = client.mapper.readValue(response, ExtractionStatuses.class);
-            return new ExtractionRequest(client, resp.statuses[0]);
+            ExtractionRequest[] extractionRequests = new ExtractionRequest[resp.statuses.length];
+            for (int i = 0; i < extractionRequests.length; i++) {
+                extractionRequests[i] = new ExtractionRequest(client, resp.statuses[i]);
+            }
+            return extractionRequests;
         } catch (JsonProcessingException e) {
             throw (new ZdaiClientException("Unable to parse response", e));
         }

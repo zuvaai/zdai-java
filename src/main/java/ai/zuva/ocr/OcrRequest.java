@@ -51,22 +51,45 @@ public class OcrRequest {
     }
 
     /**
-     * send a request to extract fields from a file
+     * send a request to perform OCR on a file
      * <p>
      * Given a ZdaiHttpClient, a fileId, this constructor makes a request to
      * the Zuva servers to asynchronously perform OCR on the file, returning an
      * OcrRequest object that can subsequently be used to obtain the file's
      * text, images and layouts.
      *
-     * @param client   The client to use to make the request
-     * @param fileId   The ID of the file to analyze
+     * @param client The client to use to make the request
+     * @param file   The file to analyze
      * @throws ZdaiApiException    Unsuccessful response code from server
      * @throws ZdaiClientException Error preparing, sending or processing the request/response
      */
     public static OcrRequest createOcrRequest(ZdaiHttpClient client, ZdaiFile file) throws ZdaiClientException, ZdaiApiException {
+        return createOcrRequests(client, new ZdaiFile[]{file})[0];
+    }
+
+    /**
+     * send a request to extract fields from multiple files
+     * <p>
+     * Given a ZdaiHttpClient, a fileId, this constructor makes a request to
+     * the Zuva servers to asynchronously perform OCR on the file, returning an
+     * OcrRequest object that can subsequently be used to obtain the file's
+     * text, images and layouts.
+     *
+     * @param client The client to use to make the request
+     * @param files  The files to analyze
+     * @throws ZdaiApiException    Unsuccessful response code from server
+     * @throws ZdaiClientException Error preparing, sending or processing the request/response
+     */
+    public static OcrRequest[] createOcrRequests(ZdaiHttpClient client, ZdaiFile[] files) throws ZdaiClientException, ZdaiApiException {
+        String[] fileIds = new String[files.length];
+
+        for (int i = 0; i < files.length; i++) {
+            fileIds[i] = files[i].fileId;
+        }
+
         String body;
         try {
-            body = client.mapper.writeValueAsString(new OcrRequestBody(new String[]{file.fileId}));
+            body = client.mapper.writeValueAsString(new OcrRequestBody(fileIds));
         } catch (JsonProcessingException e) {
             throw (new ZdaiClientException("Unable to create request body", e));
         }
@@ -75,7 +98,11 @@ public class OcrRequest {
 
         try {
             OcrStatuses resp = client.mapper.readValue(response, OcrStatuses.class);
-            return new OcrRequest(client, file.fileId, resp.statuses[0].requestId);
+            OcrRequest[] ocrRequests = new OcrRequest[resp.statuses.length];
+            for (int i = 0; i < ocrRequests.length; i++) {
+                ocrRequests[i] = new OcrRequest(client, files[i].fileId, resp.statuses[i].requestId);
+            }
+            return ocrRequests;
         } catch (JsonProcessingException e) {
             throw (new ZdaiClientException("Unable to parse response", e));
         }

@@ -93,7 +93,3 @@ the status code and response from the server
 The client currently uses [java.net.http](https://openjdk.java.net/groups/net/httpclient/intro.html), introduced in JDK 11. This dependency is 
 isolated to `ai.zuva.http`, which can be rewritten to use your http library
 of choice.
-
-## Known limitations
-
-The client does not currently support batch requests (e.g. classification of multiple files in a single request).

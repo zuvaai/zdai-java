@@ -29,22 +29,43 @@ public class ClassificationRequest {
     }
 
     /**
-     * Send a request to classify the document type.
+     * Send a request to classify the document type of a file.
      * <p>
-     * Given a ZdaiHttpClient and a fileId, make a request to the Zuva servers to
+     * Given a ZdaiHttpClient and a ZdaiFile, make a request to the Zuva servers to
      * asynchronously classify the document type of the file. The created ClassificationRequest
      * object can then be used to query the status and results of the request.
      *
      * @param client The client to use to make the request
-     * @param file The file to classify
+     * @param file   The file to classify
      * @throws ZdaiApiException    Unsuccessful response code from server
      * @throws ZdaiClientException Error preparing, sending or processing the request/response
      */
     public static ClassificationRequest createClassificationRequest(ZdaiHttpClient client, ZdaiFile file) throws ZdaiClientException, ZdaiApiException {
-        String body;
+        return createClassificationRequests(client, new ZdaiFile[]{file})[0];
+    }
 
+    /**
+     * Send a request to classify the document type of multiple files.
+     * <p>
+     * Given a ZdaiHttpClient and an array of ZdaiFiles, make a request to the Zuva servers to
+     * asynchronously classify the document type of the files. The created ClassificationRequests
+     * objects can then be used to query the status and results of each request.
+     *
+     * @param client The client to use to make the request
+     * @param files  The files to classify
+     * @throws ZdaiApiException    Unsuccessful response code from server
+     * @throws ZdaiClientException Error preparing, sending or processing the request/response
+     */
+    public static ClassificationRequest[] createClassificationRequests(ZdaiHttpClient client, ZdaiFile[] files) throws ZdaiClientException, ZdaiApiException {
+        String[] fileIds = new String[files.length];
+
+        for (int i = 0; i < files.length; i++) {
+            fileIds[i] = files[i].fileId;
+        }
+
+        String body;
         try {
-            body = client.mapper.writeValueAsString(new ClassificationRequestBody(new String[]{file.fileId}));
+            body = client.mapper.writeValueAsString(new ClassificationRequestBody(fileIds));
         } catch (JsonProcessingException e) {
             throw (new ZdaiClientException("Error creating request body", e));
         }
@@ -53,7 +74,11 @@ public class ClassificationRequest {
 
         try {
             ClassificationResultsBody resp = client.mapper.readValue(response, ClassificationResultsBody.class);
-            return new ClassificationRequest(client, file.fileId, resp.results[0].requestId);
+            ClassificationRequest[] classificationRequests = new ClassificationRequest[resp.results.length];
+            for (int i = 0; i < classificationRequests.length; i++) {
+                classificationRequests[i] = new ClassificationRequest(client, files[i].fileId, resp.results[i].requestId);
+            }
+            return classificationRequests;
         } catch (JsonProcessingException e) {
             throw (new ZdaiClientException("Unable to parse response", e));
         }
@@ -64,7 +89,7 @@ public class ClassificationRequest {
      * <p>
      * Given a ZdaiHttpClient and a map of file IDs to request IDs, this constructor
      * makes a new ClassificationRequest that can be used to obtain the status and
-     * results of the given requests.
+     * results of the given request.
      *
      * @param client    The client to use to make the request
      * @param fileId    The ID of the file being classified
