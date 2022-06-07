@@ -2,6 +2,7 @@ package ai.zuva.classification;
 
 import ai.zuva.exception.ZdaiApiException;
 import ai.zuva.exception.ZdaiClientException;
+import ai.zuva.files.ZdaiFile;
 import ai.zuva.http.ZdaiHttpClient;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -35,15 +36,15 @@ public class ClassificationRequest {
      * object can then be used to query the status and results of the request.
      *
      * @param client The client to use to make the request
-     * @param fileId The ID of the file to classify
+     * @param file The file to classify
      * @throws ZdaiApiException    Unsuccessful response code from server
      * @throws ZdaiClientException Error preparing, sending or processing the request/response
      */
-    public static ClassificationRequest createClassificationRequest(ZdaiHttpClient client, String fileId) throws ZdaiClientException, ZdaiApiException {
+    public static ClassificationRequest createClassificationRequest(ZdaiHttpClient client, ZdaiFile file) throws ZdaiClientException, ZdaiApiException {
         String body;
 
         try {
-            body = client.mapper.writeValueAsString(new ClassificationRequestBody(new String[]{fileId}));
+            body = client.mapper.writeValueAsString(new ClassificationRequestBody(new String[]{file.fileId}));
         } catch (JsonProcessingException e) {
             throw (new ZdaiClientException("Error creating request body", e));
         }
@@ -52,7 +53,7 @@ public class ClassificationRequest {
 
         try {
             ClassificationResultsBody resp = client.mapper.readValue(response, ClassificationResultsBody.class);
-            return new ClassificationRequest(client, fileId, resp.results[0].requestId);
+            return new ClassificationRequest(client, file.fileId, resp.results[0].requestId);
         } catch (JsonProcessingException e) {
             throw (new ZdaiClientException("Unable to parse response", e));
         }

@@ -2,6 +2,7 @@ package ai.zuva.language;
 
 import ai.zuva.exception.ZdaiApiException;
 import ai.zuva.exception.ZdaiClientException;
+import ai.zuva.files.ZdaiFile;
 import ai.zuva.http.ZdaiHttpClient;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -38,16 +39,16 @@ public class LanguageRequest {
      * classify the language of the file. The created LanguageRequest object can then be used
      * to query the status and results of the request.
      *
-     * @param client  The client to use to make the request
-     * @param fileId The ID of the file to classify
+     * @param client The client to use to make the request
+     * @param file   The file to classify
      * @throws ZdaiApiException    Unsuccessful response code from server
      * @throws ZdaiClientException Error preparing, sending or processing the request/response
      */
-    public static LanguageRequest createLanguageRequest(ZdaiHttpClient client, String fileId) throws ZdaiClientException, ZdaiApiException {
+    public static LanguageRequest createLanguageRequest(ZdaiHttpClient client, ZdaiFile file) throws ZdaiClientException, ZdaiApiException {
         String body;
 
         try {
-            body = client.mapper.writeValueAsString(new LanguageRequestBody(new String[]{fileId}));
+            body = client.mapper.writeValueAsString(new LanguageRequestBody(new String[]{file.fileId}));
         } catch (JsonProcessingException e) {
             throw (new ZdaiClientException("Error creating request body", e));
         }
@@ -56,7 +57,7 @@ public class LanguageRequest {
 
         try {
             LanguageResults resp = client.mapper.readValue(response, LanguageResults.class);
-            return new LanguageRequest(client, fileId, resp.results[0].requestId);
+            return new LanguageRequest(client, file.fileId, resp.results[0].requestId);
         } catch (JsonProcessingException e) {
             throw (new ZdaiClientException("Unable to parse response", e));
         }
@@ -92,8 +93,8 @@ public class LanguageRequest {
         String response = client.authorizedRequest("GET", "/language/" + requestId, 200);
         try {
             return client.mapper.readValue(response, LanguageResult.class);
-        } catch (JsonProcessingException e){
-            throw(new ZdaiClientException("Unable to parse response", e));
+        } catch (JsonProcessingException e) {
+            throw (new ZdaiClientException("Unable to parse response", e));
         }
     }
 }

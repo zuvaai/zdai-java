@@ -3,6 +3,7 @@ package ai.zuva.extraction;
 import ai.zuva.exception.ZdaiApiException;
 import ai.zuva.exception.ZdaiClientException;
 import ai.zuva.exception.ZdaiError;
+import ai.zuva.files.ZdaiFile;
 import ai.zuva.http.ZdaiHttpClient;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -89,15 +90,15 @@ public class ExtractionRequest {
      * the specified fields from the file
      *
      * @param client   The client to use to make the request
-     * @param fileId   The ID of the file to analyze
+     * @param file   The file to analyze
      * @param fieldIds The IDs of the fields to extract from the file
      * @throws ZdaiApiException    Unsuccessful response code from server
      * @throws ZdaiClientException Error preparing, sending or processing the request/response
      */
-    public static ExtractionRequest createExtractionRequest(ZdaiHttpClient client, String fileId, String[] fieldIds) throws ZdaiClientException, ZdaiApiException {
+    public static ExtractionRequest createExtractionRequest(ZdaiHttpClient client, ZdaiFile file, String[] fieldIds) throws ZdaiClientException, ZdaiApiException {
         String body;
         try {
-            body = client.mapper.writeValueAsString(new ExtractionRequestBody(new String[]{fileId}, fieldIds));
+            body = client.mapper.writeValueAsString(new ExtractionRequestBody(new String[]{file.fileId}, fieldIds));
         } catch (JsonProcessingException e) {
             throw (new ZdaiClientException("Unable to create request body", e));
         }

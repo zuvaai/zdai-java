@@ -1,6 +1,6 @@
-# Zuva DocAI Java Client
+# Zuva DocAI Java SDK
 
-This client provides a Java wrapper around the [Zuva DocAI API](https://zuva.ai/documentation/api-reference/).
+This SDK provides a Java wrapper around the [Zuva DocAI API](https://zuva.ai/documentation/api-reference/).
 
 ### Obtaining a Token
 
@@ -16,11 +16,10 @@ Start by instantiating a `ZdaiClient` with the url of the Zuva region you are us
 ZdaiClient client = new ZdaiClient(url, token);
 ```
 
-Create a `FileService` object and use it to submit your file, making sure to hang on to the returned file ID:
+Submit your file to Zuva:
 
 ```java
-ZdaiFile zdaiFile = client.submitFile(Paths.get(fileName));
-String fileId = fileDetails.fileId;
+ZdaiFile file = client.submitFile(Paths.get(fileName));
 ```
 
 Obtain field IDs of the fields you are interested in from the [field library](https://docai.zuva.ai/field-library),
@@ -33,7 +32,7 @@ String[] fieldIds = new String[]{
         "f743f363-1d8b-435b-8812-204a6d883834",
         "4d34c0ac-a3d4-4172-92d0-5fad8b3860a7"
         };
-ExtractionRequest extractionRequest = client.newExtractionRequest(fileId, fieldIds);
+ExtractionRequest extractionRequest = client.newExtractionRequest(file, fieldIds);
 ```
 
 DocAI field extraction works asynchronously: you will need to poll the status of the request until it completes.

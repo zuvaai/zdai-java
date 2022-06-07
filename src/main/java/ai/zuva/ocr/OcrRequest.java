@@ -3,6 +3,7 @@ package ai.zuva.ocr;
 import ai.zuva.exception.ZdaiApiException;
 import ai.zuva.exception.ZdaiClientException;
 import ai.zuva.exception.ZdaiError;
+import ai.zuva.files.ZdaiFile;
 import ai.zuva.http.ZdaiHttpClient;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -62,10 +63,10 @@ public class OcrRequest {
      * @throws ZdaiApiException    Unsuccessful response code from server
      * @throws ZdaiClientException Error preparing, sending or processing the request/response
      */
-    public static OcrRequest createOcrRequest(ZdaiHttpClient client, String fileId) throws ZdaiClientException, ZdaiApiException {
+    public static OcrRequest createOcrRequest(ZdaiHttpClient client, ZdaiFile file) throws ZdaiClientException, ZdaiApiException {
         String body;
         try {
-            body = client.mapper.writeValueAsString(new OcrRequestBody(new String[]{fileId}));
+            body = client.mapper.writeValueAsString(new OcrRequestBody(new String[]{file.fileId}));
         } catch (JsonProcessingException e) {
             throw (new ZdaiClientException("Unable to create request body", e));
         }
@@ -74,7 +75,7 @@ public class OcrRequest {
 
         try {
             OcrStatuses resp = client.mapper.readValue(response, OcrStatuses.class);
-            return new OcrRequest(client, fileId, resp.statuses[0].requestId);
+            return new OcrRequest(client, file.fileId, resp.statuses[0].requestId);
         } catch (JsonProcessingException e) {
             throw (new ZdaiClientException("Unable to parse response", e));
         }

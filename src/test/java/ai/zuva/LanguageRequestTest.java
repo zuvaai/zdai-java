@@ -1,5 +1,6 @@
 package ai.zuva;
 
+import ai.zuva.files.ZdaiFile;
 import ai.zuva.http.ZdaiHttpClient;
 import ai.zuva.language.LanguageRequest;
 import ai.zuva.language.LanguageResult;
@@ -27,7 +28,7 @@ public class LanguageRequestTest {
                     .willReturn(aResponse().withStatus(202).withBody(postResponseBody)));
 
             ZdaiHttpClient client = new ZdaiHttpClient("http://localhost:" + port, "my-token");
-            LanguageRequest request = LanguageRequest.createLanguageRequest(client, fileId);
+            LanguageRequest request = LanguageRequest.createLanguageRequest(client, new ZdaiFile(client, fileId));
 
             assertEquals(requestId, request.requestId);
 

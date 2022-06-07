@@ -39,7 +39,7 @@ public class Example {
         System.out.println(String.format("Uploaded file with id %s expires at %s", zdaiFile.fileId, zdaiFile.expiration));
 
         System.out.println("\nClassifying Document type:");
-        ClassificationRequest classificationRequest = client.newDocClassifierRequest(zdaiFile.fileId);
+        ClassificationRequest classificationRequest = client.newDocClassifierRequest(zdaiFile);
         System.out.println("Request ID: " + classificationRequest.requestId);
 
         String status = StatusChecker.waitForStatus(() -> classificationRequest.getClassificationResult().status, 1, 60);
@@ -51,7 +51,7 @@ public class Example {
         }
 
         System.out.println("\nDetermining Document Language:");
-        LanguageRequest languageRequest = client.newLanguageRequest(zdaiFile.fileId);
+        LanguageRequest languageRequest = client.newLanguageRequest(zdaiFile);
         System.out.println("Request ID: " + languageRequest.requestId);
 
         status = StatusChecker.waitForStatus(() -> languageRequest.getResult().status, 1, 60);
@@ -69,7 +69,7 @@ public class Example {
                 "4d34c0ac-a3d4-4172-92d0-5fad8b3860a7"
         };
 
-        ExtractionRequest extractionRequest = client.newExtractionRequest(zdaiFile.fileId, fieldIds);
+        ExtractionRequest extractionRequest = client.newExtractionRequest(zdaiFile, fieldIds);
         System.out.println("Request ID: " + extractionRequest.requestId);
 
         status = StatusChecker.waitForStatus(() -> extractionRequest.getStatus(), 1, 60);
@@ -88,7 +88,7 @@ public class Example {
         }
 
         System.out.println("\nObtaining OCR results:");
-        OcrRequest ocrRequest = client.newOcrRequest(zdaiFile.fileId);
+        OcrRequest ocrRequest = client.newOcrRequest(zdaiFile);
         System.out.println("Request ID: " + ocrRequest.requestId);
 
         status = StatusChecker.waitForStatus(() -> ocrRequest.getStatus(), 1, 60);

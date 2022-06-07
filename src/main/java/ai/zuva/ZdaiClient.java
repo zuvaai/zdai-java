@@ -35,20 +35,20 @@ public class ZdaiClient {
         return ZdaiFile.submitFile(client, ba, contentType);
     }
 
-    public ClassificationRequest newDocClassifierRequest(String fileId) throws ZdaiClientException, ZdaiApiException {
-        return ClassificationRequest.createClassificationRequest(client, fileId);
+    public ClassificationRequest newDocClassifierRequest(ZdaiFile file) throws ZdaiClientException, ZdaiApiException {
+        return ClassificationRequest.createClassificationRequest(client, file);
     }
 
-    public LanguageRequest newLanguageRequest(String fileId) throws ZdaiClientException, ZdaiApiException {
-        return LanguageRequest.createLanguageRequest(client, fileId);
+    public LanguageRequest newLanguageRequest(ZdaiFile file) throws ZdaiClientException, ZdaiApiException {
+        return LanguageRequest.createLanguageRequest(client, file);
     }
 
-    public OcrRequest newOcrRequest(String fileId) throws ZdaiClientException, ZdaiApiException  {
-        return OcrRequest.createOcrRequest(client, fileId);
+    public OcrRequest newOcrRequest(ZdaiFile file) throws ZdaiClientException, ZdaiApiException  {
+        return OcrRequest.createOcrRequest(client, file);
     }
 
-    public ExtractionRequest newExtractionRequest(String fileId, String[] fieldIds) throws ZdaiClientException, ZdaiApiException  {
-        return ExtractionRequest.createExtractionRequest(client, fileId, fieldIds);
+    public ExtractionRequest newExtractionRequest(ZdaiFile file, String[] fieldIds) throws ZdaiClientException, ZdaiApiException  {
+        return ExtractionRequest.createExtractionRequest(client, file, fieldIds);
     }
 
     public TrainingRequest newTrainingRequest(String fieldId, TrainingExample[] trainingExamples) throws ZdaiClientException, ZdaiApiException {
