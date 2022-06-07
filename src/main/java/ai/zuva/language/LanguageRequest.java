@@ -115,7 +115,7 @@ public class LanguageRequest {
      * @throws ZdaiClientException Error preparing, sending or processing the request/response
      */
     public LanguageResult getResult() throws ZdaiClientException, ZdaiApiException {
-        String response = client.authorizedRequest("GET", "/language/" + requestId, 200);
+        String response = client.authorizedGet("/language/" + requestId, 200);
         try {
             return client.mapper.readValue(response, LanguageResult.class);
         } catch (JsonProcessingException e) {

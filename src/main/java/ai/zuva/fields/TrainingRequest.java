@@ -99,7 +99,7 @@ public class TrainingRequest {
      * @throws ZdaiClientException Error preparing, sending or processing the request/response
      */
     public String getStatus() throws ZdaiClientException, ZdaiApiException {
-        String response = client.authorizedRequest("GET", String.format("/fields/%s/train/%s", fieldId, requestId), 200);
+        String response = client.authorizedGet(String.format("/fields/%s/train/%s", fieldId, requestId), 200);
         try {
             TrainingStatus status = client.mapper.readValue(response, TrainingStatus.class);
             this.status = status.status;

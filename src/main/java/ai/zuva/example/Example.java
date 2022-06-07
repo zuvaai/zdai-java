@@ -11,6 +11,7 @@ import ai.zuva.extraction.ExtractionData;
 import ai.zuva.extraction.ExtractionResults;
 import ai.zuva.fields.FieldMetadata;
 
+import java.io.File;
 import java.io.FileOutputStream;
 import java.nio.file.Paths;
 
@@ -35,7 +36,7 @@ public class Example {
 
         ZdaiClient client = new ZdaiClient(url, token);
 
-        ZdaiFile zdaiFile = client.submitFile(Paths.get(documentPath));
+        ZdaiFile zdaiFile = client.submitFile(new File(documentPath));
         System.out.println(String.format("Uploaded file with id %s expires at %s", zdaiFile.fileId, zdaiFile.expiration));
 
         System.out.println("\nClassifying Document type:");

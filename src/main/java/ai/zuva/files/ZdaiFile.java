@@ -1,6 +1,5 @@
 package ai.zuva.files;
 
-import ai.zuva.ZdaiClient;
 import ai.zuva.exception.ZdaiApiException;
 import ai.zuva.exception.ZdaiClientException;
 import ai.zuva.http.ZdaiHttpClient;
@@ -8,8 +7,8 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.JsonProcessingException;
 
+import java.io.File;
 import java.io.FileNotFoundException;
-import java.nio.file.Path;
 
 public class ZdaiFile {
     private ZdaiHttpClient client;
@@ -43,8 +42,8 @@ public class ZdaiFile {
         this.expiration= resp.expiration;
     }
 
-    public static ZdaiFile submitFile(ZdaiHttpClient client, Path p, String... contentType) throws ZdaiClientException, ZdaiApiException, FileNotFoundException, SecurityException {
-        return parseResponse(client, client.authorizedRequest("POST", "/files", p, 201, contentType));
+    public static ZdaiFile submitFile(ZdaiHttpClient client, File f, String... contentType) throws ZdaiClientException, ZdaiApiException, FileNotFoundException, SecurityException {
+        return parseResponse(client, client.authorizedRequest("POST", "/files", f, 201, contentType));
     }
 
     public static ZdaiFile submitFile(ZdaiHttpClient client, String s, String... contentType) throws ZdaiClientException, ZdaiApiException {
@@ -64,6 +63,6 @@ public class ZdaiFile {
     }
 
     public void delete() throws ZdaiClientException, ZdaiApiException {
-        client.authorizedRequest("DELETE", "/files/" + fileId, 204);
+        client.authorizedDelete("/files/" + fileId, 204);
     }
 }

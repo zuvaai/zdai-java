@@ -18,7 +18,7 @@ public class Field {
     }
 
     public static FieldListElement[] listFields(ZdaiHttpClient client) throws ZdaiClientException, ZdaiApiException {
-        String response = client.authorizedRequest("GET", "/fields", 200);
+        String response = client.authorizedGet("/fields", 200);
         try {
             return client.mapper.readValue(response, FieldListElement[].class);
         } catch (JsonProcessingException e) {
@@ -27,7 +27,7 @@ public class Field {
     }
 
     public FieldMetadata getMetadata() throws ZdaiClientException, ZdaiApiException {
-        String response = client.authorizedRequest("GET", String.format("/fields/%s/metadata", fieldId), 200);
+        String response = client.authorizedGet(String.format("/fields/%s/metadata", fieldId), 200);
         try {
             return client.mapper.readValue(response, FieldMetadata.class);
         } catch (JsonProcessingException e) {
@@ -58,7 +58,7 @@ public class Field {
     }
 
     public FieldAccuracy getAccuracy() throws ZdaiClientException, ZdaiApiException {
-        String response = client.authorizedRequest("GET", String.format("/fields/%s/accuracy", fieldId), 200);
+        String response = client.authorizedGet(String.format("/fields/%s/accuracy", fieldId), 200);
 
         try {
             return client.mapper.readValue(response, FieldAccuracy.class);
@@ -68,7 +68,7 @@ public class Field {
     }
 
     public FieldValidation[] getValidationDetails() throws ZdaiClientException, ZdaiApiException {
-        String response = client.authorizedRequest("GET", String.format("/fields/%s/validation-details", fieldId), 200);
+        String response = client.authorizedGet(String.format("/fields/%s/validation-details", fieldId), 200);
 
         try {
             return client.mapper.readValue(response, FieldValidation[].class);

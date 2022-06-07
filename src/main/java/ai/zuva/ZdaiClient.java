@@ -13,6 +13,7 @@ import ai.zuva.http.ZdaiHttpClient;
 import ai.zuva.language.LanguageRequest;
 import ai.zuva.ocr.OcrRequest;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.nio.file.Path;
 
@@ -23,8 +24,8 @@ public class ZdaiClient {
         client = new ZdaiHttpClient(baseURL, token);
     }
 
-    public ZdaiFile submitFile(Path p, String... contentType) throws ZdaiClientException, ZdaiApiException, FileNotFoundException, SecurityException {
-        return ZdaiFile.submitFile(client, p, contentType);
+    public ZdaiFile submitFile(File f, String... contentType) throws ZdaiClientException, ZdaiApiException, FileNotFoundException, SecurityException {
+        return ZdaiFile.submitFile(client, f, contentType);
     }
 
     public ZdaiFile submitFile(String s, String... contentType) throws ZdaiClientException, ZdaiApiException {

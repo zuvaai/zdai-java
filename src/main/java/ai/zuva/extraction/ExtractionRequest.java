@@ -150,7 +150,7 @@ public class ExtractionRequest {
      * @throws ZdaiClientException Error preparing, sending or processing the request/response
      */
     public String getStatus() throws ZdaiClientException, ZdaiApiException {
-        String response = client.authorizedRequest("GET", String.format("/extraction/%s", requestId), 200);
+        String response = client.authorizedGet(String.format("/extraction/%s", requestId), 200);
 
         try {
             status = client.mapper.readValue(response, ExtractionStatus.class).status;
@@ -170,7 +170,7 @@ public class ExtractionRequest {
      * @throws ZdaiClientException Error preparing, sending or processing the request/response
      */
     public ExtractionResults[] getResults() throws ZdaiClientException, ZdaiApiException {
-        String response = client.authorizedRequest("GET", "/extraction/" + requestId + "/results/text", 200);
+        String response = client.authorizedGet("/extraction/" + requestId + "/results/text", 200);
         try {
             return client.mapper.readValue(response, ExtractionResultsBody.class).results;
         } catch (JsonProcessingException e) {

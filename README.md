@@ -79,7 +79,7 @@ and fetching the results of OCR. The example expect certain environment variable
 
 - `ZUVA_URL`: the URL of the Zuva environment to connect to
 - `ZUVA_TOKEN`: your token for the Zuva environment
-- `ZUVA_DEMO_DOC`: the path to the demo document to analyze (defaults to "CANADAGOOS-F1Securiti-2152017.PDF" in the current working directoy)
+- `ZUVA_DEMO_DOC`: the path to the demo document to analyze (defaults to "CANADAGOOS-F1Securiti-2152017.PDF" in the current working directory)
 
 ## Exceptions
 
@@ -90,6 +90,5 @@ the status code and response from the server
 
 ## HTTP Library
 
-The client currently uses [java.net.http](https://openjdk.java.net/groups/net/httpclient/intro.html), introduced in JDK 11. This dependency is 
-isolated to `ai.zuva.http`, which can be rewritten to use your http library
-of choice.
+The client currently uses [OkHttp](https://square.github.io/okhttp/), which is compatible with Java 8+. This dependency is 
+isolated to `ai.zuva.http`, which can be rewritten to use your http library of choice.

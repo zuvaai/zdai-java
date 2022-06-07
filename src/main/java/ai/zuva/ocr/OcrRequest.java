@@ -124,7 +124,7 @@ public class OcrRequest {
      * @throws ZdaiClientException Error preparing, sending or processing the request/response
      */
     public String getStatus() throws ZdaiClientException, ZdaiApiException {
-        String response = client.authorizedRequest("GET", "/ocr/" + requestId, 200);
+        String response = client.authorizedGet("/ocr/" + requestId, 200);
         try {
             return client.mapper.readValue(response, OcrStatus.class).status;
         } catch (JsonProcessingException e) {
@@ -142,7 +142,7 @@ public class OcrRequest {
      * @throws ZdaiClientException Error preparing, sending or processing the request/response
      */
     public String getText() throws ZdaiClientException, ZdaiApiException {
-        String response = client.authorizedRequest("GET", "/ocr/" + requestId + "/text", 200);
+        String response = client.authorizedGet("/ocr/" + requestId + "/text", 200);
         try {
             return client.mapper.readValue(response, OcrText.class).text;
         } catch (JsonProcessingException e) {
@@ -160,7 +160,7 @@ public class OcrRequest {
      * @throws ZdaiClientException Error preparing, sending or processing the request/response
      */
     public byte[] getImages() throws ZdaiClientException, ZdaiApiException {
-        return client.authorizedRequest("/ocr/" + requestId + "/images", 200);
+        return client.authorizedGetBinary("/ocr/" + requestId + "/images", 200);
     }
 
     /**
@@ -173,6 +173,6 @@ public class OcrRequest {
      * @throws ZdaiClientException Error preparing, sending or processing the request/response
      */
     public byte[] getLayouts() throws ZdaiClientException, ZdaiApiException {
-        return client.authorizedRequest("/ocr/" + requestId + "/layouts", 200);
+        return client.authorizedGetBinary("/ocr/" + requestId + "/layouts", 200);
     }
 }

@@ -112,7 +112,7 @@ public class ClassificationRequest {
      * @throws ZdaiClientException Error preparing, sending or processing the request/response
      */
     public ClassificationResult getClassificationResult() throws ZdaiClientException, ZdaiApiException {
-        String response = client.authorizedRequest("GET", "/classification/" + requestId, 200);
+        String response = client.authorizedGet("/classification/" + requestId, 200);
         try {
             return client.mapper.readValue(response, ClassificationResult.class);
         } catch (JsonProcessingException e) {
