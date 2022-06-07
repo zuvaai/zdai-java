@@ -9,19 +9,19 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
-public class ZdaiHttpClient {
+public class ZdaiApiClient {
     public final String baseURL;
     public final String token;
     public OkHttpClient client;
     public ObjectMapper mapper = new ObjectMapper();
 
     /**
-     * Constructs a ZdaiHttpClient to interface with the Zuva DocAI API
+     * Constructs a ZdaiApiClient to interface with the Zuva DocAI API
      *
      * @param baseURL The url to make requests to (e.g. https://us.app.zuva.ai)
      * @param token The Zuva token to use to authenticate all requests
      */
-    public ZdaiHttpClient(String baseURL, String token) {
+    public ZdaiApiClient(String baseURL, String token) {
         this.baseURL = baseURL;
         this.token = token;
         client = new OkHttpClient();

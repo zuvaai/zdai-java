@@ -3,7 +3,7 @@ package ai.zuva;
 import ai.zuva.extraction.ExtractionRequest;
 import ai.zuva.extraction.ExtractionResults;
 import ai.zuva.files.ZdaiFile;
-import ai.zuva.http.ZdaiHttpClient;
+import ai.zuva.http.ZdaiApiClient;
 import com.github.tomakehurst.wiremock.junit5.WireMockRuntimeInfo;
 import com.github.tomakehurst.wiremock.junit5.WireMockTest;
 import org.junit.jupiter.api.Test;
@@ -35,7 +35,7 @@ public class ExtractionRequestTest {
                     .withRequestBody(equalToJson(postRequestBody))
                     .willReturn(aResponse().withStatus(202).withBody(postResponseBody)));
 
-            ZdaiHttpClient client = new ZdaiHttpClient("http://localhost:" + port, "my-token");
+            ZdaiApiClient client = new ZdaiApiClient("http://localhost:" + port, "my-token");
             ExtractionRequest request = ExtractionRequest.createExtractionRequest(client, new ZdaiFile(client, fileId), fieldIds);
 
             assertEquals(requestId, request.requestId);

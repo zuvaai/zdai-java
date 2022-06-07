@@ -3,14 +3,14 @@ package ai.zuva.classification;
 import ai.zuva.exception.ZdaiApiException;
 import ai.zuva.exception.ZdaiClientException;
 import ai.zuva.files.ZdaiFile;
-import ai.zuva.http.ZdaiHttpClient;
+import ai.zuva.http.ZdaiApiClient;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.JsonProcessingException;
 
 public class ClassificationRequest {
     public final String fileId;
     public final String requestId;
-    private final ZdaiHttpClient client;
+    private final ZdaiApiClient client;
 
     // This class is used internally to construct the JSON body for the POST /classification request
     static class ClassificationRequestBody {
@@ -31,7 +31,7 @@ public class ClassificationRequest {
     /**
      * Send a request to classify the document type of a file.
      * <p>
-     * Given a ZdaiHttpClient and a ZdaiFile, make a request to the Zuva servers to
+     * Given a ZdaiApiClient and a ZdaiFile, make a request to the Zuva servers to
      * asynchronously classify the document type of the file. The created ClassificationRequest
      * object can then be used to query the status and results of the request.
      *
@@ -40,14 +40,14 @@ public class ClassificationRequest {
      * @throws ZdaiApiException    Unsuccessful response code from server
      * @throws ZdaiClientException Error preparing, sending or processing the request/response
      */
-    public static ClassificationRequest createClassificationRequest(ZdaiHttpClient client, ZdaiFile file) throws ZdaiClientException, ZdaiApiException {
+    public static ClassificationRequest createClassificationRequest(ZdaiApiClient client, ZdaiFile file) throws ZdaiClientException, ZdaiApiException {
         return createClassificationRequests(client, new ZdaiFile[]{file})[0];
     }
 
     /**
      * Send a request to classify the document type of multiple files.
      * <p>
-     * Given a ZdaiHttpClient and an array of ZdaiFiles, make a request to the Zuva servers to
+     * Given a ZdaiApiClient and an array of ZdaiFiles, make a request to the Zuva servers to
      * asynchronously classify the document type of the files. The created ClassificationRequests
      * objects can then be used to query the status and results of each request.
      *
@@ -56,7 +56,7 @@ public class ClassificationRequest {
      * @throws ZdaiApiException    Unsuccessful response code from server
      * @throws ZdaiClientException Error preparing, sending or processing the request/response
      */
-    public static ClassificationRequest[] createClassificationRequests(ZdaiHttpClient client, ZdaiFile[] files) throws ZdaiClientException, ZdaiApiException {
+    public static ClassificationRequest[] createClassificationRequests(ZdaiApiClient client, ZdaiFile[] files) throws ZdaiClientException, ZdaiApiException {
         String[] fileIds = new String[files.length];
 
         for (int i = 0; i < files.length; i++) {
@@ -87,7 +87,7 @@ public class ClassificationRequest {
     /**
      * Construct a new object representing a pre-existing classification request
      * <p>
-     * Given a ZdaiHttpClient and a map of file IDs to request IDs, this constructor
+     * Given a ZdaiApiClient and a map of file IDs to request IDs, this constructor
      * makes a new ClassificationRequest that can be used to obtain the status and
      * results of the given request.
      *
@@ -95,7 +95,7 @@ public class ClassificationRequest {
      * @param fileId    The ID of the file being classified
      * @param requestId The ID of an existing request.
      */
-    public ClassificationRequest(ZdaiHttpClient client, String fileId, String requestId) {
+    public ClassificationRequest(ZdaiApiClient client, String fileId, String requestId) {
         this.client = client;
         this.fileId = fileId;
         this.requestId = requestId;
@@ -104,7 +104,7 @@ public class ClassificationRequest {
     /**
      * Get classification status and results from the Zuva server
      * <p>
-     * Given a ZdaiHttpClient, return a ClassificationResult indicating the
+     * Given a ZdaiApiClient, return a ClassificationResult indicating the
      * status of the classification request for that file and the classification
      * result (if available).
      *

@@ -3,14 +3,14 @@ package ai.zuva.fields;
 import ai.zuva.exception.ZdaiApiException;
 import ai.zuva.exception.ZdaiClientException;
 import ai.zuva.exception.ZdaiError;
-import ai.zuva.http.ZdaiHttpClient;
+import ai.zuva.http.ZdaiApiClient;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.JsonProcessingException;
 
 public class TrainingRequest {
 
-    public final ZdaiHttpClient client;
+    public final ZdaiApiClient client;
     public final String fieldId;
     public final String requestId;
     public String status;
@@ -32,7 +32,7 @@ public class TrainingRequest {
     /**
      * Send a request to train a field from examples
      * <p>
-     * Given a ZdaiHttpClient, a fileId, a field ID, and training examples make a request
+     * Given a ZdaiApiClient, a fileId, a field ID, and training examples make a request
      * to the Zuva servers to asynchronously train a new version of the field on the specified
      * data. The returned TrainingRequest object can then be used to check the status of the
      * training process.
@@ -43,7 +43,7 @@ public class TrainingRequest {
      * @throws ZdaiApiException    Unsuccessful response code from server
      * @throws ZdaiClientException Error preparing, sending or processing the request/response
      */
-    public static TrainingRequest createTrainingRequest(ZdaiHttpClient client, String fieldId, TrainingExample[] trainingExamples) throws ZdaiClientException, ZdaiApiException {
+    public static TrainingRequest createTrainingRequest(ZdaiApiClient client, String fieldId, TrainingExample[] trainingExamples) throws ZdaiClientException, ZdaiApiException {
         String body;
         try {
             body = client.mapper.writeValueAsString(trainingExamples);
@@ -67,7 +67,7 @@ public class TrainingRequest {
     /**
      * Construct a new object representing a pre-existing training request
      * <p>
-     * Given a ZdaiHttpClient and a map of file IDs to request IDs, this constructor
+     * Given a ZdaiApiClient and a map of file IDs to request IDs, this constructor
      * makes a new ClassificationRequest that can be used to obtain the status and
      * results of the given requests.
      *
@@ -75,13 +75,13 @@ public class TrainingRequest {
      * @param fieldId   The ID of the field being trained
      * @param requestId The ID of an existing request.
      */
-    public TrainingRequest(ZdaiHttpClient client, String fieldId, String requestId) {
+    public TrainingRequest(ZdaiApiClient client, String fieldId, String requestId) {
         this.client = client;
         this.fieldId = fieldId;
         this.requestId = requestId;
     }
 
-    private TrainingRequest(ZdaiHttpClient client, TrainingStatus trainingStatus) {
+    private TrainingRequest(ZdaiApiClient client, TrainingStatus trainingStatus) {
         this.client = client;
         this.fieldId = trainingStatus.fieldId;
         this.requestId = trainingStatus.requestId;
@@ -92,7 +92,7 @@ public class TrainingRequest {
     /**
      * Get status of a training request from the Zuva server
      * <p>
-     * Given a ZdaiHttpClient, return a String indicating the status of the
+     * Given a ZdaiApiClient, return a String indicating the status of the
      * request.
      *
      * @throws ZdaiApiException    Unsuccessful response code from server

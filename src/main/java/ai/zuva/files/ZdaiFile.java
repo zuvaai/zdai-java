@@ -2,7 +2,7 @@ package ai.zuva.files;
 
 import ai.zuva.exception.ZdaiApiException;
 import ai.zuva.exception.ZdaiClientException;
-import ai.zuva.http.ZdaiHttpClient;
+import ai.zuva.http.ZdaiApiClient;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -11,7 +11,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 
 public class ZdaiFile {
-    private ZdaiHttpClient client;
+    private ZdaiApiClient client;
     public String fileId;
     public FileAttributes attributes;
     public String[] permissions;
@@ -29,12 +29,12 @@ public class ZdaiFile {
         public String expiration;
     }
 
-    public ZdaiFile(ZdaiHttpClient client, String fileId) {
+    public ZdaiFile(ZdaiApiClient client, String fileId) {
         this.client = client;
         this.fileId = fileId;
     }
 
-    public ZdaiFile(ZdaiHttpClient client, SubmitFileResponse resp) {
+    public ZdaiFile(ZdaiApiClient client, SubmitFileResponse resp) {
         this.client = client;
         this.fileId = resp.fileId;
         this.attributes = resp.attributes;
@@ -42,18 +42,18 @@ public class ZdaiFile {
         this.expiration= resp.expiration;
     }
 
-    public static ZdaiFile submitFile(ZdaiHttpClient client, File f, String... contentType) throws ZdaiClientException, ZdaiApiException, FileNotFoundException, SecurityException {
+    public static ZdaiFile submitFile(ZdaiApiClient client, File f, String... contentType) throws ZdaiClientException, ZdaiApiException, FileNotFoundException, SecurityException {
         return parseResponse(client, client.authorizedRequest("POST", "/files", f, 201, contentType));
     }
 
-    public static ZdaiFile submitFile(ZdaiHttpClient client, String s, String... contentType) throws ZdaiClientException, ZdaiApiException {
+    public static ZdaiFile submitFile(ZdaiApiClient client, String s, String... contentType) throws ZdaiClientException, ZdaiApiException {
         return parseResponse(client, client.authorizedRequest("POST", "/files", s, 201, contentType));
     }
 
-    public static ZdaiFile submitFile(ZdaiHttpClient client, byte[] ba, String... contentType) throws ZdaiClientException, ZdaiApiException {
+    public static ZdaiFile submitFile(ZdaiApiClient client, byte[] ba, String... contentType) throws ZdaiClientException, ZdaiApiException {
         return parseResponse(client, client.authorizedRequest("POST", "/files", ba, 201, contentType));
     }
-    private static ZdaiFile parseResponse (ZdaiHttpClient client, String response) throws ZdaiClientException {
+    private static ZdaiFile parseResponse (ZdaiApiClient client, String response) throws ZdaiClientException {
         try {
             SubmitFileResponse resp = client.mapper.readValue(response, SubmitFileResponse.class);
             return new ZdaiFile(client, resp);

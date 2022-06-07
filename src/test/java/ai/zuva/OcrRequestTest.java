@@ -1,7 +1,7 @@
 package ai.zuva;
 
 import ai.zuva.files.ZdaiFile;
-import ai.zuva.http.ZdaiHttpClient;
+import ai.zuva.http.ZdaiApiClient;
 import ai.zuva.ocr.OcrRequest;
 import com.github.tomakehurst.wiremock.junit5.WireMockRuntimeInfo;
 import com.github.tomakehurst.wiremock.junit5.WireMockTest;
@@ -26,7 +26,7 @@ class OcrRequestTest {
                 .withRequestBody(equalToJson(postBody))
                 .willReturn(aResponse().withStatus(202).withBody(postResponseBody)));
 
-        ZdaiHttpClient client = new ZdaiHttpClient("http://localhost:" + port, "my-token");
+        ZdaiApiClient client = new ZdaiApiClient("http://localhost:" + port, "my-token");
 
         OcrRequest request = OcrRequest.createOcrRequest(client, new ZdaiFile(client, fileId));
         assertEquals(requestId, request.requestId);

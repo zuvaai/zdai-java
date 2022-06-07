@@ -10,16 +10,16 @@ This SDK provides a Java wrapper around the [Zuva DocAI API](https://zuva.ai/doc
 
 ### Quick start
 
-Start by instantiating a `ZdaiClient` with the url of the Zuva region you are using and your token:
+Start by instantiating a `ZdaiApiClient` with the url of the Zuva region you are using and your token:
 
 ```java
-ZdaiClient client = new ZdaiClient(url, token);
+ZdaiApiClient client = new ZdaiApiClient(url, token);
 ```
 
 Submit your file to Zuva:
 
 ```java
-ZdaiFile file = client.submitFile(Paths.get(fileName));
+ZdaiFile file = ZdaiFile.submitFile(client, Paths.get(fileName));
 ```
 
 Obtain field IDs of the fields you are interested in from the [field library](https://docai.zuva.ai/field-library),
@@ -32,7 +32,7 @@ String[] fieldIds = new String[]{
         "f743f363-1d8b-435b-8812-204a6d883834",
         "4d34c0ac-a3d4-4172-92d0-5fad8b3860a7"
         };
-ExtractionRequest extractionRequest = client.newExtractionRequest(file, fieldIds);
+ExtractionRequest extractionRequest = ExtractionRequest.createExtractionRequest(client, file, fieldIds);
 ```
 
 DocAI field extraction works asynchronously: you will need to poll the status of the request until it completes.
@@ -58,10 +58,9 @@ the full set of results.
 ```java
 if (status.equals("complete")) {
     ExtractionResults[] extractions = extractionRequest.getResults();
-
-    FieldService fieldService = client.newFieldService();
+    
     for (ExtractionResults ex : extractions) {
-        FieldMetadata fm = fieldService.getFieldMetadata(ex.fieldId);
+        FieldMetadata fm = (new Field(client, ex.fieldId)).getFieldMetadata();
         System.out.println(String.format("%s:", fm.name));
 
         for (ExtractionData ed : ex.extractions) {

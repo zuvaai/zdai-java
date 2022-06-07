@@ -3,7 +3,7 @@ package ai.zuva;
 import ai.zuva.classification.ClassificationRequest;
 import ai.zuva.classification.ClassificationResult;
 import ai.zuva.files.ZdaiFile;
-import ai.zuva.http.ZdaiHttpClient;
+import ai.zuva.http.ZdaiApiClient;
 import com.github.tomakehurst.wiremock.junit5.WireMockRuntimeInfo;
 import com.github.tomakehurst.wiremock.junit5.WireMockTest;
 import org.junit.jupiter.api.Test;
@@ -27,7 +27,7 @@ class ClassificationRequestTest {
                     .withRequestBody(equalToJson("{\"file_ids\": [\"c5e41av1qk1er7odm79g\"]}"))
                     .willReturn(aResponse().withStatus(202).withBody(postResponseBody)));
 
-            ZdaiHttpClient client = new ZdaiHttpClient("http://localhost:" + port, "my-token");
+            ZdaiApiClient client = new ZdaiApiClient("http://localhost:" + port, "my-token");
             ClassificationRequest request = ClassificationRequest.createClassificationRequest(client, new ZdaiFile(client, fileId));
 
             assertEquals(requestId, request.requestId);

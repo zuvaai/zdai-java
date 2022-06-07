@@ -4,7 +4,7 @@ import ai.zuva.exception.ZdaiApiException;
 import ai.zuva.exception.ZdaiClientException;
 import ai.zuva.exception.ZdaiError;
 import ai.zuva.files.ZdaiFile;
-import ai.zuva.http.ZdaiHttpClient;
+import ai.zuva.http.ZdaiApiClient;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -13,7 +13,7 @@ public class OcrRequest {
     public final String requestId;
     public final String fileId;
 
-    private final ZdaiHttpClient client;
+    private final ZdaiApiClient client;
 
     @JsonIgnoreProperties(ignoreUnknown = true)
     static class OcrStatus {
@@ -51,9 +51,9 @@ public class OcrRequest {
     }
 
     /**
-     * send a request to perform OCR on a file
+     * Send a request to perform OCR on a file
      * <p>
-     * Given a ZdaiHttpClient, a fileId, this constructor makes a request to
+     * Given a ZdaiApiClient, a fileId, this constructor makes a request to
      * the Zuva servers to asynchronously perform OCR on the file, returning an
      * OcrRequest object that can subsequently be used to obtain the file's
      * text, images and layouts.
@@ -63,14 +63,14 @@ public class OcrRequest {
      * @throws ZdaiApiException    Unsuccessful response code from server
      * @throws ZdaiClientException Error preparing, sending or processing the request/response
      */
-    public static OcrRequest createOcrRequest(ZdaiHttpClient client, ZdaiFile file) throws ZdaiClientException, ZdaiApiException {
+    public static OcrRequest createOcrRequest(ZdaiApiClient client, ZdaiFile file) throws ZdaiClientException, ZdaiApiException {
         return createOcrRequests(client, new ZdaiFile[]{file})[0];
     }
 
     /**
-     * send a request to extract fields from multiple files
+     * Send a request to extract fields from multiple files
      * <p>
-     * Given a ZdaiHttpClient, a fileId, this constructor makes a request to
+     * Given a ZdaiApiClient, a fileId, this constructor makes a request to
      * the Zuva servers to asynchronously perform OCR on the file, returning an
      * OcrRequest object that can subsequently be used to obtain the file's
      * text, images and layouts.
@@ -80,7 +80,7 @@ public class OcrRequest {
      * @throws ZdaiApiException    Unsuccessful response code from server
      * @throws ZdaiClientException Error preparing, sending or processing the request/response
      */
-    public static OcrRequest[] createOcrRequests(ZdaiHttpClient client, ZdaiFile[] files) throws ZdaiClientException, ZdaiApiException {
+    public static OcrRequest[] createOcrRequests(ZdaiApiClient client, ZdaiFile[] files) throws ZdaiClientException, ZdaiApiException {
         String[] fileIds = new String[files.length];
 
         for (int i = 0; i < files.length; i++) {
@@ -108,7 +108,7 @@ public class OcrRequest {
         }
     }
 
-    public OcrRequest(ZdaiHttpClient client, String fileId, String requestId) {
+    public OcrRequest(ZdaiApiClient client, String fileId, String requestId) {
         this.client = client;
         this.fileId = fileId;
         this.requestId = requestId;
@@ -117,7 +117,7 @@ public class OcrRequest {
     /**
      * Get status of an OCR request from the Zuva server
      * <p>
-     * Given a ZdaiHttpClient, return a String indicating the status of the
+     * Given a ZdaiApiClient, return a String indicating the status of the
      * request.
      *
      * @throws ZdaiApiException    Unsuccessful response code from server
@@ -135,7 +135,7 @@ public class OcrRequest {
     /**
      * Get text results of an OCR request from the Zuva server
      * <p>
-     * Given a ZdaiHttpClient, return the OCR text of the document as
+     * Given a ZdaiApiClient, return the OCR text of the document as
      * a String.
      *
      * @throws ZdaiApiException    Unsuccessful response code from server
@@ -153,7 +153,7 @@ public class OcrRequest {
     /**
      * Get image results of an OCR request from the Zuva server
      * <p>
-     * Given a ZdaiHttpClient, return the OCR images of the document as
+     * Given a ZdaiApiClient, return the OCR images of the document as
      * a zip file containing a PNG image of each page.
      *
      * @throws ZdaiApiException    Unsuccessful response code from server
@@ -166,7 +166,7 @@ public class OcrRequest {
     /**
      * Get layout results of an OCR request from the Zuva server
      * <p>
-     * Given a ZdaiHttpClient, return the layout of the document in a
+     * Given a ZdaiApiClient, return the layout of the document in a
      * protobuff format
      *
      * @throws ZdaiApiException    Unsuccessful response code from server

@@ -3,7 +3,7 @@ package ai.zuva;
 import ai.zuva.exception.ZdaiApiException;
 import ai.zuva.fields.TrainingExample;
 import ai.zuva.fields.TrainingRequest;
-import ai.zuva.http.ZdaiHttpClient;
+import ai.zuva.http.ZdaiApiClient;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.tomakehurst.wiremock.junit5.WireMockRuntimeInfo;
 import com.github.tomakehurst.wiremock.junit5.WireMockTest;
@@ -35,7 +35,7 @@ public class TrainingRequestTest {
                 .withRequestBody(equalToJson(postRequestBody))
                 .willReturn(aResponse().withStatus(202).withBody(postResponseBody)));
 
-        ZdaiHttpClient client = new ZdaiHttpClient("http://localhost:" + port, "my-token");
+        ZdaiApiClient client = new ZdaiApiClient("http://localhost:" + port, "my-token");
         TrainingRequest request = TrainingRequest.createTrainingRequest(client, fieldId, td);
 
         assertEquals(requestId, request.requestId);
@@ -64,7 +64,7 @@ public class TrainingRequestTest {
                 .withRequestBody(equalToJson(postRequestBody))
                 .willReturn(aResponse().withStatus(409).withBody(postResponseBody)));
 
-        ZdaiHttpClient client = new ZdaiHttpClient("http://localhost:" + port, "my-token");
+        ZdaiApiClient client = new ZdaiApiClient("http://localhost:" + port, "my-token");
 
         assertThrows(Exception.class, () -> {
             TrainingRequest.createTrainingRequest(client, fieldId, td);
@@ -78,7 +78,7 @@ public class TrainingRequestTest {
         String fieldId = "2efa79d4-854d-46de-8087-f70778157dbf";
         String requestId = "c71qfbbo2ua8dqja2d70";
 
-        ZdaiHttpClient client = new ZdaiHttpClient("http://localhost:" + port, "my-token");
+        ZdaiApiClient client = new ZdaiApiClient("http://localhost:" + port, "my-token");
         TrainingRequest request = new TrainingRequest(client, fieldId, requestId);
 
         assertEquals(fieldId, request.fieldId);

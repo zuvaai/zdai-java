@@ -14,7 +14,7 @@ import static com.github.tomakehurst.wiremock.client.WireMock.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @WireMockTest
-class ZdaiHttpClientTest {
+class ZdaiApiClientTest {
 
     private String resourceAsString (String resourceName) throws IOException {
         return  IOUtils.toString(Objects.requireNonNull(this.getClass().getClassLoader().getResource(resourceName)), "UTF-8");

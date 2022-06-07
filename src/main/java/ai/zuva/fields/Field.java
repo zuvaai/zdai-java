@@ -2,22 +2,22 @@ package ai.zuva.fields;
 
 import ai.zuva.exception.ZdaiApiException;
 import ai.zuva.exception.ZdaiClientException;
-import ai.zuva.http.ZdaiHttpClient;
+import ai.zuva.http.ZdaiApiClient;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.JsonProcessingException;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Field {
-    private ZdaiHttpClient client;
+    private ZdaiApiClient client;
     public String fieldId;
 
-    public Field(ZdaiHttpClient client, String fieldId) {
+    public Field(ZdaiApiClient client, String fieldId) {
         this.client = client;
         this.fieldId = fieldId;
     }
 
-    public static FieldListElement[] listFields(ZdaiHttpClient client) throws ZdaiClientException, ZdaiApiException {
+    public static FieldListElement[] listFields(ZdaiApiClient client) throws ZdaiClientException, ZdaiApiException {
         String response = client.authorizedGet("/fields", 200);
         try {
             return client.mapper.readValue(response, FieldListElement[].class);
@@ -100,7 +100,7 @@ public class Field {
         public String fieldId;
     }
 
-    public static Field createField(ZdaiHttpClient client, String name, String description) throws ZdaiClientException, ZdaiApiException {
+    public static Field createField(ZdaiApiClient client, String name, String description) throws ZdaiClientException, ZdaiApiException {
         String body;
         try {
             body = client.mapper.writeValueAsString(new CreateFieldRequest(name, description));

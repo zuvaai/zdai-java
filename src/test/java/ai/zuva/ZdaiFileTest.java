@@ -2,7 +2,7 @@ package ai.zuva;
 
 import ai.zuva.exception.ZdaiApiException;
 import ai.zuva.files.ZdaiFile;
-import ai.zuva.http.ZdaiHttpClient;
+import ai.zuva.http.ZdaiApiClient;
 import com.github.tomakehurst.wiremock.junit5.WireMockRuntimeInfo;
 import com.github.tomakehurst.wiremock.junit5.WireMockTest;
 import org.junit.jupiter.api.Test;
@@ -27,7 +27,7 @@ public class ZdaiFileTest {
                 .withRequestBody(equalTo(content))
                 .willReturn(created().withBody(responseBody)));
 
-        ZdaiHttpClient zClient = new ZdaiHttpClient("http://localhost:"+ port, "my-token");
+        ZdaiApiClient zClient = new ZdaiApiClient("http://localhost:"+ port, "my-token");
 
         try {
             ZdaiFile result = ZdaiFile.submitFile(zClient, "Sample text", "text/plain");
@@ -50,7 +50,7 @@ public class ZdaiFileTest {
                 .withRequestBody(equalTo(content))
                 .willReturn(created().withBody(responseBody)));
 
-        ZdaiHttpClient zClient = new ZdaiHttpClient("http://localhost:"+ port, "my-token");
+        ZdaiApiClient zClient = new ZdaiApiClient("http://localhost:"+ port, "my-token");
 
         try {
             ZdaiFile result = ZdaiFile.submitFile(zClient, content);
@@ -74,7 +74,7 @@ public class ZdaiFileTest {
                 .withRequestBody(binaryEqualTo(content))
                 .willReturn(created().withBody(responseBody)));
 
-        ZdaiHttpClient zClient = new ZdaiHttpClient("http://localhost:"+ port, "my-token");
+        ZdaiApiClient zClient = new ZdaiApiClient("http://localhost:"+ port, "my-token");
 
         try {
             ZdaiFile result = ZdaiFile.submitFile(zClient, content, "application/kiraocr");
@@ -93,7 +93,7 @@ public class ZdaiFileTest {
         stubFor(delete("/files/123")
                 .willReturn(noContent().withBody("1")));
 
-        ZdaiHttpClient zClient = new ZdaiHttpClient("http://localhost:"+ port, "my-token");
+        ZdaiApiClient zClient = new ZdaiApiClient("http://localhost:"+ port, "my-token");
         ZdaiFile zdaiFile = new ZdaiFile(zClient,"123");
         try {
             // Implied success if no error is thrown
@@ -111,7 +111,7 @@ public class ZdaiFileTest {
         stubFor(delete("/files/123")
                 .willReturn(notFound().withBody(responseBody)));
 
-        ZdaiHttpClient zClient = new ZdaiHttpClient("http://localhost:"+ port, "my-token");
+        ZdaiApiClient zClient = new ZdaiApiClient("http://localhost:"+ port, "my-token");
         ZdaiFile zdaiFile = new ZdaiFile(zClient,"123");
         try {
             // Implied success if no error is thrown

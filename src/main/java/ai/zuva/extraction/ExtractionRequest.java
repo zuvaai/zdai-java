@@ -4,8 +4,7 @@ import ai.zuva.exception.ZdaiApiException;
 import ai.zuva.exception.ZdaiClientException;
 import ai.zuva.exception.ZdaiError;
 import ai.zuva.files.ZdaiFile;
-import ai.zuva.http.ZdaiHttpClient;
-import ai.zuva.ocr.OcrRequest;
+import ai.zuva.http.ZdaiApiClient;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -16,16 +15,16 @@ public class ExtractionRequest {
     public final String requestId;
     public String status;
     public ZdaiError error;
-    private final ZdaiHttpClient client;
+    private final ZdaiApiClient client;
 
-    public ExtractionRequest(ZdaiHttpClient client, String requestId) {
+    public ExtractionRequest(ZdaiApiClient client, String requestId) {
         this.client = client;
         this.requestId = requestId;
         this.fileId = null;
         this.fieldIds = null;
     }
 
-    private ExtractionRequest(ZdaiHttpClient client, ExtractionStatus extractionStatus) {
+    private ExtractionRequest(ZdaiApiClient client, ExtractionStatus extractionStatus) {
         this.client = client;
         this.fileId = extractionStatus.fileId;
         this.fieldIds = extractionStatus.fieldIds;
@@ -86,7 +85,7 @@ public class ExtractionRequest {
     /**
      * Construct and send a request to extract fields from a file
      * <p>
-     * Given a ZdaiHttpClient, a fileId, and an array of field IDs, this
+     * Given a ZdaiApiClient, a fileId, and an array of field IDs, this
      * constructor makes a request to the Zuva servers to asynchronously extract
      * the specified fields from the file
      *
@@ -96,14 +95,14 @@ public class ExtractionRequest {
      * @throws ZdaiApiException    Unsuccessful response code from server
      * @throws ZdaiClientException Error preparing, sending or processing the request/response
      */
-    public static ExtractionRequest createExtractionRequest(ZdaiHttpClient client, ZdaiFile file, String[] fieldIds) throws ZdaiClientException, ZdaiApiException {
+    public static ExtractionRequest createExtractionRequest(ZdaiApiClient client, ZdaiFile file, String[] fieldIds) throws ZdaiClientException, ZdaiApiException {
         return createExtractionRequests(client, new ZdaiFile[]{file}, fieldIds)[0];
     }
 
     /**
      * Construct and send a request to extract fields from multiple files
      * <p>
-     * Given a ZdaiHttpClient, a fileId, and an array of field IDs, this
+     * Given a ZdaiApiClient, a fileId, and an array of field IDs, this
      * constructor makes a request to the Zuva servers to asynchronously extract
      * the specified fields from the file
      *
@@ -113,7 +112,7 @@ public class ExtractionRequest {
      * @throws ZdaiApiException    Unsuccessful response code from server
      * @throws ZdaiClientException Error preparing, sending or processing the request/response
      */
-    public static ExtractionRequest[] createExtractionRequests(ZdaiHttpClient client, ZdaiFile[] files, String[] fieldIds) throws ZdaiClientException, ZdaiApiException {
+    public static ExtractionRequest[] createExtractionRequests(ZdaiApiClient client, ZdaiFile[] files, String[] fieldIds) throws ZdaiClientException, ZdaiApiException {
         String[] fileIds = new String[files.length];
 
         for (int i = 0; i < files.length; i++) {
@@ -143,7 +142,7 @@ public class ExtractionRequest {
     /**
      * Get status of extraction request from the Zuva server
      * <p>
-     * Given a ZdaiHttpClient, return a String indicating the status of the
+     * Given a ZdaiApiClient, return a String indicating the status of the
      * request.
      *
      * @throws ZdaiApiException    Unsuccessful response code from server
@@ -163,7 +162,7 @@ public class ExtractionRequest {
     /**
      * Get results of a successful extraction request from the Zuva server
      * <p>
-     * Given a ZdaiHttpClient, return an array of ExtractionResults containing
+     * Given a ZdaiApiClient, return an array of ExtractionResults containing
      * the text and location of all extractions for each field.
      *
      * @throws ZdaiApiException    Unsuccessful response code from server

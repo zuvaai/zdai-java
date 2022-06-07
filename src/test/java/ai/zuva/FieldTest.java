@@ -1,7 +1,7 @@
 package ai.zuva;
 
 import ai.zuva.fields.*;
-import ai.zuva.http.ZdaiHttpClient;
+import ai.zuva.http.ZdaiApiClient;
 import com.github.tomakehurst.wiremock.junit5.WireMockRuntimeInfo;
 import com.github.tomakehurst.wiremock.junit5.WireMockTest;
 import org.junit.jupiter.api.Test;
@@ -25,7 +25,7 @@ public class FieldTest {
                 .withRequestBody(binaryEqualTo(new byte[]{}))
                 .willReturn(ok().withBody(responseBody)));
 
-        ZdaiHttpClient client = new ZdaiHttpClient("http://localhost:" + port, "my-token");
+        ZdaiApiClient client = new ZdaiApiClient("http://localhost:" + port, "my-token");
 
         try {
             FieldListElement result = Field.listFields(client)[0];
@@ -45,7 +45,7 @@ public class FieldTest {
                 .withRequestBody(binaryEqualTo(new byte[]{}))
                 .willReturn(ok().withBody(responseBody)));
 
-        ZdaiHttpClient client = new ZdaiHttpClient("http://localhost:" + port, "my-token");
+        ZdaiApiClient client = new ZdaiApiClient("http://localhost:" + port, "my-token");
         Field field = new Field(client, fieldId);
 
         try {
@@ -66,7 +66,7 @@ public class FieldTest {
                 .withRequestBody(equalToJson(requestBody))
                 .willReturn(noContent().withBody("1")));
 
-        ZdaiHttpClient client = new ZdaiHttpClient("http://localhost:" + port, "my-token");
+        ZdaiApiClient client = new ZdaiApiClient("http://localhost:" + port, "my-token");
         Field field = new Field(client, fieldId);
 
         try {
@@ -86,7 +86,7 @@ public class FieldTest {
                 .withRequestBody(binaryEqualTo(new byte[]{}))
                 .willReturn(ok().withBody(responseBody)));
 
-        ZdaiHttpClient client = new ZdaiHttpClient("http://localhost:" + port, "my-token");
+        ZdaiApiClient client = new ZdaiApiClient("http://localhost:" + port, "my-token");
         Field field = new Field(client, fieldId);
 
         try {
@@ -109,7 +109,7 @@ public class FieldTest {
                 .withRequestBody(binaryEqualTo(new byte[]{}))
                 .willReturn(ok().withBody(responseBody)));
 
-        ZdaiHttpClient client = new ZdaiHttpClient("http://localhost:" + port, "my-token");
+        ZdaiApiClient client = new ZdaiApiClient("http://localhost:" + port, "my-token");
         Field field = new Field(client, fieldId);
 
         try {
@@ -135,7 +135,7 @@ public class FieldTest {
                 .withRequestBody(equalToJson(requestBody))
                 .willReturn(created().withBody(responseBody)));
 
-        ZdaiHttpClient client = new ZdaiHttpClient("http://localhost:" + port, "my-token");
+        ZdaiApiClient client = new ZdaiApiClient("http://localhost:" + port, "my-token");
 
         try {
             Field field = Field.createField(client,"Test Field", "Test field description");
