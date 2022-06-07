@@ -2,7 +2,7 @@ package ai.zuva;
 
 import ai.zuva.exception.ZdaiApiException;
 import ai.zuva.files.ZdaiFile;
-import ai.zuva.http.ZdaiApiClient;
+import ai.zuva.api.ZdaiApiClient;
 import com.github.tomakehurst.wiremock.junit5.WireMockRuntimeInfo;
 import com.github.tomakehurst.wiremock.junit5.WireMockTest;
 import org.junit.jupiter.api.Test;

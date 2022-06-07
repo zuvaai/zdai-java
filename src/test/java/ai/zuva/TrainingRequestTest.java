@@ -3,7 +3,7 @@ package ai.zuva;
 import ai.zuva.exception.ZdaiApiException;
 import ai.zuva.fields.TrainingExample;
 import ai.zuva.fields.TrainingRequest;
-import ai.zuva.http.ZdaiApiClient;
+import ai.zuva.api.ZdaiApiClient;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.tomakehurst.wiremock.junit5.WireMockRuntimeInfo;
 import com.github.tomakehurst.wiremock.junit5.WireMockTest;

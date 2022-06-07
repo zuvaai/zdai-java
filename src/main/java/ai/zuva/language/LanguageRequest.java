@@ -3,7 +3,7 @@ package ai.zuva.language;
 import ai.zuva.exception.ZdaiApiException;
 import ai.zuva.exception.ZdaiClientException;
 import ai.zuva.files.ZdaiFile;
-import ai.zuva.http.ZdaiApiClient;
+import ai.zuva.api.ZdaiApiClient;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.JsonProcessingException;
 

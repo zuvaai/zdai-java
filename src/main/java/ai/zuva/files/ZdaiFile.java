@@ -2,7 +2,7 @@ package ai.zuva.files;
 
 import ai.zuva.exception.ZdaiApiException;
 import ai.zuva.exception.ZdaiClientException;
-import ai.zuva.http.ZdaiApiClient;
+import ai.zuva.api.ZdaiApiClient;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -29,19 +29,6 @@ public class ZdaiFile {
         public String expiration;
     }
 
-    public ZdaiFile(ZdaiApiClient client, String fileId) {
-        this.client = client;
-        this.fileId = fileId;
-    }
-
-    public ZdaiFile(ZdaiApiClient client, SubmitFileResponse resp) {
-        this.client = client;
-        this.fileId = resp.fileId;
-        this.attributes = resp.attributes;
-        this.permissions = resp.permissions;
-        this.expiration= resp.expiration;
-    }
-
     public static ZdaiFile submitFile(ZdaiApiClient client, File f, String... contentType) throws ZdaiClientException, ZdaiApiException, FileNotFoundException, SecurityException {
         return parseResponse(client, client.authorizedRequest("POST", "/files", f, 201, contentType));
     }
@@ -60,6 +47,19 @@ public class ZdaiFile {
         } catch (JsonProcessingException e) {
             throw new ZdaiClientException("Unable to parse response body", e);
         }
+    }
+
+    public ZdaiFile(ZdaiApiClient client, String fileId) {
+        this.client = client;
+        this.fileId = fileId;
+    }
+
+    public ZdaiFile(ZdaiApiClient client, SubmitFileResponse resp) {
+        this.client = client;
+        this.fileId = resp.fileId;
+        this.attributes = resp.attributes;
+        this.permissions = resp.permissions;
+        this.expiration= resp.expiration;
     }
 
     public void delete() throws ZdaiClientException, ZdaiApiException {

@@ -4,7 +4,7 @@ import ai.zuva.classification.ClassificationRequest;
 import ai.zuva.extraction.ExtractionRequest;
 import ai.zuva.fields.Field;
 import ai.zuva.files.ZdaiFile;
-import ai.zuva.http.ZdaiApiClient;
+import ai.zuva.api.ZdaiApiClient;
 import ai.zuva.language.LanguageRequest;
 import ai.zuva.ocr.OcrRequest;
 import ai.zuva.extraction.ExtractionData;

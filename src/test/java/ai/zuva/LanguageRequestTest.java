@@ -1,7 +1,7 @@
 package ai.zuva;
 
 import ai.zuva.files.ZdaiFile;
-import ai.zuva.http.ZdaiApiClient;
+import ai.zuva.api.ZdaiApiClient;
 import ai.zuva.language.LanguageRequest;
 import ai.zuva.language.LanguageResult;
 import com.github.tomakehurst.wiremock.junit5.WireMockRuntimeInfo;

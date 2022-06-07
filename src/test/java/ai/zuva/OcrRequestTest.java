@@ -1,7 +1,7 @@
 package ai.zuva;
 
 import ai.zuva.files.ZdaiFile;
-import ai.zuva.http.ZdaiApiClient;
+import ai.zuva.api.ZdaiApiClient;
 import ai.zuva.ocr.OcrRequest;
 import com.github.tomakehurst.wiremock.junit5.WireMockRuntimeInfo;
 import com.github.tomakehurst.wiremock.junit5.WireMockTest;

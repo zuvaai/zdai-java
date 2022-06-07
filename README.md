@@ -90,4 +90,4 @@ the status code and response from the server
 ## HTTP Library
 
 The client currently uses [OkHttp](https://square.github.io/okhttp/), which is compatible with Java 8+. This dependency is 
-isolated to `ai.zuva.http`, which can be rewritten to use your http library of choice.
+isolated to `ai.zuva.api`, which can be rewritten to use your http library of choice.

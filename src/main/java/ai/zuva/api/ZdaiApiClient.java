@@ -1,4 +1,4 @@
-package ai.zuva.http;
+package ai.zuva.api;
 
 import ai.zuva.exception.ZdaiClientException;
 import ai.zuva.exception.ZdaiApiException;
@@ -12,8 +12,8 @@ import java.io.IOException;
 public class ZdaiApiClient {
     public final String baseURL;
     public final String token;
-    public OkHttpClient client;
-    public ObjectMapper mapper = new ObjectMapper();
+    public final OkHttpClient client;
+    public final ObjectMapper mapper;
 
     /**
      * Constructs a ZdaiApiClient to interface with the Zuva DocAI API
@@ -25,6 +25,7 @@ public class ZdaiApiClient {
         this.baseURL = baseURL;
         this.token = token;
         client = new OkHttpClient();
+        mapper = new ObjectMapper();
     }
 
     private String sendRequest(Request request, int expectedStatusCode) throws ZdaiClientException, ZdaiApiException {

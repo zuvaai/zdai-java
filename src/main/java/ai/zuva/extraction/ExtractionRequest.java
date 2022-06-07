@@ -4,7 +4,7 @@ import ai.zuva.exception.ZdaiApiException;
 import ai.zuva.exception.ZdaiClientException;
 import ai.zuva.exception.ZdaiError;
 import ai.zuva.files.ZdaiFile;
-import ai.zuva.http.ZdaiApiClient;
+import ai.zuva.api.ZdaiApiClient;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -22,15 +22,6 @@ public class ExtractionRequest {
         this.requestId = requestId;
         this.fileId = null;
         this.fieldIds = null;
-    }
-
-    private ExtractionRequest(ZdaiApiClient client, ExtractionStatus extractionStatus) {
-        this.client = client;
-        this.fileId = extractionStatus.fileId;
-        this.fieldIds = extractionStatus.fieldIds;
-        this.requestId = extractionStatus.requestId;
-        this.status = extractionStatus.status;
-        this.error = extractionStatus.error;
     }
 
     static class ExtractionRequestBody {
@@ -137,6 +128,16 @@ public class ExtractionRequest {
         } catch (JsonProcessingException e) {
             throw (new ZdaiClientException("Unable to parse response", e));
         }
+    }
+
+    // Constructor is private since it is only used by the above static factory methods
+    private ExtractionRequest(ZdaiApiClient client, ExtractionStatus extractionStatus) {
+        this.client = client;
+        this.fileId = extractionStatus.fileId;
+        this.fieldIds = extractionStatus.fieldIds;
+        this.requestId = extractionStatus.requestId;
+        this.status = extractionStatus.status;
+        this.error = extractionStatus.error;
     }
 
     /**
