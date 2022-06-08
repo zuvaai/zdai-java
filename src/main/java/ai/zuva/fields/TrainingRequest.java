@@ -40,6 +40,7 @@ public class TrainingRequest {
      * @param client           The client to use to make the request
      * @param fieldId          The ID of the custom field to train
      * @param trainingExamples The examples to train on
+     * @return A TrainingRequest object, which can be used to check the status of the request
      * @throws ZdaiApiException    Unsuccessful response code from server
      * @throws ZdaiClientException Error preparing, sending or processing the request/response
      */
@@ -95,6 +96,7 @@ public class TrainingRequest {
      * Given a ZdaiApiClient, return a String indicating the status of the
      * request.
      *
+     * @return The request status as a String (one of "queued", "processing", "complete" or "failed")
      * @throws ZdaiApiException    Unsuccessful response code from server
      * @throws ZdaiClientException Error preparing, sending or processing the request/response
      */

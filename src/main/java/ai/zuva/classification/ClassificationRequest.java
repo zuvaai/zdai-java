@@ -37,6 +37,7 @@ public class ClassificationRequest {
      *
      * @param client The client to use to make the request
      * @param file   The file to classify
+     * @return A ClassificationRequest, which can be used to check the status and results of the request
      * @throws ZdaiApiException    Unsuccessful response code from server
      * @throws ZdaiClientException Error preparing, sending or processing the request/response
      */
@@ -53,6 +54,7 @@ public class ClassificationRequest {
      *
      * @param client The client to use to make the request
      * @param files  The files to classify
+     * @return An array of ClassificationRequests, which can be used to check the status and results of the requests
      * @throws ZdaiApiException    Unsuccessful response code from server
      * @throws ZdaiClientException Error preparing, sending or processing the request/response
      */
@@ -107,7 +109,7 @@ public class ClassificationRequest {
      * Given a ZdaiApiClient, return a ClassificationResult indicating the
      * status of the classification request for that file and the classification
      * result (if available).
-     *
+     * @return A ClassificationResult, with the status and results of the request
      * @throws ZdaiApiException    Unsuccessful response code from server
      * @throws ZdaiClientException Error preparing, sending or processing the request/response
      */

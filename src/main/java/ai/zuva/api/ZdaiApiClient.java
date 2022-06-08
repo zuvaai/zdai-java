@@ -164,6 +164,7 @@ public class ZdaiApiClient {
      * @return The response body as a String, if the request was successful
      * @throws ZdaiClientException There was a problem sending the request, such as an IOException or InterruptedException
      * @throws ZdaiApiException The status code in the response was anything other than expectedStatusCode
+     * @throws FileNotFoundException The File to be used as the request body could not be found
      */
     public String authorizedRequest(String method, String path, File body, int expectedStatusCode, String... contentType) throws ZdaiClientException, ZdaiApiException, FileNotFoundException, SecurityException {
         MediaType mediaType = null;

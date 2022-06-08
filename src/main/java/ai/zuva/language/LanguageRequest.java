@@ -41,6 +41,7 @@ public class LanguageRequest {
      *
      * @param client The client to use to make the request
      * @param file   The file to classify
+     * @return A LanguageRequest object, which can be used to check the status and results of the request
      * @throws ZdaiApiException    Unsuccessful response code from server
      * @throws ZdaiClientException Error preparing, sending or processing the request/response
      */
@@ -57,6 +58,7 @@ public class LanguageRequest {
      *
      * @param client The client to use to make the request
      * @param files  The files to classify
+     * @return An array of LanguageRequest objects, which can be used to check the status and results of the requests
      * @throws ZdaiApiException    Unsuccessful response code from server
      * @throws ZdaiClientException Error preparing, sending or processing the request/response
      */
@@ -111,6 +113,7 @@ public class LanguageRequest {
      * Given a ZdaiApiClient, return a LanguageResult indicating the status of the
      * request and the language result (if available).
      *
+     * @return A LanguageResult object, containing both the status of the request and, if available, the results.
      * @throws ZdaiApiException    Unsuccessful response code from server
      * @throws ZdaiClientException Error preparing, sending or processing the request/response
      */

@@ -60,6 +60,7 @@ public class OcrRequest {
      *
      * @param client The client to use to make the request
      * @param file   The file to analyze
+     * @return An OcrRequest object, which can be used to check the status and results of the request
      * @throws ZdaiApiException    Unsuccessful response code from server
      * @throws ZdaiClientException Error preparing, sending or processing the request/response
      */
@@ -77,6 +78,7 @@ public class OcrRequest {
      *
      * @param client The client to use to make the request
      * @param files  The files to analyze
+     * @return An array of OcrRequest objects, which can be used to check the status and results of the requests
      * @throws ZdaiApiException    Unsuccessful response code from server
      * @throws ZdaiClientException Error preparing, sending or processing the request/response
      */
@@ -120,6 +122,7 @@ public class OcrRequest {
      * Given a ZdaiApiClient, return a String indicating the status of the
      * request.
      *
+     * @return The request status as a String (one of "queued", "processing", "complete" or "failed")
      * @throws ZdaiApiException    Unsuccessful response code from server
      * @throws ZdaiClientException Error preparing, sending or processing the request/response
      */
@@ -138,6 +141,7 @@ public class OcrRequest {
      * Given a ZdaiApiClient, return the OCR text of the document as
      * a String.
      *
+     * @return The text of the document as a String
      * @throws ZdaiApiException    Unsuccessful response code from server
      * @throws ZdaiClientException Error preparing, sending or processing the request/response
      */
@@ -152,10 +156,8 @@ public class OcrRequest {
 
     /**
      * Get image results of an OCR request from the Zuva server
-     * <p>
-     * Given a ZdaiApiClient, return the OCR images of the document as
-     * a zip file containing a PNG image of each page.
      *
+     * @return A byte array of the OCR images of the document as a zip file containing a PNG image of each page.
      * @throws ZdaiApiException    Unsuccessful response code from server
      * @throws ZdaiClientException Error preparing, sending or processing the request/response
      */
@@ -165,10 +167,8 @@ public class OcrRequest {
 
     /**
      * Get layout results of an OCR request from the Zuva server
-     * <p>
-     * Given a ZdaiApiClient, return the layout of the document in a
-     * protobuff format
      *
+     * @return The layout of the document in a protobuff format, as a byte array
      * @throws ZdaiApiException    Unsuccessful response code from server
      * @throws ZdaiClientException Error preparing, sending or processing the request/response
      */

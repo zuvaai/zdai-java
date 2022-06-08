@@ -30,7 +30,7 @@ public class Example {
         String documentPath = System.getenv("ZUVA_DEMO_DOC");
         if (documentPath == null) {
             // default to looking for the demo file in the current working directory
-            documentPath = "CANADAGOOS-F1Securiti-2152017.PDF";
+            documentPath = "CANADAGOOS-F1Securiti-2152017.PDF2";
         }
 
         ZdaiApiClient client = new ZdaiApiClient(url, token);

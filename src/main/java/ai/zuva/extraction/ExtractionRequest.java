@@ -83,6 +83,7 @@ public class ExtractionRequest {
      * @param client   The client to use to make the request
      * @param file   The file to analyze
      * @param fieldIds The IDs of the fields to extract from the file
+     * @return An ExtractionRequest object, which can be used to check the status and results of the request
      * @throws ZdaiApiException    Unsuccessful response code from server
      * @throws ZdaiClientException Error preparing, sending or processing the request/response
      */
@@ -100,6 +101,7 @@ public class ExtractionRequest {
      * @param client   The client to use to make the request
      * @param files   The files to analyze
      * @param fieldIds The IDs of the fields to extract from the file
+     * @return An array of ExtractionRequest objects, which can be used to check the status and results of the requests
      * @throws ZdaiApiException    Unsuccessful response code from server
      * @throws ZdaiClientException Error preparing, sending or processing the request/response
      */
@@ -146,6 +148,7 @@ public class ExtractionRequest {
      * Given a ZdaiApiClient, return a String indicating the status of the
      * request.
      *
+     * @return The request status as a String (one of "queued", "processing", "complete" or "failed")
      * @throws ZdaiApiException    Unsuccessful response code from server
      * @throws ZdaiClientException Error preparing, sending or processing the request/response
      */
@@ -166,6 +169,7 @@ public class ExtractionRequest {
      * Given a ZdaiApiClient, return an array of ExtractionResults containing
      * the text and location of all extractions for each field.
      *
+     * @return An array of ExtractionResult objects, containing the results of the extraction
      * @throws ZdaiApiException    Unsuccessful response code from server
      * @throws ZdaiClientException Error preparing, sending or processing the request/response
      */
