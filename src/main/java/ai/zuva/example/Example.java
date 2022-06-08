@@ -39,19 +39,19 @@ public class Example {
         System.out.println(String.format("Uploaded file with id %s expires at %s", zdaiFile.fileId, zdaiFile.expiration));
 
         System.out.println("%nClassifying Document type:");
-        ClassificationRequest classificationRequest = ClassificationRequest.createClassificationRequest(client, zdaiFile);
+        ClassificationRequest classificationRequest = ClassificationRequest.createRequest(client, zdaiFile);
         System.out.println("Request ID: " + classificationRequest.requestId);
 
-        String status = StatusChecker.waitForStatus(() -> classificationRequest.getClassificationResult().status, 1, 60);
+        String status = StatusChecker.waitForStatus(() -> classificationRequest.getResult().status, 1, 60);
         if (status.equals("complete")) {
-            System.out.println("Document type is: " + classificationRequest.getClassificationResult().classification);
+            System.out.println("Document type is: " + classificationRequest.getResult().classification);
         }
         else {
             System.out.println("Classification failed.");
         }
 
         System.out.println("%nDetermining Document Language:");
-        LanguageRequest languageRequest = LanguageRequest.createLanguageRequest(client, zdaiFile);
+        LanguageRequest languageRequest = LanguageRequest.createRequest(client, zdaiFile);
         System.out.println("Request ID: " + languageRequest.requestId);
 
         status = StatusChecker.waitForStatus(() -> languageRequest.getResult().status, 1, 60);
@@ -69,7 +69,7 @@ public class Example {
                 "4d34c0ac-a3d4-4172-92d0-5fad8b3860a7"
         };
 
-        ExtractionRequest extractionRequest = ExtractionRequest.createExtractionRequest(client, zdaiFile, fieldIds);
+        ExtractionRequest extractionRequest = ExtractionRequest.createRequest(client, zdaiFile, fieldIds);
         System.out.println("Request ID: " + extractionRequest.requestId);
 
         status = StatusChecker.waitForStatus(() -> extractionRequest.getStatus(), 1, 60);
@@ -88,7 +88,7 @@ public class Example {
         }
 
         System.out.println("%nObtaining OCR results:");
-        OcrRequest ocrRequest = OcrRequest.createOcrRequest(client, zdaiFile);
+        OcrRequest ocrRequest = OcrRequest.createRequest(client, zdaiFile);
         System.out.println("Request ID: " + ocrRequest.requestId);
 
         status = StatusChecker.waitForStatus(() -> ocrRequest.getStatus(), 1, 60);

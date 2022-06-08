@@ -44,7 +44,7 @@ public class TrainingRequest {
      * @throws ZdaiApiException    Unsuccessful response code from server
      * @throws ZdaiClientException Error preparing, sending or processing the request/response
      */
-    public static TrainingRequest createTrainingRequest(ZdaiApiClient client, String fieldId, TrainingExample[] trainingExamples) throws ZdaiClientException, ZdaiApiException {
+    public static TrainingRequest createRequest(ZdaiApiClient client, String fieldId, TrainingExample[] trainingExamples) throws ZdaiClientException, ZdaiApiException {
         String body;
         try {
             body = client.mapper.writeValueAsString(trainingExamples);

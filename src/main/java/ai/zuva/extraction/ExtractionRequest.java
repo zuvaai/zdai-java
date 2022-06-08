@@ -87,8 +87,8 @@ public class ExtractionRequest {
      * @throws ZdaiApiException    Unsuccessful response code from server
      * @throws ZdaiClientException Error preparing, sending or processing the request/response
      */
-    public static ExtractionRequest createExtractionRequest(ZdaiApiClient client, ZdaiFile file, String[] fieldIds) throws ZdaiClientException, ZdaiApiException {
-        return createExtractionRequests(client, new ZdaiFile[]{file}, fieldIds)[0];
+    public static ExtractionRequest createRequest(ZdaiApiClient client, ZdaiFile file, String[] fieldIds) throws ZdaiClientException, ZdaiApiException {
+        return createRequests(client, new ZdaiFile[]{file}, fieldIds)[0];
     }
 
     /**
@@ -105,7 +105,7 @@ public class ExtractionRequest {
      * @throws ZdaiApiException    Unsuccessful response code from server
      * @throws ZdaiClientException Error preparing, sending or processing the request/response
      */
-    public static ExtractionRequest[] createExtractionRequests(ZdaiApiClient client, ZdaiFile[] files, String[] fieldIds) throws ZdaiClientException, ZdaiApiException {
+    public static ExtractionRequest[] createRequests(ZdaiApiClient client, ZdaiFile[] files, String[] fieldIds) throws ZdaiClientException, ZdaiApiException {
         String[] fileIds = new String[files.length];
 
         for (int i = 0; i < files.length; i++) {

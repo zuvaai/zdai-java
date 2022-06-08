@@ -133,7 +133,7 @@ public class Field {
      * @throws ZdaiClientException Error preparing, sending or processing the request/response
      */
     public TrainingRequest createTrainingRequest(TrainingExample[] trainingExamples) throws ZdaiClientException, ZdaiApiException {
-        return TrainingRequest.createTrainingRequest(client, fieldId, trainingExamples);
+        return TrainingRequest.createRequest(client, fieldId, trainingExamples);
     }
 
     static class CreateFieldRequest {

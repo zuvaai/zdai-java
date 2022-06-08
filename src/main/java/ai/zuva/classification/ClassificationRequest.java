@@ -41,8 +41,8 @@ public class ClassificationRequest {
      * @throws ZdaiApiException    Unsuccessful response code from server
      * @throws ZdaiClientException Error preparing, sending or processing the request/response
      */
-    public static ClassificationRequest createClassificationRequest(ZdaiApiClient client, ZdaiFile file) throws ZdaiClientException, ZdaiApiException {
-        return createClassificationRequests(client, new ZdaiFile[]{file})[0];
+    public static ClassificationRequest createRequest(ZdaiApiClient client, ZdaiFile file) throws ZdaiClientException, ZdaiApiException {
+        return createRequests(client, new ZdaiFile[]{file})[0];
     }
 
     /**
@@ -58,7 +58,7 @@ public class ClassificationRequest {
      * @throws ZdaiApiException    Unsuccessful response code from server
      * @throws ZdaiClientException Error preparing, sending or processing the request/response
      */
-    public static ClassificationRequest[] createClassificationRequests(ZdaiApiClient client, ZdaiFile[] files) throws ZdaiClientException, ZdaiApiException {
+    public static ClassificationRequest[] createRequests(ZdaiApiClient client, ZdaiFile[] files) throws ZdaiClientException, ZdaiApiException {
         String[] fileIds = new String[files.length];
 
         for (int i = 0; i < files.length; i++) {
@@ -113,7 +113,7 @@ public class ClassificationRequest {
      * @throws ZdaiApiException    Unsuccessful response code from server
      * @throws ZdaiClientException Error preparing, sending or processing the request/response
      */
-    public ClassificationResult getClassificationResult() throws ZdaiClientException, ZdaiApiException {
+    public ClassificationResult getResult() throws ZdaiClientException, ZdaiApiException {
         String response = client.authorizedGet("/classification/" + requestId, 200);
         try {
             return client.mapper.readValue(response, ClassificationResult.class);

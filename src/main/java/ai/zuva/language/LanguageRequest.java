@@ -45,8 +45,8 @@ public class LanguageRequest {
      * @throws ZdaiApiException    Unsuccessful response code from server
      * @throws ZdaiClientException Error preparing, sending or processing the request/response
      */
-    public static LanguageRequest createLanguageRequest(ZdaiApiClient client, ZdaiFile file) throws ZdaiClientException, ZdaiApiException {
-        return createLanguageRequests(client, new ZdaiFile[]{file})[0];
+    public static LanguageRequest createRequest(ZdaiApiClient client, ZdaiFile file) throws ZdaiClientException, ZdaiApiException {
+        return createRequests(client, new ZdaiFile[]{file})[0];
     }
 
     /**
@@ -62,7 +62,7 @@ public class LanguageRequest {
      * @throws ZdaiApiException    Unsuccessful response code from server
      * @throws ZdaiClientException Error preparing, sending or processing the request/response
      */
-    public static LanguageRequest[] createLanguageRequests(ZdaiApiClient client, ZdaiFile[] files) throws ZdaiClientException, ZdaiApiException {
+    public static LanguageRequest[] createRequests(ZdaiApiClient client, ZdaiFile[] files) throws ZdaiClientException, ZdaiApiException {
         String body;
         String[] fileIds = new String[files.length];
 

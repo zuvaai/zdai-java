@@ -28,7 +28,7 @@ class ClassificationRequestTest {
                     .willReturn(aResponse().withStatus(202).withBody(postResponseBody)));
 
             ZdaiApiClient client = new ZdaiApiClient("http://localhost:" + port, "my-token");
-            ClassificationRequest request = ClassificationRequest.createClassificationRequest(client, new ZdaiFile(client, fileId));
+            ClassificationRequest request = ClassificationRequest.createRequest(client, new ZdaiFile(client, fileId));
 
             assertEquals(requestId, request.requestId);
 
@@ -37,7 +37,7 @@ class ClassificationRequestTest {
             stubFor(get("/classification/" + requestId)
                     .willReturn(aResponse().withStatus(200).withBody(getResponseBody)));
 
-            ClassificationResult result = request.getClassificationResult();
+            ClassificationResult result = request.getResult();
 
             assertEquals("complete", result.status);
             assertEquals("Real Estate Agt", result.classification);

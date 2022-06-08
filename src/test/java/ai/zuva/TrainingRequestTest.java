@@ -36,7 +36,7 @@ public class TrainingRequestTest {
                 .willReturn(aResponse().withStatus(202).withBody(postResponseBody)));
 
         ZdaiApiClient client = new ZdaiApiClient("http://localhost:" + port, "my-token");
-        TrainingRequest request = TrainingRequest.createTrainingRequest(client, fieldId, td);
+        TrainingRequest request = TrainingRequest.createRequest(client, fieldId, td);
 
         assertEquals(requestId, request.requestId);
 
@@ -66,7 +66,7 @@ public class TrainingRequestTest {
         ZdaiApiClient client = new ZdaiApiClient("http://localhost:" + port, "my-token");
 
         assertThrows(Exception.class, () -> {
-            TrainingRequest.createTrainingRequest(client, fieldId, td);
+            TrainingRequest.createRequest(client, fieldId, td);
         });
     }
 

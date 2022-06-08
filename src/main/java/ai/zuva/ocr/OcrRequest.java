@@ -64,8 +64,8 @@ public class OcrRequest {
      * @throws ZdaiApiException    Unsuccessful response code from server
      * @throws ZdaiClientException Error preparing, sending or processing the request/response
      */
-    public static OcrRequest createOcrRequest(ZdaiApiClient client, ZdaiFile file) throws ZdaiClientException, ZdaiApiException {
-        return createOcrRequests(client, new ZdaiFile[]{file})[0];
+    public static OcrRequest createRequest(ZdaiApiClient client, ZdaiFile file) throws ZdaiClientException, ZdaiApiException {
+        return createRequests(client, new ZdaiFile[]{file})[0];
     }
 
     /**
@@ -82,7 +82,7 @@ public class OcrRequest {
      * @throws ZdaiApiException    Unsuccessful response code from server
      * @throws ZdaiClientException Error preparing, sending or processing the request/response
      */
-    public static OcrRequest[] createOcrRequests(ZdaiApiClient client, ZdaiFile[] files) throws ZdaiClientException, ZdaiApiException {
+    public static OcrRequest[] createRequests(ZdaiApiClient client, ZdaiFile[] files) throws ZdaiClientException, ZdaiApiException {
         String[] fileIds = new String[files.length];
 
         for (int i = 0; i < files.length; i++) {

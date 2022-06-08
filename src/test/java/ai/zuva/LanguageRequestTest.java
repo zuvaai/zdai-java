@@ -27,7 +27,7 @@ public class LanguageRequestTest {
                     .willReturn(aResponse().withStatus(202).withBody(postResponseBody)));
 
             ZdaiApiClient client = new ZdaiApiClient("http://localhost:" + port, "my-token");
-            LanguageRequest request = LanguageRequest.createLanguageRequest(client, new ZdaiFile(client, fileId));
+            LanguageRequest request = LanguageRequest.createRequest(client, new ZdaiFile(client, fileId));
 
             assertEquals(requestId, request.requestId);
 

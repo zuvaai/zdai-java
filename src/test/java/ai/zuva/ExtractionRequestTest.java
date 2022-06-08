@@ -36,7 +36,7 @@ public class ExtractionRequestTest {
                     .willReturn(aResponse().withStatus(202).withBody(postResponseBody)));
 
             ZdaiApiClient client = new ZdaiApiClient("http://localhost:" + port, "my-token");
-            ExtractionRequest request = ExtractionRequest.createExtractionRequest(client, new ZdaiFile(client, fileId), fieldIds);
+            ExtractionRequest request = ExtractionRequest.createRequest(client, new ZdaiFile(client, fileId), fieldIds);
 
             assertEquals(requestId, request.requestId);
 
