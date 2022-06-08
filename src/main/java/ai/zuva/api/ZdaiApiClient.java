@@ -87,7 +87,7 @@ public class ZdaiApiClient {
     }
 
     // Shared functionality of the requests which do have bodies
-    private String authorizedRequest(String method, String path, RequestBody body, int expectedStatusCode, String[] contentType) throws ZdaiClientException, ZdaiApiException {
+    private String authorizedRequest(String method, String path, RequestBody body, int expectedStatusCode) throws ZdaiClientException, ZdaiApiException {
         Request.Builder builder = new Request.Builder()
                 .url(this.baseURL + path)
                 .header("Authorization", "Bearer " + token)
@@ -119,7 +119,7 @@ public class ZdaiApiClient {
             mediaType = MediaType.parse(contentType[0]);
         }
         RequestBody requestBody = RequestBody.create(body, mediaType);
-        return authorizedRequest(method, path, requestBody, expectedStatusCode, contentType);
+        return authorizedRequest(method, path, requestBody, expectedStatusCode);
     }
 
     /**
@@ -145,7 +145,7 @@ public class ZdaiApiClient {
             mediaType = MediaType.parse(contentType[0]);
         }
         RequestBody requestBody = RequestBody.create(body, mediaType);
-        return authorizedRequest(method, path, requestBody, expectedStatusCode, contentType);
+        return authorizedRequest(method, path, requestBody, expectedStatusCode);
     }
 
     /**

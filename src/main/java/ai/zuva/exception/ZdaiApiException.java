@@ -22,7 +22,7 @@ public class ZdaiApiException extends Exception {
     }
 
     public ZdaiApiException(ObjectMapper mapper, String method, String uri, int statusCode, String body) {
-        super(String.format("%s %s failed with status code %s.\nMessage:\n%s", method, uri, statusCode, body));
+        super(String.format("%s %s failed with status code %s.%nMessage:%n%s", method, uri, statusCode, body));
 
         this.method = method;
         this.uri = uri;

@@ -52,7 +52,6 @@ public class TrainingRequestTest {
     void requestTrainingErrorTest(WireMockRuntimeInfo wmRuntimeInfo) throws Exception {
         int port = wmRuntimeInfo.getHttpPort();
         String fieldId = "2efa79d4-854d-46de-8087-f70778157dbf";
-        String requestId = "c71qfbbo2ua8dqja2d70";
 
         String postRequestBody = TestHelpers.resourceAsString(this, "training-request.json");
         String postResponseBody = TestHelpers.resourceAsString(this, "training-request-error.json");

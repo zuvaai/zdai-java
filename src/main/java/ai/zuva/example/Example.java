@@ -38,7 +38,7 @@ public class Example {
         ZdaiFile zdaiFile = ZdaiFile.submitFile(client, new File(documentPath));
         System.out.println(String.format("Uploaded file with id %s expires at %s", zdaiFile.fileId, zdaiFile.expiration));
 
-        System.out.println("\nClassifying Document type:");
+        System.out.println("%nClassifying Document type:");
         ClassificationRequest classificationRequest = ClassificationRequest.createClassificationRequest(client, zdaiFile);
         System.out.println("Request ID: " + classificationRequest.requestId);
 
@@ -50,7 +50,7 @@ public class Example {
             System.out.println("Classification failed.");
         }
 
-        System.out.println("\nDetermining Document Language:");
+        System.out.println("%nDetermining Document Language:");
         LanguageRequest languageRequest = LanguageRequest.createLanguageRequest(client, zdaiFile);
         System.out.println("Request ID: " + languageRequest.requestId);
 
@@ -62,7 +62,7 @@ public class Example {
             System.out.println("Classification failed.");
         }
 
-        System.out.println("\nPerforming Field extraction");
+        System.out.println("%nPerforming Field extraction");
         String[] fieldIds = new String[]{
                 "668ee3b5-e15a-439f-9475-05a21755a5c1",
                 "f743f363-1d8b-435b-8812-204a6d883834",
@@ -87,7 +87,7 @@ public class Example {
             }
         }
 
-        System.out.println("\nObtaining OCR results:");
+        System.out.println("%nObtaining OCR results:");
         OcrRequest ocrRequest = OcrRequest.createOcrRequest(client, zdaiFile);
         System.out.println("Request ID: " + ocrRequest.requestId);
 
@@ -100,7 +100,7 @@ public class Example {
                 outputStream.write(ocrRequest.getImages());
             }
         }
-        System.out.println("\nDeleting file from server.");
+        System.out.println("%nDeleting file from server.");
         zdaiFile.delete();
     }
 }

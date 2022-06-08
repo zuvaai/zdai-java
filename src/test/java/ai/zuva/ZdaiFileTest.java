@@ -10,7 +10,7 @@ import org.junit.jupiter.api.Test;
 import java.io.IOException;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.*;
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 
 @WireMockTest
 public class ZdaiFileTest {
@@ -76,15 +76,12 @@ public class ZdaiFileTest {
 
         ZdaiApiClient zClient = new ZdaiApiClient("http://localhost:"+ port, "my-token");
 
-        try {
-            ZdaiFile result = ZdaiFile.submitFile(zClient, content, "application/kiraocr");
-            assertEquals("c5e40of1qk1er7odm740", result.fileId);
-            assertEquals("application/kiraocr", result.attributes.contentType);
-            assertEquals("", result.permissions[0]);
-            assertEquals("2021-10-07T12:09:05Z", result.expiration);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
+
+        ZdaiFile result =assertDoesNotThrow(()->ZdaiFile.submitFile(zClient, content, "application/kiraocr"));
+        assertEquals("c5e40of1qk1er7odm740", result.fileId);
+        assertEquals("application/kiraocr", result.attributes.contentType);
+        assertEquals("", result.permissions[0]);
+        assertEquals("2021-10-07T12:09:05Z", result.expiration);
     }
     @Test
     void deleteFileSuccessTest(WireMockRuntimeInfo wmRuntimeInfo) {
@@ -95,12 +92,9 @@ public class ZdaiFileTest {
 
         ZdaiApiClient zClient = new ZdaiApiClient("http://localhost:"+ port, "my-token");
         ZdaiFile zdaiFile = new ZdaiFile(zClient,"123");
-        try {
-            // Implied success if no error is thrown
-            zdaiFile.delete();
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
+
+        // Implied success if no error is thrown
+        assertDoesNotThrow(()->zdaiFile.delete());
     }
 
     @Test
@@ -113,12 +107,8 @@ public class ZdaiFileTest {
 
         ZdaiApiClient zClient = new ZdaiApiClient("http://localhost:"+ port, "my-token");
         ZdaiFile zdaiFile = new ZdaiFile(zClient,"123");
-        try {
-            // Implied success if no error is thrown
-            zdaiFile.delete();
-        } catch (ZdaiApiException e) {
-            assertEquals(404, e.statusCode);
-            // assertEquals("file-not-found", e.code);
-        }
+
+        ZdaiApiException thrown = assertThrows(ZdaiApiException.class, ()->zdaiFile.delete());
+        assertEquals(404, thrown.statusCode);
     }
 }
