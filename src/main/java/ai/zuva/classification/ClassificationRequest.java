@@ -78,7 +78,7 @@ public class ClassificationRequest {
             ClassificationResultsBody resp = client.mapper.readValue(response, ClassificationResultsBody.class);
             ClassificationRequest[] classificationRequests = new ClassificationRequest[resp.results.length];
             for (int i = 0; i < classificationRequests.length; i++) {
-                classificationRequests[i] = new ClassificationRequest(client, files[i].fileId, resp.results[i].requestId);
+                classificationRequests[i] = new ClassificationRequest(client, resp.results[i].fileId, resp.results[i].requestId);
             }
             return classificationRequests;
         } catch (JsonProcessingException e) {

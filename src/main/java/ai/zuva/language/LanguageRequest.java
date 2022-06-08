@@ -82,7 +82,7 @@ public class LanguageRequest {
             LanguageResults resp = client.mapper.readValue(response, LanguageResults.class);
             LanguageRequest[] languageRequests = new LanguageRequest[resp.results.length];
             for (int i = 0; i < languageRequests.length; i++) {
-                languageRequests[i] = new LanguageRequest(client, files[i].fileId, resp.results[i].requestId);
+                languageRequests[i] = new LanguageRequest(client, resp.results[i].fileId, resp.results[i].requestId);
             }
             return languageRequests;
         } catch (JsonProcessingException e) {

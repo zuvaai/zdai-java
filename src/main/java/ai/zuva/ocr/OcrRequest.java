@@ -102,7 +102,7 @@ public class OcrRequest {
             OcrStatuses resp = client.mapper.readValue(response, OcrStatuses.class);
             OcrRequest[] ocrRequests = new OcrRequest[resp.statuses.length];
             for (int i = 0; i < ocrRequests.length; i++) {
-                ocrRequests[i] = new OcrRequest(client, files[i].fileId, resp.statuses[i].requestId);
+                ocrRequests[i] = new OcrRequest(client, resp.statuses[i].fileId, resp.statuses[i].requestId);
             }
             return ocrRequests;
         } catch (JsonProcessingException e) {
