@@ -74,14 +74,7 @@ public class Field {
      * @throws ZdaiClientException Error preparing, sending or processing the request/response
      */
     public void updateMetadata(String name, String description) throws ZdaiClientException, ZdaiApiException {
-        String body;
-        try {
-            body = client.mapper.writeValueAsString(new NameAndDescription(name, description));
-        } catch (JsonProcessingException e) {
-            throw (new ZdaiClientException("Unable to create request body", e));
-        }
-
-        client.authorizedRequest("PUT", String.format("/fields/%s/metadata", fieldId), body, 204);
+        client.authorizedJsonRequest("PUT", String.format("/fields/%s/metadata", fieldId), new NameAndDescription(name, description), 204);
     }
 
     /**
@@ -164,14 +157,7 @@ public class Field {
      * @throws ZdaiClientException Error preparing, sending or processing the request/response
      */
     public static Field createField(ZdaiApiClient client, String name, String description) throws ZdaiClientException, ZdaiApiException {
-        String body;
-        try {
-            body = client.mapper.writeValueAsString(new CreateFieldRequest(name, description));
-        } catch (JsonProcessingException e) {
-            throw (new ZdaiClientException("Unable to create request body", e));
-        }
-
-        String response = client.authorizedRequest("POST", "/fields", body, 201);
+        String response = client.authorizedJsonRequest("POST", "/fields", new CreateFieldRequest(name, description), 201);
 
         try {
             return new Field(client, client.mapper.readValue(response, CreateFieldResponse.class).fieldId);

@@ -2,6 +2,7 @@ package ai.zuva.api;
 
 import ai.zuva.exception.ZdaiClientException;
 import ai.zuva.exception.ZdaiApiException;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import okhttp3.*;
 
@@ -26,6 +27,14 @@ public class ZdaiApiClient {
         this.token = token;
         client = new OkHttpClient();
         mapper = new ObjectMapper();
+    }
+
+    private String JsonToStringBody(Object obj) throws ZdaiClientException {
+        try {
+            return this.mapper.writeValueAsString(obj);
+        } catch (JsonProcessingException e) {
+            throw (new ZdaiClientException("Error creating request body", e));
+        }
     }
 
     private String sendRequest(Request request, int expectedStatusCode) throws ZdaiClientException, ZdaiApiException {
@@ -94,6 +103,28 @@ public class ZdaiApiClient {
                 .method(method, body);
 
         return sendRequest(builder.build(), expectedStatusCode);
+    }
+
+    /**
+     * Makes an authorized Zuva API request with a JSON body, returning the body of the (successful) response as a String.
+     * <p>
+     * This function makes a request using the specified HTTP method to the specified URI (comprised of the Client's
+     * baseURL + the given path), adding the required authorization header (using the client's token). If the status
+     * code of the response matches expectedStatusCode, the response body is returned as a String. Otherwise, a
+     * ZdaiApiException is thrown.
+     *
+     * @param method The HTTP method to use
+     * @param path The path part of the URI to send the request to
+     * @param body The request body as a String
+     * @param expectedStatusCode The status code expected for a successful response
+     * @return The response body as a String, if the request was successful
+     * @throws ZdaiClientException There was a problem sending the request, such as an IOException or InterruptedException
+     * @throws ZdaiApiException The status code in the response was anything other than expectedStatusCode
+     */
+    public String authorizedJsonRequest(String method, String path, Object body, int expectedStatusCode) throws ZdaiClientException, ZdaiApiException {
+        String stringBody = this.JsonToStringBody(body);
+        RequestBody requestBody = RequestBody.create(stringBody, null);
+        return authorizedRequest(method, path, requestBody, expectedStatusCode);
     }
 
     /**

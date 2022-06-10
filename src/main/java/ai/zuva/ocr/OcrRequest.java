@@ -43,10 +43,11 @@ public class OcrRequest {
     }
 
     static class OcrRequestBody {
-        public String[] file_ids;
+        @JsonProperty("file_ids")
+        public String[] fileIds;
 
-        public OcrRequestBody(String[] fileIds) {
-            this.file_ids = fileIds;
+        public OcrRequestBody(ZdaiFile[] files) {
+            this.fileIds = ZdaiFile.toFileIdArray(files);
         }
     }
 
@@ -83,20 +84,7 @@ public class OcrRequest {
      * @throws ZdaiClientException Error preparing, sending or processing the request/response
      */
     public static OcrRequest[] createRequests(ZdaiApiClient client, ZdaiFile[] files) throws ZdaiClientException, ZdaiApiException {
-        String[] fileIds = new String[files.length];
-
-        for (int i = 0; i < files.length; i++) {
-            fileIds[i] = files[i].fileId;
-        }
-
-        String body;
-        try {
-            body = client.mapper.writeValueAsString(new OcrRequestBody(fileIds));
-        } catch (JsonProcessingException e) {
-            throw (new ZdaiClientException("Unable to create request body", e));
-        }
-
-        String response = client.authorizedRequest("POST", "/ocr", body, 202);
+        String response = client.authorizedJsonRequest("POST", "/ocr", new OcrRequestBody(files), 202);
 
         try {
             OcrStatuses resp = client.mapper.readValue(response, OcrStatuses.class);

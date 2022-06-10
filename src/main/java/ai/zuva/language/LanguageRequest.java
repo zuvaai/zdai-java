@@ -21,8 +21,8 @@ public class LanguageRequest {
         @JsonProperty("file_ids")
         public String[] fileIds;
 
-        public LanguageRequestBody(String[] fileIds) {
-            this.fileIds = fileIds;
+        public LanguageRequestBody(ZdaiFile[] files) {
+            this.fileIds = ZdaiFile.toFileIdArray(files);
         }
     }
 
@@ -63,20 +63,7 @@ public class LanguageRequest {
      * @throws ZdaiClientException Error preparing, sending or processing the request/response
      */
     public static LanguageRequest[] createRequests(ZdaiApiClient client, ZdaiFile[] files) throws ZdaiClientException, ZdaiApiException {
-        String body;
-        String[] fileIds = new String[files.length];
-
-        for (int i = 0; i < files.length; i++) {
-            fileIds[i] = files[i].fileId;
-        }
-
-        try {
-            body = client.mapper.writeValueAsString(new LanguageRequestBody(fileIds));
-        } catch (JsonProcessingException e) {
-            throw (new ZdaiClientException("Error creating request body", e));
-        }
-
-        String response = client.authorizedRequest("POST", "/language", body, 202);
+        String response = client.authorizedJsonRequest("POST", "/language", new LanguageRequestBody(files), 202);
 
         try {
             LanguageResults resp = client.mapper.readValue(response, LanguageResults.class);

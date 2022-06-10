@@ -45,16 +45,9 @@ public class TrainingRequest {
      * @throws ZdaiClientException Error preparing, sending or processing the request/response
      */
     public static TrainingRequest createRequest(ZdaiApiClient client, String fieldId, TrainingExample[] trainingExamples) throws ZdaiClientException, ZdaiApiException {
-        String body;
-        try {
-            body = client.mapper.writeValueAsString(trainingExamples);
-        } catch (JsonProcessingException e) {
-            throw (new ZdaiClientException("Unable to create request body", e));
-        }
-
-        String response = client.authorizedRequest("POST",
+        String response = client.authorizedJsonRequest("POST",
                 String.format("/fields/%s/train", fieldId),
-                body,
+                trainingExamples,
                 202);
 
         try {

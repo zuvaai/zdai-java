@@ -17,8 +17,8 @@ public class ClassificationRequest {
         @JsonProperty("file_ids")
         public String[] fileIds;
 
-        public ClassificationRequestBody(String[] fileIds) {
-            this.fileIds = fileIds;
+        public ClassificationRequestBody(ZdaiFile[] files) {
+            this.fileIds = ZdaiFile.toFileIdArray(files);
         }
     }
 
@@ -59,20 +59,7 @@ public class ClassificationRequest {
      * @throws ZdaiClientException Error preparing, sending or processing the request/response
      */
     public static ClassificationRequest[] createRequests(ZdaiApiClient client, ZdaiFile[] files) throws ZdaiClientException, ZdaiApiException {
-        String[] fileIds = new String[files.length];
-
-        for (int i = 0; i < files.length; i++) {
-            fileIds[i] = files[i].fileId;
-        }
-
-        String body;
-        try {
-            body = client.mapper.writeValueAsString(new ClassificationRequestBody(fileIds));
-        } catch (JsonProcessingException e) {
-            throw (new ZdaiClientException("Error creating request body", e));
-        }
-
-        String response = client.authorizedRequest("POST", "/classification", body, 202);
+        String response = client.authorizedJsonRequest("POST", "/classification", new ClassificationRequestBody(files), 202);
 
         try {
             ClassificationResultsBody resp = client.mapper.readValue(response, ClassificationResultsBody.class);

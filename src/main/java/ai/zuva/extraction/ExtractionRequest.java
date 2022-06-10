@@ -32,8 +32,8 @@ public class ExtractionRequest {
         @JsonProperty("field_ids")
         public String[] fieldIds;
 
-        public ExtractionRequestBody(String[] fileIds, String[] fieldIds) {
-            this.fileIds = fileIds;
+        public ExtractionRequestBody(ZdaiFile[] files, String[] fieldIds) {
+            this.fileIds = ZdaiFile.toFileIdArray(files);
             this.fieldIds = fieldIds;
         }
     }
@@ -106,19 +106,7 @@ public class ExtractionRequest {
      * @throws ZdaiClientException Error preparing, sending or processing the request/response
      */
     public static ExtractionRequest[] createRequests(ZdaiApiClient client, ZdaiFile[] files, String[] fieldIds) throws ZdaiClientException, ZdaiApiException {
-        String[] fileIds = new String[files.length];
-
-        for (int i = 0; i < files.length; i++) {
-            fileIds[i] = files[i].fileId;
-        }
-
-        String body;
-        try {
-            body = client.mapper.writeValueAsString(new ExtractionRequestBody(fileIds, fieldIds));
-        } catch (JsonProcessingException e) {
-            throw (new ZdaiClientException("Unable to create request body", e));
-        }
-        String response = client.authorizedRequest("POST", "/extraction", body, 202);
+        String response = client.authorizedJsonRequest("POST", "/extraction", new ExtractionRequestBody(files, fieldIds), 202);
 
         try {
             ExtractionStatuses resp = client.mapper.readValue(response, ExtractionStatuses.class);

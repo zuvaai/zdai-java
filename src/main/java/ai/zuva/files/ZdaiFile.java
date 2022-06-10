@@ -65,4 +65,14 @@ public class ZdaiFile {
     public void delete() throws ZdaiClientException, ZdaiApiException {
         client.authorizedDelete("/files/" + fileId, 204);
     }
+
+    // Returns an array of the file IDs of the given files
+    public static String[] toFileIdArray(ZdaiFile[] files) {
+        String[] fileIds = new String[files.length];
+
+        for (int i = 0; i < files.length; i++) {
+            fileIds[i] = files[i].fileId;
+        }
+        return fileIds;
+    }
 }
