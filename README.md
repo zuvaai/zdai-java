@@ -82,7 +82,7 @@ and fetching the results of OCR. The example expect certain environment variable
 
 ## Exceptions
 
-Two custom exception classes are defined:
+The general `ZdaiException` class has two subclasses:
 - `ZdaiApiException` captures unexpected status codes (4xx, 5xx) returned from the API request and includes
 the status code and response from the server
 - `ZdaiClientException` captures all other errors and always includes the original `cause` (e.g. `IOException`,`JsonProcessingException` etc.)
