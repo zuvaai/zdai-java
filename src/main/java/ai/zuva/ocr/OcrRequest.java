@@ -1,11 +1,9 @@
 package ai.zuva.ocr;
 
-import ai.zuva.ProcessingState;
+import ai.zuva.api.ZdaiApiClient;
 import ai.zuva.exception.ZdaiApiException;
 import ai.zuva.exception.ZdaiClientException;
-import ai.zuva.exception.ZdaiError;
 import ai.zuva.files.ZdaiFile;
-import ai.zuva.api.ZdaiApiClient;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -15,21 +13,6 @@ public class OcrRequest {
     public final String fileId;
 
     private final ZdaiApiClient client;
-
-    @JsonIgnoreProperties(ignoreUnknown = true)
-    static class OcrStatus {
-        @JsonProperty("file_id")
-        public String fileId;
-
-        public ProcessingState status;
-
-        @JsonProperty("request_id")
-        public String requestId;
-
-        // Expect this to be populated only when status is failed
-        @JsonProperty("error")
-        public ZdaiError error;
-    }
 
     @JsonIgnoreProperties(ignoreUnknown = true)
     static class OcrStatuses {
@@ -116,10 +99,10 @@ public class OcrRequest {
      * @throws ZdaiApiException    Unsuccessful response code from server
      * @throws ZdaiClientException Error preparing, sending or processing the request/response
      */
-    public ProcessingState getStatus() throws ZdaiClientException, ZdaiApiException {
+    public OcrStatus getStatus() throws ZdaiClientException, ZdaiApiException {
         String response = client.authorizedGet("/ocr/" + requestId, 200);
         try {
-            return client.mapper.readValue(response, OcrStatus.class).status;
+            return client.mapper.readValue(response, OcrStatus.class);
         } catch (JsonProcessingException e) {
             throw (new ZdaiClientException("Unable to parse response", e));
         }

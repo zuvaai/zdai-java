@@ -1,11 +1,11 @@
 package ai.zuva.extraction;
 
 import ai.zuva.ProcessingState;
+import ai.zuva.api.ZdaiApiClient;
 import ai.zuva.exception.ZdaiApiException;
 import ai.zuva.exception.ZdaiClientException;
 import ai.zuva.exception.ZdaiError;
 import ai.zuva.files.ZdaiFile;
-import ai.zuva.api.ZdaiApiClient;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -51,24 +51,6 @@ public class ExtractionRequest {
     }
 
     @JsonIgnoreProperties(ignoreUnknown = true)
-    static class ExtractionStatus {
-        @JsonProperty("file_id")
-        public String fileId;
-
-        public ProcessingState status;
-
-        @JsonProperty("request_id")
-        public String requestId;
-
-        @JsonProperty("field_ids")
-        public String[] fieldIds;
-
-        // Expect this to be populated only when status is failed
-        @JsonProperty("error")
-        public ZdaiError error;
-    }
-
-    @JsonIgnoreProperties(ignoreUnknown = true)
     static class ExtractionStatuses {
         @JsonProperty("file_ids")
         public ExtractionStatus[] statuses;
@@ -82,7 +64,7 @@ public class ExtractionRequest {
      * the specified fields from the file
      *
      * @param client   The client to use to make the request
-     * @param file   The file to analyze
+     * @param file     The file to analyze
      * @param fieldIds The IDs of the fields to extract from the file
      * @return An ExtractionRequest object, which can be used to check the status and results of the request
      * @throws ZdaiApiException    Unsuccessful response code from server
@@ -100,7 +82,7 @@ public class ExtractionRequest {
      * the specified fields from the file
      *
      * @param client   The client to use to make the request
-     * @param files   The files to analyze
+     * @param files    The files to analyze
      * @param fieldIds The IDs of the fields to extract from the file
      * @return An array of ExtractionRequest objects, which can be used to check the status and results of the requests
      * @throws ZdaiApiException    Unsuccessful response code from server
@@ -141,12 +123,11 @@ public class ExtractionRequest {
      * @throws ZdaiApiException    Unsuccessful response code from server
      * @throws ZdaiClientException Error preparing, sending or processing the request/response
      */
-    public ProcessingState getStatus() throws ZdaiClientException, ZdaiApiException {
+    public ExtractionStatus getStatus() throws ZdaiClientException, ZdaiApiException {
         String response = client.authorizedGet(String.format("/extraction/%s", requestId), 200);
 
         try {
-            status = client.mapper.readValue(response, ExtractionStatus.class).status;
-            return status;
+            return client.mapper.readValue(response, ExtractionStatus.class);
         } catch (JsonProcessingException e) {
             throw (new ZdaiClientException("Unable to parse response", e));
         }

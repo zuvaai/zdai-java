@@ -1,6 +1,7 @@
 package ai.zuva.example;
 
 import ai.zuva.ProcessingState;
+import ai.zuva.RequestStatus;
 import ai.zuva.classification.ClassificationRequest;
 import ai.zuva.extraction.ExtractionRequest;
 import ai.zuva.fields.Field;
@@ -39,11 +40,11 @@ public class Example {
         ZdaiFile zdaiFile = ZdaiFile.submitFile(client, new File(documentPath));
         System.out.println(String.format("Uploaded file with id %s expires at %s", zdaiFile.fileId, zdaiFile.expiration));
 
-        System.out.println("%nClassifying Document type:");
+        System.out.printf("%nClassifying Document type:%n");
         ClassificationRequest classificationRequest = ClassificationRequest.createRequest(client, zdaiFile);
         System.out.println("Request ID: " + classificationRequest.requestId);
 
-        ProcessingState status = StatusChecker.waitForStatus(() -> classificationRequest.getResult().status, 1, 60);
+        RequestStatus status = StatusChecker.waitForStatus(() -> classificationRequest.getResult(), 1, 60);
         if (status.isComplete()) {
             System.out.println("Document type is: " + classificationRequest.getResult().classification);
         }
@@ -55,7 +56,7 @@ public class Example {
         LanguageRequest languageRequest = LanguageRequest.createRequest(client, zdaiFile);
         System.out.println("Request ID: " + languageRequest.requestId);
 
-        status = StatusChecker.waitForStatus(() -> languageRequest.getResult().status, 1, 60);
+        status = StatusChecker.waitForStatus(() -> languageRequest.getResult(), 1, 60);
         if (status.isComplete()) {
             System.out.println("Document language is: " + languageRequest.getResult().language);
         }

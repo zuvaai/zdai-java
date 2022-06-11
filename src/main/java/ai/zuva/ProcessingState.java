@@ -5,28 +5,28 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 public enum ProcessingState {
     @JsonProperty("queued")
-    QUEUED(){
+    QUEUED("queued"){
         @Override
         public boolean isQueued() {
             return true;
         }
     },
     @JsonProperty("processing")
-    PROCESSING{
+    PROCESSING("processing"){
         @Override
         public boolean isProcessing() {
             return true;
         }
     },
     @JsonProperty("complete")
-    COMPLETE{
+    COMPLETE("complete"){
         @Override
         public boolean isComplete() {
             return true;
         }
     },
     @JsonProperty("failed")
-    FAILED{
+    FAILED("failed"){
         @Override
         public boolean isFailed() {
             return true;
@@ -34,7 +34,7 @@ public enum ProcessingState {
     },
     // Future-proofing in case more intermediate processing states are exposed in the future
     @JsonEnumDefaultValue
-    UNRECOGNIZED_STATUS;
+    UNRECOGNIZED_STATUS("unrecognized status");
 
     public boolean isQueued() {
         return false;
@@ -47,5 +47,16 @@ public enum ProcessingState {
     }
     public boolean isFailed() {
         return false;
+    }
+
+    private final String value;
+
+    ProcessingState(final String value) {
+        this.value = value;
+    }
+
+    @Override
+    public String toString() {
+        return this.value;
     }
 }

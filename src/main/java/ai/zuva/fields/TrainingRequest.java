@@ -1,6 +1,7 @@
 package ai.zuva.fields;
 
 import ai.zuva.ProcessingState;
+import ai.zuva.RequestStatus;
 import ai.zuva.exception.ZdaiApiException;
 import ai.zuva.exception.ZdaiClientException;
 import ai.zuva.exception.ZdaiError;
@@ -14,21 +15,8 @@ public class TrainingRequest {
     public final ZdaiApiClient client;
     public final String fieldId;
     public final String requestId;
-    public ProcessingState status;
+    public TrainingStatus status;
     public ZdaiError error;
-
-    @JsonIgnoreProperties(ignoreUnknown = true)
-    static class TrainingStatus {
-        @JsonProperty("field_id")
-        public String fieldId;
-        public ProcessingState status;
-        @JsonProperty("request_id")
-        public String requestId;
-
-        // Expect this to be populated only when status is failed
-        @JsonProperty("error")
-        public ZdaiError error;
-    }
 
     /**
      * Send a request to train a field from examples
@@ -80,27 +68,25 @@ public class TrainingRequest {
         this.client = client;
         this.fieldId = trainingStatus.fieldId;
         this.requestId = trainingStatus.requestId;
-        this.status = trainingStatus.status;
-        this.error = trainingStatus.error;
+        this.status = trainingStatus;
     }
 
     /**
      * Get status of a training request from the Zuva server
      * <p>
-     * Given a ZdaiApiClient, return a String indicating the status of the
-     * request.
+     * Given a ZdaiApiClient, make an API request for the status of the training request,
+     * returning a TrainingStatus object.
      *
-     * @return The request status as a String (one of "queued", "processing", "complete" or "failed")
+     * @return The request status
      * @throws ZdaiApiException    Unsuccessful response code from server
      * @throws ZdaiClientException Error preparing, sending or processing the request/response
      */
-    public ProcessingState getStatus() throws ZdaiClientException, ZdaiApiException {
+    public TrainingStatus getStatus() throws ZdaiClientException, ZdaiApiException {
         String response = client.authorizedGet(String.format("/fields/%s/train/%s", fieldId, requestId), 200);
         try {
             TrainingStatus status = client.mapper.readValue(response, TrainingStatus.class);
-            this.status = status.status;
-            this.error = status.error;
-            return this.status;
+            this.status = status;
+            return status;
         } catch (JsonProcessingException e) {
             throw (new ZdaiClientException("Unable to parse response", e));
         }
