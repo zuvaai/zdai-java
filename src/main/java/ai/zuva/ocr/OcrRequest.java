@@ -1,5 +1,6 @@
 package ai.zuva.ocr;
 
+import ai.zuva.ProcessingState;
 import ai.zuva.exception.ZdaiApiException;
 import ai.zuva.exception.ZdaiClientException;
 import ai.zuva.exception.ZdaiError;
@@ -20,7 +21,8 @@ public class OcrRequest {
         @JsonProperty("file_id")
         public String fileId;
 
-        public String status;
+        public ProcessingState status;
+
         @JsonProperty("request_id")
         public String requestId;
 
@@ -114,7 +116,7 @@ public class OcrRequest {
      * @throws ZdaiApiException    Unsuccessful response code from server
      * @throws ZdaiClientException Error preparing, sending or processing the request/response
      */
-    public String getStatus() throws ZdaiClientException, ZdaiApiException {
+    public ProcessingState getStatus() throws ZdaiClientException, ZdaiApiException {
         String response = client.authorizedGet("/ocr/" + requestId, 200);
         try {
             return client.mapper.readValue(response, OcrStatus.class).status;

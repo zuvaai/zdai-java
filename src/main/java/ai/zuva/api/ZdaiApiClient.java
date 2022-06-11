@@ -3,6 +3,7 @@ package ai.zuva.api;
 import ai.zuva.exception.ZdaiClientException;
 import ai.zuva.exception.ZdaiApiException;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import okhttp3.*;
 
@@ -27,6 +28,7 @@ public class ZdaiApiClient {
         this.token = token;
         client = new OkHttpClient();
         mapper = new ObjectMapper();
+        mapper.enable(DeserializationFeature.READ_UNKNOWN_ENUM_VALUES_USING_DEFAULT_VALUE);
     }
 
     private String JsonToStringBody(Object obj) throws ZdaiClientException {

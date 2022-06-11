@@ -1,5 +1,6 @@
 package ai.zuva.extraction;
 
+import ai.zuva.ProcessingState;
 import ai.zuva.exception.ZdaiApiException;
 import ai.zuva.exception.ZdaiClientException;
 import ai.zuva.exception.ZdaiError;
@@ -13,7 +14,7 @@ public class ExtractionRequest {
     public final String fileId;
     public final String[] fieldIds;
     public final String requestId;
-    public String status;
+    public ProcessingState status;
     public ZdaiError error;
     private final ZdaiApiClient client;
 
@@ -54,7 +55,7 @@ public class ExtractionRequest {
         @JsonProperty("file_id")
         public String fileId;
 
-        public String status;
+        public ProcessingState status;
 
         @JsonProperty("request_id")
         public String requestId;
@@ -140,7 +141,7 @@ public class ExtractionRequest {
      * @throws ZdaiApiException    Unsuccessful response code from server
      * @throws ZdaiClientException Error preparing, sending or processing the request/response
      */
-    public String getStatus() throws ZdaiClientException, ZdaiApiException {
+    public ProcessingState getStatus() throws ZdaiClientException, ZdaiApiException {
         String response = client.authorizedGet(String.format("/extraction/%s", requestId), 200);
 
         try {

@@ -8,8 +8,7 @@ import com.github.tomakehurst.wiremock.junit5.WireMockTest;
 import org.junit.jupiter.api.Test;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.*;
-import static org.junit.jupiter.api.Assertions.assertArrayEquals;
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 
 @WireMockTest
 class OcrRequestTest {
@@ -35,7 +34,7 @@ class OcrRequestTest {
         stubFor(get("/ocr/" + requestId)
                 .willReturn(aResponse().withStatus(200).withBody(getStatusResponseBody)));
 
-        assertEquals("complete", request.getStatus());
+        assertTrue(request.getStatus().isComplete());
 
 
         String getTextResponseBody = TestHelpers.resourceAsString(this, "ocr-text.json");

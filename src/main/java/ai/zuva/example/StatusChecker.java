@@ -1,19 +1,21 @@
 package ai.zuva.example;
 
+import ai.zuva.ProcessingState;
+
 import java.time.Instant;
 
 interface StatusCheck {
-    String checkStatus() throws Exception;
+    ProcessingState checkStatus() throws Exception;
 }
 
 public class StatusChecker {
-    static String waitForStatus(StatusCheck checker, long pollingIntervalSeconds, long timeoutSeconds) throws Exception {
+    static ProcessingState waitForStatus(StatusCheck checker, long pollingIntervalSeconds, long timeoutSeconds) throws Exception {
         long tStart = Instant.now().toEpochMilli();
         System.out.print("Wait for processing");
         while (Instant.now().toEpochMilli() - tStart < timeoutSeconds * 1000) {
-            String status = checker.checkStatus();
+            ProcessingState status = checker.checkStatus();
             System.out.print(".");
-            if (status.equals("complete") || status.equals("failed")) {
+            if (status.isComplete()|| status.isFailed()) {
                 System.out.println(status);
                 return status;
             }

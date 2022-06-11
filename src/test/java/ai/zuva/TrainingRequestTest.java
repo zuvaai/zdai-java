@@ -10,8 +10,7 @@ import com.github.tomakehurst.wiremock.junit5.WireMockTest;
 import org.junit.jupiter.api.Test;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.*;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 
 @WireMockTest
 public class TrainingRequestTest {
@@ -45,7 +44,7 @@ public class TrainingRequestTest {
         stubFor(get(String.format("/fields/%s/train/%s", fieldId, requestId))
                 .willReturn(ok().withBody(statusResponseBody)));
 
-        assertEquals("complete", request.getStatus());
+        assertTrue(request.getStatus().isComplete());
     }
 
     @Test

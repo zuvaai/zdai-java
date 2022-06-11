@@ -1,5 +1,6 @@
 package ai.zuva.fields;
 
+import ai.zuva.ProcessingState;
 import ai.zuva.exception.ZdaiApiException;
 import ai.zuva.exception.ZdaiClientException;
 import ai.zuva.exception.ZdaiError;
@@ -13,14 +14,14 @@ public class TrainingRequest {
     public final ZdaiApiClient client;
     public final String fieldId;
     public final String requestId;
-    public String status;
+    public ProcessingState status;
     public ZdaiError error;
 
     @JsonIgnoreProperties(ignoreUnknown = true)
     static class TrainingStatus {
         @JsonProperty("field_id")
         public String fieldId;
-        public String status;
+        public ProcessingState status;
         @JsonProperty("request_id")
         public String requestId;
 
@@ -93,7 +94,7 @@ public class TrainingRequest {
      * @throws ZdaiApiException    Unsuccessful response code from server
      * @throws ZdaiClientException Error preparing, sending or processing the request/response
      */
-    public String getStatus() throws ZdaiClientException, ZdaiApiException {
+    public ProcessingState getStatus() throws ZdaiClientException, ZdaiApiException {
         String response = client.authorizedGet(String.format("/fields/%s/train/%s", fieldId, requestId), 200);
         try {
             TrainingStatus status = client.mapper.readValue(response, TrainingStatus.class);

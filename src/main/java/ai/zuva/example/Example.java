@@ -1,5 +1,6 @@
 package ai.zuva.example;
 
+import ai.zuva.ProcessingState;
 import ai.zuva.classification.ClassificationRequest;
 import ai.zuva.extraction.ExtractionRequest;
 import ai.zuva.fields.Field;
@@ -42,8 +43,8 @@ public class Example {
         ClassificationRequest classificationRequest = ClassificationRequest.createRequest(client, zdaiFile);
         System.out.println("Request ID: " + classificationRequest.requestId);
 
-        String status = StatusChecker.waitForStatus(() -> classificationRequest.getResult().status, 1, 60);
-        if (status.equals("complete")) {
+        ProcessingState status = StatusChecker.waitForStatus(() -> classificationRequest.getResult().status, 1, 60);
+        if (status.isComplete()) {
             System.out.println("Document type is: " + classificationRequest.getResult().classification);
         }
         else {
@@ -55,7 +56,7 @@ public class Example {
         System.out.println("Request ID: " + languageRequest.requestId);
 
         status = StatusChecker.waitForStatus(() -> languageRequest.getResult().status, 1, 60);
-        if (status.equals("complete")) {
+        if (status.isComplete()) {
             System.out.println("Document language is: " + languageRequest.getResult().language);
         }
         else {
@@ -73,7 +74,7 @@ public class Example {
         System.out.println("Request ID: " + extractionRequest.requestId);
 
         status = StatusChecker.waitForStatus(() -> extractionRequest.getStatus(), 1, 60);
-        if (status.equals("complete")) {
+        if (status.isComplete()) {
             ExtractionResults[] extractions = extractionRequest.getResults();
 
 
@@ -92,7 +93,7 @@ public class Example {
         System.out.println("Request ID: " + ocrRequest.requestId);
 
         status = StatusChecker.waitForStatus(() -> ocrRequest.getStatus(), 1, 60);
-        if (status.equals("complete")) {
+        if (status.isComplete()) {
             System.out.println(String.format("Character count: %d", ocrRequest.getText().length()));
             System.out.println("Downloading and saving images as temp.zip");
 

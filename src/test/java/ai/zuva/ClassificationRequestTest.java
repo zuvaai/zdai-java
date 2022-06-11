@@ -39,7 +39,7 @@ class ClassificationRequestTest {
 
             ClassificationResult result = request.getResult();
 
-            assertEquals("complete", result.status);
+            assertTrue(result.status.isComplete());
             assertEquals("Real Estate Agt", result.classification);
             assertTrue(result.isContract);
 
