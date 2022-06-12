@@ -15,7 +15,7 @@ public class ZdaiApiClient {
     public final String baseURL;
     public final String token;
     public final OkHttpClient client;
-    public final ObjectMapper mapper;
+    private final ObjectMapper mapper;
 
     /**
      * Constructs a ZdaiApiClient to interface with the Zuva DocAI API
@@ -36,6 +36,14 @@ public class ZdaiApiClient {
             return this.mapper.writeValueAsString(obj);
         } catch (JsonProcessingException e) {
             throw (new ZdaiClientException("Error creating request body", e));
+        }
+    }
+
+    public <T> T jsonToObject(String s, Class<T> type) throws ZdaiClientException {
+        try {
+            return mapper.readValue(s, type);
+        } catch (JsonProcessingException e) {
+            throw (new ZdaiClientException("Unable to parse response", e));
         }
     }
 

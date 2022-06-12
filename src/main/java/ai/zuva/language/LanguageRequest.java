@@ -5,7 +5,6 @@ import ai.zuva.exception.ZdaiClientException;
 import ai.zuva.files.ZdaiFile;
 import ai.zuva.api.ZdaiApiClient;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.core.JsonProcessingException;
 
 public class LanguageRequest {
     /**
@@ -65,16 +64,12 @@ public class LanguageRequest {
     public static LanguageRequest[] createRequests(ZdaiApiClient client, ZdaiFile[] files) throws ZdaiClientException, ZdaiApiException {
         String response = client.authorizedJsonRequest("POST", "/language", new LanguageRequestBody(files), 202);
 
-        try {
-            LanguageResults resp = client.mapper.readValue(response, LanguageResults.class);
-            LanguageRequest[] languageRequests = new LanguageRequest[resp.results.length];
-            for (int i = 0; i < languageRequests.length; i++) {
-                languageRequests[i] = new LanguageRequest(client, resp.results[i].fileId, resp.results[i].requestId);
-            }
-            return languageRequests;
-        } catch (JsonProcessingException e) {
-            throw (new ZdaiClientException("Unable to parse response", e));
+        LanguageResults resp = client.jsonToObject(response, LanguageResults.class);
+        LanguageRequest[] languageRequests = new LanguageRequest[resp.results.length];
+        for (int i = 0; i < languageRequests.length; i++) {
+            languageRequests[i] = new LanguageRequest(client, resp.results[i].fileId, resp.results[i].requestId);
         }
+        return languageRequests;
     }
 
     /**
@@ -106,10 +101,6 @@ public class LanguageRequest {
      */
     public LanguageResult getResult() throws ZdaiClientException, ZdaiApiException {
         String response = client.authorizedGet("/language/" + requestId, 200);
-        try {
-            return client.mapper.readValue(response, LanguageResult.class);
-        } catch (JsonProcessingException e) {
-            throw (new ZdaiClientException("Unable to parse response", e));
-        }
+        return client.jsonToObject(response, LanguageResult.class);
     }
 }

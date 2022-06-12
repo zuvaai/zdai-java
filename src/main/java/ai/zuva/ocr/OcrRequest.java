@@ -6,7 +6,6 @@ import ai.zuva.exception.ZdaiClientException;
 import ai.zuva.files.ZdaiFile;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.core.JsonProcessingException;
 
 public class OcrRequest {
     public final String requestId;
@@ -71,16 +70,12 @@ public class OcrRequest {
     public static OcrRequest[] createRequests(ZdaiApiClient client, ZdaiFile[] files) throws ZdaiClientException, ZdaiApiException {
         String response = client.authorizedJsonRequest("POST", "/ocr", new OcrRequestBody(files), 202);
 
-        try {
-            OcrStatuses resp = client.mapper.readValue(response, OcrStatuses.class);
-            OcrRequest[] ocrRequests = new OcrRequest[resp.statuses.length];
-            for (int i = 0; i < ocrRequests.length; i++) {
-                ocrRequests[i] = new OcrRequest(client, resp.statuses[i].fileId, resp.statuses[i].requestId);
-            }
-            return ocrRequests;
-        } catch (JsonProcessingException e) {
-            throw (new ZdaiClientException("Unable to parse response", e));
+        OcrStatuses resp = client.jsonToObject(response, OcrStatuses.class);
+        OcrRequest[] ocrRequests = new OcrRequest[resp.statuses.length];
+        for (int i = 0; i < ocrRequests.length; i++) {
+            ocrRequests[i] = new OcrRequest(client, resp.statuses[i].fileId, resp.statuses[i].requestId);
         }
+        return ocrRequests;
     }
 
     public OcrRequest(ZdaiApiClient client, String fileId, String requestId) {
@@ -101,11 +96,7 @@ public class OcrRequest {
      */
     public OcrStatus getStatus() throws ZdaiClientException, ZdaiApiException {
         String response = client.authorizedGet("/ocr/" + requestId, 200);
-        try {
-            return client.mapper.readValue(response, OcrStatus.class);
-        } catch (JsonProcessingException e) {
-            throw (new ZdaiClientException("Unable to parse response", e));
-        }
+        return client.jsonToObject(response, OcrStatus.class);
     }
 
     /**
@@ -120,11 +111,7 @@ public class OcrRequest {
      */
     public String getText() throws ZdaiClientException, ZdaiApiException {
         String response = client.authorizedGet("/ocr/" + requestId + "/text", 200);
-        try {
-            return client.mapper.readValue(response, OcrText.class).text;
-        } catch (JsonProcessingException e) {
-            throw (new ZdaiClientException("Unable to parse response", e));
-        }
+        return client.jsonToObject(response, OcrText.class).text;
     }
 
     /**

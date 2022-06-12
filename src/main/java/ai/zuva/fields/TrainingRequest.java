@@ -1,14 +1,9 @@
 package ai.zuva.fields;
 
-import ai.zuva.ProcessingState;
-import ai.zuva.RequestStatus;
 import ai.zuva.exception.ZdaiApiException;
 import ai.zuva.exception.ZdaiClientException;
 import ai.zuva.exception.ZdaiError;
 import ai.zuva.api.ZdaiApiClient;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.core.JsonProcessingException;
 
 public class TrainingRequest {
 
@@ -38,13 +33,8 @@ public class TrainingRequest {
                 String.format("/fields/%s/train", fieldId),
                 trainingExamples,
                 202);
-
-        try {
-            TrainingStatus trainingStatus = client.mapper.readValue(response, TrainingStatus.class);
-            return new TrainingRequest(client, trainingStatus);
-        } catch (JsonProcessingException e) {
-            throw (new ZdaiClientException("Unable to parse response", e));
-        }
+        TrainingStatus trainingStatus = client.jsonToObject(response, TrainingStatus.class);
+        return new TrainingRequest(client, trainingStatus);
     }
 
     /**
@@ -83,12 +73,9 @@ public class TrainingRequest {
      */
     public TrainingStatus getStatus() throws ZdaiClientException, ZdaiApiException {
         String response = client.authorizedGet(String.format("/fields/%s/train/%s", fieldId, requestId), 200);
-        try {
-            TrainingStatus status = client.mapper.readValue(response, TrainingStatus.class);
-            this.status = status;
-            return status;
-        } catch (JsonProcessingException e) {
-            throw (new ZdaiClientException("Unable to parse response", e));
-        }
+
+        TrainingStatus status = client.jsonToObject(response, TrainingStatus.class);
+        this.status = status;
+        return status;
     }
 }

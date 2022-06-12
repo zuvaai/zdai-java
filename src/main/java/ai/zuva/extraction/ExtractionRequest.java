@@ -8,7 +8,6 @@ import ai.zuva.exception.ZdaiError;
 import ai.zuva.files.ZdaiFile;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.core.JsonProcessingException;
 
 public class ExtractionRequest {
     public final String fileId;
@@ -91,16 +90,12 @@ public class ExtractionRequest {
     public static ExtractionRequest[] createRequests(ZdaiApiClient client, ZdaiFile[] files, String[] fieldIds) throws ZdaiClientException, ZdaiApiException {
         String response = client.authorizedJsonRequest("POST", "/extraction", new ExtractionRequestBody(files, fieldIds), 202);
 
-        try {
-            ExtractionStatuses resp = client.mapper.readValue(response, ExtractionStatuses.class);
-            ExtractionRequest[] extractionRequests = new ExtractionRequest[resp.statuses.length];
-            for (int i = 0; i < extractionRequests.length; i++) {
-                extractionRequests[i] = new ExtractionRequest(client, resp.statuses[i]);
-            }
-            return extractionRequests;
-        } catch (JsonProcessingException e) {
-            throw (new ZdaiClientException("Unable to parse response", e));
+        ExtractionStatuses resp = client.jsonToObject(response, ExtractionStatuses.class);
+        ExtractionRequest[] extractionRequests = new ExtractionRequest[resp.statuses.length];
+        for (int i = 0; i < extractionRequests.length; i++) {
+            extractionRequests[i] = new ExtractionRequest(client, resp.statuses[i]);
         }
+        return extractionRequests;
     }
 
     // Constructor is private since it is only used by the above static factory methods
@@ -125,12 +120,7 @@ public class ExtractionRequest {
      */
     public ExtractionStatus getStatus() throws ZdaiClientException, ZdaiApiException {
         String response = client.authorizedGet(String.format("/extraction/%s", requestId), 200);
-
-        try {
-            return client.mapper.readValue(response, ExtractionStatus.class);
-        } catch (JsonProcessingException e) {
-            throw (new ZdaiClientException("Unable to parse response", e));
-        }
+        return client.jsonToObject(response, ExtractionStatus.class);
     }
 
     /**
@@ -145,10 +135,6 @@ public class ExtractionRequest {
      */
     public ExtractionResults[] getResults() throws ZdaiClientException, ZdaiApiException {
         String response = client.authorizedGet("/extraction/" + requestId + "/results/text", 200);
-        try {
-            return client.mapper.readValue(response, ExtractionResultsBody.class).results;
-        } catch (JsonProcessingException e) {
-            throw (new ZdaiClientException("Unable to parse response", e));
-        }
+        return client.jsonToObject(response, ExtractionResultsBody.class).results;
     }
 }

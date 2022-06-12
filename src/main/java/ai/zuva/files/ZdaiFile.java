@@ -41,12 +41,8 @@ public class ZdaiFile {
         return parseResponse(client, client.authorizedRequest("POST", "/files", ba, 201, contentType));
     }
     private static ZdaiFile parseResponse (ZdaiApiClient client, String response) throws ZdaiClientException {
-        try {
-            SubmitFileResponse resp = client.mapper.readValue(response, SubmitFileResponse.class);
-            return new ZdaiFile(client, resp);
-        } catch (JsonProcessingException e) {
-            throw new ZdaiClientException("Unable to parse response body", e);
-        }
+        SubmitFileResponse resp = client.jsonToObject(response, SubmitFileResponse.class);
+        return new ZdaiFile(client, resp);
     }
 
     public ZdaiFile(ZdaiApiClient client, String fileId) {

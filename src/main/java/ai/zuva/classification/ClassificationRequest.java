@@ -61,16 +61,12 @@ public class ClassificationRequest {
     public static ClassificationRequest[] createRequests(ZdaiApiClient client, ZdaiFile[] files) throws ZdaiClientException, ZdaiApiException {
         String response = client.authorizedJsonRequest("POST", "/classification", new ClassificationRequestBody(files), 202);
 
-        try {
-            ClassificationResultsBody resp = client.mapper.readValue(response, ClassificationResultsBody.class);
-            ClassificationRequest[] classificationRequests = new ClassificationRequest[resp.results.length];
-            for (int i = 0; i < classificationRequests.length; i++) {
-                classificationRequests[i] = new ClassificationRequest(client, resp.results[i].fileId, resp.results[i].requestId);
-            }
-            return classificationRequests;
-        } catch (JsonProcessingException e) {
-            throw (new ZdaiClientException("Unable to parse response", e));
+        ClassificationResultsBody resp = client.jsonToObject(response, ClassificationResultsBody.class);
+        ClassificationRequest[] classificationRequests = new ClassificationRequest[resp.results.length];
+        for (int i = 0; i < classificationRequests.length; i++) {
+            classificationRequests[i] = new ClassificationRequest(client, resp.results[i].fileId, resp.results[i].requestId);
         }
+        return classificationRequests;
     }
 
     /**
@@ -102,10 +98,6 @@ public class ClassificationRequest {
      */
     public ClassificationResult getResult() throws ZdaiClientException, ZdaiApiException {
         String response = client.authorizedGet("/classification/" + requestId, 200);
-        try {
-            return client.mapper.readValue(response, ClassificationResult.class);
-        } catch (JsonProcessingException e) {
-            throw (new ZdaiClientException("Unable to parse response", e));
-        }
+        return client.jsonToObject(response, ClassificationResult.class);
     }
 }
