@@ -30,18 +30,17 @@ public class ZdaiFile {
     }
 
     public static ZdaiFile submitFile(ZdaiApiClient client, File f, String... contentType) throws ZdaiClientException, ZdaiApiException, FileNotFoundException, SecurityException {
-        return parseResponse(client, client.authorizedRequest("POST", "/files", f, 201, contentType));
+        SubmitFileResponse resp = client.authorizedRequest("POST", "/files", f, 201, SubmitFileResponse.class, contentType);
+        return new ZdaiFile(client, resp);
     }
 
     public static ZdaiFile submitFile(ZdaiApiClient client, String s, String... contentType) throws ZdaiClientException, ZdaiApiException {
-        return parseResponse(client, client.authorizedRequest("POST", "/files", s, 201, contentType));
+        SubmitFileResponse resp = client.authorizedRequest("POST", "/files", s, 201, SubmitFileResponse.class, contentType);
+        return new ZdaiFile(client, resp);
     }
 
     public static ZdaiFile submitFile(ZdaiApiClient client, byte[] ba, String... contentType) throws ZdaiClientException, ZdaiApiException {
-        return parseResponse(client, client.authorizedRequest("POST", "/files", ba, 201, contentType));
-    }
-    private static ZdaiFile parseResponse (ZdaiApiClient client, String response) throws ZdaiClientException {
-        SubmitFileResponse resp = client.jsonToObject(response, SubmitFileResponse.class);
+        SubmitFileResponse resp = client.authorizedRequest("POST", "/files", ba, 201,SubmitFileResponse.class, contentType);
         return new ZdaiFile(client, resp);
     }
 

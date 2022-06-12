@@ -68,9 +68,7 @@ public class OcrRequest {
      * @throws ZdaiClientException Error preparing, sending or processing the request/response
      */
     public static OcrRequest[] createRequests(ZdaiApiClient client, ZdaiFile[] files) throws ZdaiClientException, ZdaiApiException {
-        String response = client.authorizedJsonRequest("POST", "/ocr", new OcrRequestBody(files), 202);
-
-        OcrStatuses resp = client.jsonToObject(response, OcrStatuses.class);
+        OcrStatuses resp = client.authorizedJsonRequest("POST", "/ocr", new OcrRequestBody(files), 202, OcrStatuses.class);
         OcrRequest[] ocrRequests = new OcrRequest[resp.statuses.length];
         for (int i = 0; i < ocrRequests.length; i++) {
             ocrRequests[i] = new OcrRequest(client, resp.statuses[i].fileId, resp.statuses[i].requestId);
@@ -95,8 +93,7 @@ public class OcrRequest {
      * @throws ZdaiClientException Error preparing, sending or processing the request/response
      */
     public OcrStatus getStatus() throws ZdaiClientException, ZdaiApiException {
-        String response = client.authorizedGet("/ocr/" + requestId, 200);
-        return client.jsonToObject(response, OcrStatus.class);
+        return client.authorizedGet("/ocr/" + requestId, 200, OcrStatus.class);
     }
 
     /**
@@ -110,8 +107,7 @@ public class OcrRequest {
      * @throws ZdaiClientException Error preparing, sending or processing the request/response
      */
     public String getText() throws ZdaiClientException, ZdaiApiException {
-        String response = client.authorizedGet("/ocr/" + requestId + "/text", 200);
-        return client.jsonToObject(response, OcrText.class).text;
+        return client.authorizedGet("/ocr/" + requestId + "/text", 200, OcrText.class).text;
     }
 
     /**

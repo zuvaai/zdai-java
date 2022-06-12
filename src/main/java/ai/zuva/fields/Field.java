@@ -1,8 +1,8 @@
 package ai.zuva.fields;
 
+import ai.zuva.api.ZdaiApiClient;
 import ai.zuva.exception.ZdaiApiException;
 import ai.zuva.exception.ZdaiClientException;
-import ai.zuva.api.ZdaiApiClient;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -12,7 +12,7 @@ public class Field {
     public String fieldId;
 
     /**
-     * @param client The client to use when interacting with this field
+     * @param client  The client to use when interacting with this field
      * @param fieldId The ID of the field
      */
     public Field(ZdaiApiClient client, String fieldId) {
@@ -29,8 +29,7 @@ public class Field {
      * @throws ZdaiClientException Error preparing, sending or processing the request/response
      */
     public static FieldListElement[] listFields(ZdaiApiClient client) throws ZdaiClientException, ZdaiApiException {
-        String response = client.authorizedGet("/fields", 200);
-        return client.jsonToObject(response, FieldListElement[].class);
+        return client.authorizedGet("/fields", 200, FieldListElement[].class);
     }
 
     /**
@@ -41,8 +40,7 @@ public class Field {
      * @throws ZdaiClientException Error preparing, sending or processing the request/response
      */
     public FieldMetadata getMetadata() throws ZdaiClientException, ZdaiApiException {
-        String response = client.authorizedGet(String.format("/fields/%s/metadata", fieldId), 200);
-        return client.jsonToObject(response, FieldMetadata.class);
+        return client.authorizedGet(String.format("/fields/%s/metadata", fieldId), 200, FieldMetadata.class);
     }
 
     // NameAndDescription is used to serialize an update metadata request
@@ -59,13 +57,17 @@ public class Field {
     /**
      * Updates the name and description of a custom field
      *
-     * @param name The new name for the field
+     * @param name        The new name for the field
      * @param description The new descriptionf of the field
      * @throws ZdaiApiException    Unsuccessful response code from server
      * @throws ZdaiClientException Error preparing, sending or processing the request/response
      */
     public void updateMetadata(String name, String description) throws ZdaiClientException, ZdaiApiException {
-        client.authorizedJsonRequest("PUT", String.format("/fields/%s/metadata", fieldId), new NameAndDescription(name, description), 204);
+        client.authorizedJsonRequest("PUT",
+                String.format("/fields/%s/metadata", fieldId),
+                new NameAndDescription(name, description),
+                204,
+                null);
     }
 
     /**
@@ -76,8 +78,7 @@ public class Field {
      * @throws ZdaiClientException Error preparing, sending or processing the request/response
      */
     public FieldAccuracy getAccuracy() throws ZdaiClientException, ZdaiApiException {
-        String response = client.authorizedGet(String.format("/fields/%s/accuracy", fieldId), 200);
-        return client.jsonToObject(response, FieldAccuracy.class);
+        return client.authorizedGet(String.format("/fields/%s/accuracy", fieldId), 200, FieldAccuracy.class);
     }
 
     /**
@@ -88,8 +89,7 @@ public class Field {
      * @throws ZdaiClientException Error preparing, sending or processing the request/response
      */
     public FieldValidation[] getValidationDetails() throws ZdaiClientException, ZdaiApiException {
-        String response = client.authorizedGet(String.format("/fields/%s/validation-details", fieldId), 200);
-        return client.jsonToObject(response, FieldValidation[].class);
+        return client.authorizedGet(String.format("/fields/%s/validation-details", fieldId), 200, FieldValidation[].class);
     }
 
     /**
@@ -130,15 +130,20 @@ public class Field {
     }
 
     /**
-     * @param client The client to use to make the request
-     * @param name The name of the field
+     * @param client      The client to use to make the request
+     * @param name        The name of the field
      * @param description The description of the field
      * @return A Field object representing the new untrained field
      * @throws ZdaiApiException    Unsuccessful response code from server
      * @throws ZdaiClientException Error preparing, sending or processing the request/response
      */
     public static Field createField(ZdaiApiClient client, String name, String description) throws ZdaiClientException, ZdaiApiException {
-        String response = client.authorizedJsonRequest("POST", "/fields", new CreateFieldRequest(name, description), 201);
-        return new Field(client, client.jsonToObject(response, CreateFieldResponse.class).fieldId);
+        CreateFieldResponse response = client.authorizedJsonRequest(
+                "POST",
+                "/fields",
+                new CreateFieldRequest(name, description),
+                201,
+                CreateFieldResponse.class);
+        return new Field(client, response.fieldId);
     }
 }

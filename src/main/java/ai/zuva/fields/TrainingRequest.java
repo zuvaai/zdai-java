@@ -29,11 +29,11 @@ public class TrainingRequest {
      * @throws ZdaiClientException Error preparing, sending or processing the request/response
      */
     public static TrainingRequest createRequest(ZdaiApiClient client, String fieldId, TrainingExample[] trainingExamples) throws ZdaiClientException, ZdaiApiException {
-        String response = client.authorizedJsonRequest("POST",
+        TrainingStatus trainingStatus  = client.authorizedJsonRequest("POST",
                 String.format("/fields/%s/train", fieldId),
                 trainingExamples,
-                202);
-        TrainingStatus trainingStatus = client.jsonToObject(response, TrainingStatus.class);
+                202,
+                TrainingStatus.class);
         return new TrainingRequest(client, trainingStatus);
     }
 
@@ -72,9 +72,7 @@ public class TrainingRequest {
      * @throws ZdaiClientException Error preparing, sending or processing the request/response
      */
     public TrainingStatus getStatus() throws ZdaiClientException, ZdaiApiException {
-        String response = client.authorizedGet(String.format("/fields/%s/train/%s", fieldId, requestId), 200);
-
-        TrainingStatus status = client.jsonToObject(response, TrainingStatus.class);
+        TrainingStatus status = client.authorizedGet(String.format("/fields/%s/train/%s", fieldId, requestId), 200, TrainingStatus.class);
         this.status = status;
         return status;
     }

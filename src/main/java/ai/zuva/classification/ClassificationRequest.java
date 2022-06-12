@@ -1,11 +1,10 @@
 package ai.zuva.classification;
 
+import ai.zuva.api.ZdaiApiClient;
 import ai.zuva.exception.ZdaiApiException;
 import ai.zuva.exception.ZdaiClientException;
 import ai.zuva.files.ZdaiFile;
-import ai.zuva.api.ZdaiApiClient;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.core.JsonProcessingException;
 
 public class ClassificationRequest {
     public final String fileId;
@@ -59,9 +58,13 @@ public class ClassificationRequest {
      * @throws ZdaiClientException Error preparing, sending or processing the request/response
      */
     public static ClassificationRequest[] createRequests(ZdaiApiClient client, ZdaiFile[] files) throws ZdaiClientException, ZdaiApiException {
-        String response = client.authorizedJsonRequest("POST", "/classification", new ClassificationRequestBody(files), 202);
+        ClassificationResultsBody resp = client.authorizedJsonRequest(
+                "POST",
+                "/classification",
+                new ClassificationRequestBody(files),
+                202,
+                ClassificationResultsBody.class);
 
-        ClassificationResultsBody resp = client.jsonToObject(response, ClassificationResultsBody.class);
         ClassificationRequest[] classificationRequests = new ClassificationRequest[resp.results.length];
         for (int i = 0; i < classificationRequests.length; i++) {
             classificationRequests[i] = new ClassificationRequest(client, resp.results[i].fileId, resp.results[i].requestId);
@@ -92,12 +95,12 @@ public class ClassificationRequest {
      * Given a ZdaiApiClient, return a ClassificationResult indicating the
      * status of the classification request for that file and the classification
      * result (if available).
+     *
      * @return A ClassificationResult, with the status and results of the request
      * @throws ZdaiApiException    Unsuccessful response code from server
      * @throws ZdaiClientException Error preparing, sending or processing the request/response
      */
     public ClassificationResult getResult() throws ZdaiClientException, ZdaiApiException {
-        String response = client.authorizedGet("/classification/" + requestId, 200);
-        return client.jsonToObject(response, ClassificationResult.class);
+        return client.authorizedGet("/classification/" + requestId, 200, ClassificationResult.class);
     }
 }

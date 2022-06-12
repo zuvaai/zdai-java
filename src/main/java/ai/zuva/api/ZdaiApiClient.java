@@ -12,9 +12,9 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 
 public class ZdaiApiClient {
-    public final String baseURL;
-    public final String token;
-    public final OkHttpClient client;
+    private final String baseURL;
+    private final String token;
+    private final OkHttpClient client;
     private final ObjectMapper mapper;
 
     /**
@@ -39,7 +39,7 @@ public class ZdaiApiClient {
         }
     }
 
-    public <T> T jsonToObject(String s, Class<T> type) throws ZdaiClientException {
+    private <T> T jsonToObject(String s, Class<T> type) throws ZdaiClientException {
         try {
             return mapper.readValue(s, type);
         } catch (JsonProcessingException e) {
@@ -73,13 +73,13 @@ public class ZdaiApiClient {
      * @throws ZdaiClientException There was a problem sending the request, such as an IOException or InterruptedException
      * @throws ZdaiApiException The status code in the response was anything other than expectedStatusCode
      */
-    public String authorizedGet(String path, int expectedStatusCode) throws ZdaiClientException, ZdaiApiException {
+    public <T> T authorizedGet(String path, int expectedStatusCode, Class<T> type) throws ZdaiClientException, ZdaiApiException {
         Request request = new Request.Builder()
                 .url(this.baseURL + path)
                 .header("Authorization", "Bearer " + token)
                 .get()
                 .build();
-        return sendRequest(request, expectedStatusCode);
+        return jsonToObject(sendRequest(request, expectedStatusCode), type);
     }
 
     /**
@@ -131,10 +131,15 @@ public class ZdaiApiClient {
      * @throws ZdaiClientException There was a problem sending the request, such as an IOException or InterruptedException
      * @throws ZdaiApiException The status code in the response was anything other than expectedStatusCode
      */
-    public String authorizedJsonRequest(String method, String path, Object body, int expectedStatusCode) throws ZdaiClientException, ZdaiApiException {
+    public <T> T authorizedJsonRequest(String method, String path, Object body, int expectedStatusCode, Class<T> responseType) throws ZdaiClientException, ZdaiApiException {
         String stringBody = this.JsonToStringBody(body);
         RequestBody requestBody = RequestBody.create(stringBody, null);
-        return authorizedRequest(method, path, requestBody, expectedStatusCode);
+        String response = authorizedRequest(method, path, requestBody, expectedStatusCode);
+        if (response.length() > 0) {
+            return jsonToObject(response, responseType);
+        } else {
+            return null;
+        }
     }
 
     /**
@@ -154,13 +159,14 @@ public class ZdaiApiClient {
      * @throws ZdaiClientException There was a problem sending the request, such as an IOException or InterruptedException
      * @throws ZdaiApiException The status code in the response was anything other than expectedStatusCode
      */
-    public String authorizedRequest(String method, String path, String body, int expectedStatusCode, String... contentType) throws ZdaiClientException, ZdaiApiException {
+    public <T> T authorizedRequest(String method, String path, String body, int expectedStatusCode, Class<T> responseType, String... contentType) throws ZdaiClientException, ZdaiApiException {
         MediaType mediaType = null;
         if (contentType.length > 0) {
             mediaType = MediaType.parse(contentType[0]);
         }
         RequestBody requestBody = RequestBody.create(body, mediaType);
-        return authorizedRequest(method, path, requestBody, expectedStatusCode);
+        String response = authorizedRequest(method, path, requestBody, expectedStatusCode);
+        return jsonToObject(response, responseType);
     }
 
     /**
@@ -180,13 +186,14 @@ public class ZdaiApiClient {
      * @throws ZdaiClientException There was a problem sending the request, such as an IOException or InterruptedException
      * @throws ZdaiApiException The status code in the response was anything other than expectedStatusCode
      */
-    public String authorizedRequest(String method, String path, byte[] body, int expectedStatusCode, String... contentType) throws ZdaiClientException, ZdaiApiException {
+    public <T> T authorizedRequest(String method, String path, byte[] body, int expectedStatusCode, Class<T> responseType, String... contentType) throws ZdaiClientException, ZdaiApiException {
         MediaType mediaType = null;
         if (contentType.length > 0) {
             mediaType = MediaType.parse(contentType[0]);
         }
         RequestBody requestBody = RequestBody.create(body, mediaType);
-        return authorizedRequest(method, path, requestBody, expectedStatusCode);
+        String response = authorizedRequest(method, path, requestBody, expectedStatusCode);
+        return jsonToObject(response, responseType);
     }
 
     /**
@@ -207,7 +214,7 @@ public class ZdaiApiClient {
      * @throws ZdaiApiException The status code in the response was anything other than expectedStatusCode
      * @throws FileNotFoundException The File to be used as the request body could not be found
      */
-    public String authorizedRequest(String method, String path, File body, int expectedStatusCode, String... contentType) throws ZdaiClientException, ZdaiApiException, FileNotFoundException, SecurityException {
+    public <T> T authorizedRequest(String method, String path, File body, int expectedStatusCode,  Class<T> responseType, String... contentType) throws ZdaiClientException, ZdaiApiException, FileNotFoundException, SecurityException {
         MediaType mediaType = null;
         if (contentType.length > 0) {
             mediaType = MediaType.parse(contentType[0]);
@@ -218,7 +225,8 @@ public class ZdaiApiClient {
                 .header("Authorization", "Bearer " + token)
                 .method(method, RequestBody.create(body, mediaType));
 
-        return sendRequest(builder.build(), expectedStatusCode);
+        String response = sendRequest(builder.build(), expectedStatusCode);
+        return jsonToObject(response, responseType);
     }
 
     /**

@@ -88,9 +88,13 @@ public class ExtractionRequest {
      * @throws ZdaiClientException Error preparing, sending or processing the request/response
      */
     public static ExtractionRequest[] createRequests(ZdaiApiClient client, ZdaiFile[] files, String[] fieldIds) throws ZdaiClientException, ZdaiApiException {
-        String response = client.authorizedJsonRequest("POST", "/extraction", new ExtractionRequestBody(files, fieldIds), 202);
+        ExtractionStatuses resp = client.authorizedJsonRequest(
+                "POST",
+                "/extraction",
+                new ExtractionRequestBody(files, fieldIds),
+                202,
+                ExtractionStatuses.class);
 
-        ExtractionStatuses resp = client.jsonToObject(response, ExtractionStatuses.class);
         ExtractionRequest[] extractionRequests = new ExtractionRequest[resp.statuses.length];
         for (int i = 0; i < extractionRequests.length; i++) {
             extractionRequests[i] = new ExtractionRequest(client, resp.statuses[i]);
@@ -119,8 +123,7 @@ public class ExtractionRequest {
      * @throws ZdaiClientException Error preparing, sending or processing the request/response
      */
     public ExtractionStatus getStatus() throws ZdaiClientException, ZdaiApiException {
-        String response = client.authorizedGet(String.format("/extraction/%s", requestId), 200);
-        return client.jsonToObject(response, ExtractionStatus.class);
+        return client.authorizedGet(String.format("/extraction/%s", requestId), 200, ExtractionStatus.class);
     }
 
     /**
@@ -134,7 +137,6 @@ public class ExtractionRequest {
      * @throws ZdaiClientException Error preparing, sending or processing the request/response
      */
     public ExtractionResults[] getResults() throws ZdaiClientException, ZdaiApiException {
-        String response = client.authorizedGet("/extraction/" + requestId + "/results/text", 200);
-        return client.jsonToObject(response, ExtractionResultsBody.class).results;
+        return client.authorizedGet("/extraction/" + requestId + "/results/text", 200, ExtractionResultsBody.class).results;
     }
 }
