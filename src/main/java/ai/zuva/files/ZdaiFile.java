@@ -29,7 +29,7 @@ public class ZdaiFile {
     }
 
     public static ZdaiFile submitFile(ZdaiApiClient client, File f, String... contentType) throws ZdaiClientException, ZdaiApiException, FileNotFoundException, SecurityException {
-        SubmitFileResponse resp = client.authorizedRequest("POST", "ap/v2/files", f, 201, SubmitFileResponse.class, contentType);
+        SubmitFileResponse resp = client.authorizedRequest("POST", "api/v2/files", f, 201, SubmitFileResponse.class, contentType);
         return new ZdaiFile(client, resp);
     }
 

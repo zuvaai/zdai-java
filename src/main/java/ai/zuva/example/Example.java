@@ -31,7 +31,7 @@ public class Example {
         String documentPath = System.getenv("ZUVA_DEMO_DOC");
         if (documentPath == null) {
             // default to looking for the demo file in the current working directory
-            documentPath = "CANADAGOOS-F1Securiti-2152017.PDF2";
+            documentPath = "CANADAGOOS-F1Securiti-2152017.PDF";
         }
 
         ZdaiApiClient client = new ZdaiApiClient(url, token);
@@ -63,7 +63,7 @@ public class Example {
             System.out.println("Classification failed.");
         }
 
-        System.out.println("%nPerforming Field extraction");
+        System.out.printf("%nPerforming Field extraction%n");
         String[] fieldIds = new String[]{
                 "668ee3b5-e15a-439f-9475-05a21755a5c1",
                 "f743f363-1d8b-435b-8812-204a6d883834",
@@ -88,7 +88,7 @@ public class Example {
             }
         }
 
-        System.out.println("%nObtaining OCR results:");
+        System.out.printf("%nObtaining OCR results:%n");
         OcrRequest ocrRequest = OcrRequest.createRequest(client, zdaiFile);
         System.out.println("Request ID: " + ocrRequest.requestId);
 
@@ -101,7 +101,7 @@ public class Example {
                 outputStream.write(ocrRequest.getImages());
             }
         }
-        System.out.println("%nDeleting file from server.");
+        System.out.printf("%nDeleting file from server.%n");
         zdaiFile.delete();
     }
 }
