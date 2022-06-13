@@ -23,7 +23,7 @@ class ClassificationRequestTest {
 
             // Test constructing and sending a request for a single file
             String postResponseBody = TestHelpers.resourceAsString(this, "doc-classification-request-created.json");
-            stubFor(post("/classification")
+            stubFor(post("/api/v2/classification")
                     .withRequestBody(equalToJson("{\"file_ids\": [\"c5e41av1qk1er7odm79g\"]}"))
                     .willReturn(aResponse().withStatus(202).withBody(postResponseBody)));
 
@@ -34,7 +34,7 @@ class ClassificationRequestTest {
 
             // Testing getClassificationResult where processing is complete
             String getResponseBody = TestHelpers.resourceAsString(this, "doc-classification-request-complete.json");
-            stubFor(get("/classification/" + requestId)
+            stubFor(get("/api/v2/classification/" + requestId)
                     .willReturn(aResponse().withStatus(200).withBody(getResponseBody)));
 
             ClassificationResult result = request.getStatus();

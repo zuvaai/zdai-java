@@ -32,7 +32,7 @@ public class ExtractionRequestTest {
             String postRequestBody = TestHelpers.resourceAsString(this, "extraction-request.json");
             String postResponseBody = TestHelpers.resourceAsString(this, "extraction-request-created.json");
 
-            stubFor(post("/extraction")
+            stubFor(post("/api/v2/extraction")
                     .withRequestBody(equalToJson(postRequestBody))
                     .willReturn(aResponse().withStatus(202).withBody(postResponseBody)));
 
@@ -43,14 +43,14 @@ public class ExtractionRequestTest {
 
             // Test checking the status of a file
             String statusResponseBody = TestHelpers.resourceAsString(this, "extraction-status-complete.json");
-            stubFor(get("/extraction/" + requestId)
+            stubFor(get("/api/v2/extraction/" + requestId)
                     .willReturn(ok().withBody(statusResponseBody)));
 
             assertTrue(request.getStatus().isComplete());
 
             // Test checking the results for a file
             String textResponseBody = TestHelpers.resourceAsString(this, "extraction-results.json");
-            stubFor(get("/extraction/" + requestId + "/results/text")
+            stubFor(get("/api/v2/extraction/" + requestId + "/results/text")
                     .willReturn(ok().withBody(textResponseBody)));
 
             ExtractionResults[] results = request.getResults();

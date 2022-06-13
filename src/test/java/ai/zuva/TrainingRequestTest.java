@@ -30,7 +30,7 @@ public class TrainingRequestTest {
 
         TrainingExample[] td = new TrainingExample[]{te};
 
-        stubFor(post(String.format("/fields/%s/train", fieldId))
+        stubFor(post(String.format("/api/v2/fields/%s/train", fieldId))
                 .withRequestBody(equalToJson(postRequestBody))
                 .willReturn(aResponse().withStatus(202).withBody(postResponseBody)));
 
@@ -41,7 +41,7 @@ public class TrainingRequestTest {
 
         //Test checking the status of the request
         String statusResponseBody = TestHelpers.resourceAsString(this, "training-request-complete.json");
-        stubFor(get(String.format("/fields/%s/train/%s", fieldId, requestId))
+        stubFor(get(String.format("/api/v2/fields/%s/train/%s", fieldId, requestId))
                 .willReturn(ok().withBody(statusResponseBody)));
 
         assertTrue(request.getStatus().isComplete());
@@ -58,7 +58,7 @@ public class TrainingRequestTest {
         ObjectMapper mapper = new ObjectMapper();
         TrainingExample[] td = mapper.readerForArrayOf(TrainingExample.class).readValue(postRequestBody);
 
-        stubFor(post(String.format("/fields/%s/train", fieldId))
+        stubFor(post(String.format("/api/v2/fields/%s/train", fieldId))
                 .withRequestBody(equalToJson(postRequestBody))
                 .willReturn(aResponse().withStatus(409).withBody(postResponseBody)));
 
@@ -84,7 +84,7 @@ public class TrainingRequestTest {
 
         //Test checking the status of the request
         String statusResponseBody = TestHelpers.resourceAsString(this, "request-not-found.json");
-        stubFor(get(String.format("/fields/%s/train/%s", fieldId, requestId))
+        stubFor(get(String.format("/api/v2/fields/%s/train/%s", fieldId, requestId))
                 .willReturn(notFound().withBody(statusResponseBody)));
 
         assertThrows(ZdaiApiException.class, request::getStatus);

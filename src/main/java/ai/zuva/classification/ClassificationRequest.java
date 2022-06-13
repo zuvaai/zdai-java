@@ -59,7 +59,7 @@ public class ClassificationRequest extends BaseRequest {
     public static ClassificationRequest[] createRequests(ZdaiApiClient client, ZdaiFile[] files) throws ZdaiClientException, ZdaiApiException {
         ClassificationResultsBody resp = client.authorizedJsonRequest(
                 "POST",
-                "/classification",
+                "api/v2/classification",
                 new ClassificationRequestBody(files),
                 202,
                 ClassificationResultsBody.class);
@@ -104,6 +104,6 @@ public class ClassificationRequest extends BaseRequest {
      * @throws ZdaiClientException Error preparing, sending or processing the request/response
      */
     public ClassificationResult getStatus() throws ZdaiClientException, ZdaiApiException {
-        return client.authorizedGet("/classification/" + requestId, 200, ClassificationResult.class);
+        return client.authorizedGet("api/v2/classification/" + requestId, 200, ClassificationResult.class);
     }
 }

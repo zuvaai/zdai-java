@@ -29,7 +29,7 @@ public class Field {
      * @throws ZdaiClientException Error preparing, sending or processing the request/response
      */
     public static FieldListElement[] listFields(ZdaiApiClient client) throws ZdaiClientException, ZdaiApiException {
-        return client.authorizedGet("/fields", 200, FieldListElement[].class);
+        return client.authorizedGet("api/v2/fields", 200, FieldListElement[].class);
     }
 
     /**
@@ -40,7 +40,7 @@ public class Field {
      * @throws ZdaiClientException Error preparing, sending or processing the request/response
      */
     public FieldMetadata getMetadata() throws ZdaiClientException, ZdaiApiException {
-        return client.authorizedGet(String.format("/fields/%s/metadata", fieldId), 200, FieldMetadata.class);
+        return client.authorizedGet(String.format("api/v2/fields/%s/metadata", fieldId), 200, FieldMetadata.class);
     }
 
     // NameAndDescription is used to serialize an update metadata request
@@ -64,7 +64,7 @@ public class Field {
      */
     public void updateMetadata(String name, String description) throws ZdaiClientException, ZdaiApiException {
         client.authorizedJsonRequest("PUT",
-                String.format("/fields/%s/metadata", fieldId),
+                String.format("api/v2/fields/%s/metadata", fieldId),
                 new NameAndDescription(name, description),
                 204,
                 null);
@@ -78,7 +78,7 @@ public class Field {
      * @throws ZdaiClientException Error preparing, sending or processing the request/response
      */
     public FieldAccuracy getAccuracy() throws ZdaiClientException, ZdaiApiException {
-        return client.authorizedGet(String.format("/fields/%s/accuracy", fieldId), 200, FieldAccuracy.class);
+        return client.authorizedGet(String.format("api/v2/fields/%s/accuracy", fieldId), 200, FieldAccuracy.class);
     }
 
     /**
@@ -89,7 +89,7 @@ public class Field {
      * @throws ZdaiClientException Error preparing, sending or processing the request/response
      */
     public FieldValidation[] getValidationDetails() throws ZdaiClientException, ZdaiApiException {
-        return client.authorizedGet(String.format("/fields/%s/validation-details", fieldId), 200, FieldValidation[].class);
+        return client.authorizedGet(String.format("api/v2/fields/%s/validation-details", fieldId), 200, FieldValidation[].class);
     }
 
     /**
@@ -140,7 +140,7 @@ public class Field {
     public static Field createField(ZdaiApiClient client, String name, String description) throws ZdaiClientException, ZdaiApiException {
         CreateFieldResponse response = client.authorizedJsonRequest(
                 "POST",
-                "/fields",
+                "api/v2/fields",
                 new CreateFieldRequest(name, description),
                 201,
                 CreateFieldResponse.class);

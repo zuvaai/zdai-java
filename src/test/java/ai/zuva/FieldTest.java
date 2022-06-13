@@ -21,7 +21,7 @@ public class FieldTest {
 
         String responseBody = TestHelpers.resourceAsString(this, "fields-list.json");
 
-        stubFor(get("/fields")
+        stubFor(get("/api/v2/fields")
                 .withRequestBody(binaryEqualTo(new byte[]{}))
                 .willReturn(ok().withBody(responseBody)));
 
@@ -41,7 +41,7 @@ public class FieldTest {
 
         String responseBody = TestHelpers.resourceAsString(this, "field-metadata.json");
         String fieldId = "2efa79d4-854d-46de-8087-f70778157dbf";
-        stubFor(get(String.format("/fields/%s/metadata", fieldId))
+        stubFor(get(String.format("/api/v2/fields/%s/metadata", fieldId))
                 .withRequestBody(binaryEqualTo(new byte[]{}))
                 .willReturn(ok().withBody(responseBody)));
 
@@ -62,7 +62,7 @@ public class FieldTest {
 
         String requestBody = TestHelpers.resourceAsString(this, "field-metadata-update.json");
         String fieldId = "2efa79d4-854d-46de-8087-f70778157dbf";
-        stubFor(put(String.format("/fields/%s/metadata", fieldId))
+        stubFor(put(String.format("/api/v2/fields/%s/metadata", fieldId))
                 .withRequestBody(equalToJson(requestBody))
                 .willReturn(noContent().withBody("1")));
 
@@ -82,7 +82,7 @@ public class FieldTest {
 
         String responseBody = TestHelpers.resourceAsString(this, "field-accuracy.json");
         String fieldId = "2efa79d4-854d-46de-8087-f70778157dbf";
-        stubFor(get(String.format("/fields/%s/accuracy", fieldId))
+        stubFor(get(String.format("/api/v2/fields/%s/accuracy", fieldId))
                 .withRequestBody(binaryEqualTo(new byte[]{}))
                 .willReturn(ok().withBody(responseBody)));
 
@@ -105,7 +105,7 @@ public class FieldTest {
 
         String responseBody = TestHelpers.resourceAsString(this, "field-validation-details.json");
         String fieldId = "2efa79d4-854d-46de-8087-f70778157dbf";
-        stubFor(get(String.format("/fields/%s/validation-details", fieldId))
+        stubFor(get(String.format("/api/v2/fields/%s/validation-details", fieldId))
                 .withRequestBody(binaryEqualTo(new byte[]{}))
                 .willReturn(ok().withBody(responseBody)));
 
@@ -131,7 +131,7 @@ public class FieldTest {
         String requestBody = TestHelpers.resourceAsString(this, "create-field.json");
         String responseBody = TestHelpers.resourceAsString(this, "field-created.json");
 
-        stubFor(post("/fields")
+        stubFor(post("/api/v2/fields")
                 .withRequestBody(equalToJson(requestBody))
                 .willReturn(created().withBody(responseBody)));
 

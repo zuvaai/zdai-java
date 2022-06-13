@@ -22,7 +22,7 @@ public class ZdaiFileTest {
         String content = "Sample text";
         String responseBody = TestHelpers.resourceAsString(this, "text-file-created-response.json");
 
-        stubFor(post("/files")
+        stubFor(post("/api/v2/files")
                 .withHeader("Content-Type", containing("text/plain"))
                 .withRequestBody(equalTo(content))
                 .willReturn(created().withBody(responseBody)));
@@ -46,7 +46,7 @@ public class ZdaiFileTest {
         String content = "Sample text";
         String responseBody = TestHelpers.resourceAsString(this, "pdf-file-created-response.json");
 
-        stubFor(post("/files")
+        stubFor(post("/api/v2/files")
                 .withRequestBody(equalTo(content))
                 .willReturn(created().withBody(responseBody)));
 
@@ -69,7 +69,7 @@ public class ZdaiFileTest {
         byte[] content = new byte[]{1, 2, 3, 4};
         String responseBody = TestHelpers.resourceAsString(this, "kiraocr-file-created-response.json");
 
-        stubFor(post("/files")
+        stubFor(post("/api/v2/files")
                 .withHeader("Content-Type", containing("application/kiraocr"))
                 .withRequestBody(binaryEqualTo(content))
                 .willReturn(created().withBody(responseBody)));
@@ -87,7 +87,7 @@ public class ZdaiFileTest {
     void deleteFileSuccessTest(WireMockRuntimeInfo wmRuntimeInfo) {
         int port = wmRuntimeInfo.getHttpPort();
 
-        stubFor(delete("/files/123")
+        stubFor(delete("/api/v2/files/123")
                 .willReturn(noContent().withBody("1")));
 
         ZdaiApiClient zClient = new ZdaiApiClient("http://localhost:"+ port, "my-token");
@@ -102,7 +102,7 @@ public class ZdaiFileTest {
         int port = wmRuntimeInfo.getHttpPort();
 
         String responseBody = TestHelpers.resourceAsString(this, "file-not-found.json");
-        stubFor(delete("/files/123")
+        stubFor(delete("/api/v2/files/123")
                 .willReturn(notFound().withBody(responseBody)));
 
         ZdaiApiClient zClient = new ZdaiApiClient("http://localhost:"+ port, "my-token");

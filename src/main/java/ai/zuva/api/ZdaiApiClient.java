@@ -31,6 +31,10 @@ public class ZdaiApiClient {
         mapper.enable(DeserializationFeature.READ_UNKNOWN_ENUM_VALUES_USING_DEFAULT_VALUE);
     }
 
+    private String buildUrl(String path){
+        return this.baseURL + "/" + path;
+    }
+
     private String JsonToStringBody(Object obj) throws ZdaiClientException {
         try {
             return this.mapper.writeValueAsString(obj);
@@ -83,7 +87,7 @@ public class ZdaiApiClient {
      */
     public <T> T authorizedGet(String path, int expectedStatusCode, Class<T> type) throws ZdaiClientException, ZdaiApiException {
         Request request = new Request.Builder()
-                .url(this.baseURL + path)
+                .url(buildUrl(path))
                 .header("Authorization", "Bearer " + token)
                 .get()
                 .build();
@@ -106,7 +110,7 @@ public class ZdaiApiClient {
      */
     public String authorizedDelete(String path, int expectedStatusCode) throws ZdaiClientException, ZdaiApiException {
         Request request = new Request.Builder()
-                .url(this.baseURL + path)
+                .url(buildUrl(path))
                 .header("Authorization", "Bearer " + token)
                 .delete()
                 .build();
@@ -116,7 +120,7 @@ public class ZdaiApiClient {
     // Shared functionality of the requests which do have bodies
     private <T> T authorizedRequest(String method, String path, RequestBody body, int expectedStatusCode, Class<T> responseType) throws ZdaiClientException, ZdaiApiException {
         Request.Builder builder = new Request.Builder()
-                .url(this.baseURL + path)
+                .url(buildUrl(path))
                 .header("Authorization", "Bearer " + token)
                 .method(method, body);
 
@@ -214,7 +218,7 @@ public class ZdaiApiClient {
      */
     public <T> T authorizedRequest(String method, String path, File body, int expectedStatusCode,  Class<T> responseType, String... contentType) throws ZdaiClientException, ZdaiApiException, FileNotFoundException, SecurityException {
         Request.Builder builder = new Request.Builder()
-                .url(this.baseURL + path)
+                .url(buildUrl(path))
                 .header("Authorization", "Bearer " + token)
                 .method(method, RequestBody.create(body, toMediaType(contentType)));
 
@@ -238,7 +242,7 @@ public class ZdaiApiClient {
      */
     public byte[] authorizedGetBinary(String path, int expectedStatusCode) throws ZdaiClientException, ZdaiApiException {
         Request request = new Request.Builder()
-                .url(this.baseURL + path)
+                .url(buildUrl(path))
                 .header("Authorization", "Bearer " + token)
                 .build();
 

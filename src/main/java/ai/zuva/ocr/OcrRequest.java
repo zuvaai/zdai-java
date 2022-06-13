@@ -68,7 +68,7 @@ public class OcrRequest extends BaseRequest {
      * @throws ZdaiClientException Error preparing, sending or processing the request/response
      */
     public static OcrRequest[] createRequests(ZdaiApiClient client, ZdaiFile[] files) throws ZdaiClientException, ZdaiApiException {
-        OcrStatuses resp = client.authorizedJsonRequest("POST", "/ocr", new OcrRequestBody(files), 202, OcrStatuses.class);
+        OcrStatuses resp = client.authorizedJsonRequest("POST", "api/v2/ocr", new OcrRequestBody(files), 202, OcrStatuses.class);
         OcrRequest[] ocrRequests = new OcrRequest[resp.statuses.length];
         for (int i = 0; i < ocrRequests.length; i++) {
             ocrRequests[i] = new OcrRequest(client, resp.statuses[i]);
@@ -97,7 +97,7 @@ public class OcrRequest extends BaseRequest {
      * @throws ZdaiClientException Error preparing, sending or processing the request/response
      */
     public OcrStatus getStatus() throws ZdaiClientException, ZdaiApiException {
-        return client.authorizedGet("/ocr/" + requestId, 200, OcrStatus.class);
+        return client.authorizedGet("api/v2/ocr/" + requestId, 200, OcrStatus.class);
     }
 
     /**
@@ -111,7 +111,7 @@ public class OcrRequest extends BaseRequest {
      * @throws ZdaiClientException Error preparing, sending or processing the request/response
      */
     public String getText() throws ZdaiClientException, ZdaiApiException {
-        return client.authorizedGet("/ocr/" + requestId + "/text", 200, OcrText.class).text;
+        return client.authorizedGet("api/v2/ocr/" + requestId + "/text", 200, OcrText.class).text;
     }
 
     /**
@@ -122,7 +122,7 @@ public class OcrRequest extends BaseRequest {
      * @throws ZdaiClientException Error preparing, sending or processing the request/response
      */
     public byte[] getImages() throws ZdaiClientException, ZdaiApiException {
-        return client.authorizedGetBinary("/ocr/" + requestId + "/images", 200);
+        return client.authorizedGetBinary("api/v2/ocr/" + requestId + "/images", 200);
     }
 
     /**
@@ -133,6 +133,6 @@ public class OcrRequest extends BaseRequest {
      * @throws ZdaiClientException Error preparing, sending or processing the request/response
      */
     public byte[] getLayouts() throws ZdaiClientException, ZdaiApiException {
-        return client.authorizedGetBinary("/ocr/" + requestId + "/layouts", 200);
+        return client.authorizedGetBinary("api/v2/ocr/" + requestId + "/layouts", 200);
     }
 }

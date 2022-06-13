@@ -59,7 +59,7 @@ public class LanguageRequest extends BaseRequest {
     public static LanguageRequest[] createRequests(ZdaiApiClient client, ZdaiFile[] files) throws ZdaiClientException, ZdaiApiException {
         LanguageResults resp = client.authorizedJsonRequest(
                 "POST",
-                "/language",
+                "api/v2/language",
                 new LanguageRequestBody(files),
                 202, LanguageResults.class);
         LanguageRequest[] languageRequests = new LanguageRequest[resp.results.length];
@@ -101,6 +101,6 @@ public class LanguageRequest extends BaseRequest {
      * @throws ZdaiClientException Error preparing, sending or processing the request/response
      */
     public LanguageResult getStatus() throws ZdaiClientException, ZdaiApiException {
-        return client.authorizedGet("/language/" + requestId, 200, LanguageResult.class);
+        return client.authorizedGet("api/v2/language/" + requestId, 200, LanguageResult.class);
     }
 }

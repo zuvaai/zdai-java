@@ -80,7 +80,7 @@ public class ExtractionRequest extends BaseRequest {
     public static ExtractionRequest[] createRequests(ZdaiApiClient client, ZdaiFile[] files, String[] fieldIds) throws ZdaiClientException, ZdaiApiException {
         ExtractionStatuses resp = client.authorizedJsonRequest(
                 "POST",
-                "/extraction",
+                "api/v2/extraction",
                 new ExtractionRequestBody(files, fieldIds),
                 202,
                 ExtractionStatuses.class);
@@ -116,7 +116,7 @@ public class ExtractionRequest extends BaseRequest {
      * @throws ZdaiClientException Error preparing, sending or processing the request/response
      */
     public ExtractionStatus getStatus() throws ZdaiClientException, ZdaiApiException {
-        return client.authorizedGet(String.format("/extraction/%s", requestId), 200, ExtractionStatus.class);
+        return client.authorizedGet(String.format("api/v2/extraction/%s", requestId), 200, ExtractionStatus.class);
     }
 
     /**
@@ -130,6 +130,6 @@ public class ExtractionRequest extends BaseRequest {
      * @throws ZdaiClientException Error preparing, sending or processing the request/response
      */
     public ExtractionResults[] getResults() throws ZdaiClientException, ZdaiApiException {
-        return client.authorizedGet("/extraction/" + requestId + "/results/text", 200, ExtractionResultsBody.class).results;
+        return client.authorizedGet("api/v2/extraction/" + requestId + "/results/text", 200, ExtractionResultsBody.class).results;
     }
 }

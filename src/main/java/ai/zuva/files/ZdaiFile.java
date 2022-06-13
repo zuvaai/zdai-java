@@ -5,7 +5,6 @@ import ai.zuva.exception.ZdaiClientException;
 import ai.zuva.api.ZdaiApiClient;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.core.JsonProcessingException;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -30,17 +29,17 @@ public class ZdaiFile {
     }
 
     public static ZdaiFile submitFile(ZdaiApiClient client, File f, String... contentType) throws ZdaiClientException, ZdaiApiException, FileNotFoundException, SecurityException {
-        SubmitFileResponse resp = client.authorizedRequest("POST", "/files", f, 201, SubmitFileResponse.class, contentType);
+        SubmitFileResponse resp = client.authorizedRequest("POST", "ap/v2/files", f, 201, SubmitFileResponse.class, contentType);
         return new ZdaiFile(client, resp);
     }
 
     public static ZdaiFile submitFile(ZdaiApiClient client, String s, String... contentType) throws ZdaiClientException, ZdaiApiException {
-        SubmitFileResponse resp = client.authorizedRequest("POST", "/files", s, 201, SubmitFileResponse.class, contentType);
+        SubmitFileResponse resp = client.authorizedRequest("POST", "api/v2/files", s, 201, SubmitFileResponse.class, contentType);
         return new ZdaiFile(client, resp);
     }
 
     public static ZdaiFile submitFile(ZdaiApiClient client, byte[] ba, String... contentType) throws ZdaiClientException, ZdaiApiException {
-        SubmitFileResponse resp = client.authorizedRequest("POST", "/files", ba, 201,SubmitFileResponse.class, contentType);
+        SubmitFileResponse resp = client.authorizedRequest("POST", "api/v2/files", ba, 201,SubmitFileResponse.class, contentType);
         return new ZdaiFile(client, resp);
     }
 
@@ -58,7 +57,7 @@ public class ZdaiFile {
     }
 
     public void delete() throws ZdaiClientException, ZdaiApiException {
-        client.authorizedDelete("/files/" + fileId, 204);
+        client.authorizedDelete("api/v2/files/" + fileId, 204);
     }
 
     // Returns an array of the file IDs of the given files

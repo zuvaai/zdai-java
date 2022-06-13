@@ -23,7 +23,7 @@ public class LanguageRequestTest {
 
             // Test constructing and sending a request
             String postResponseBody = TestHelpers.resourceAsString(this, "language-request-created.json");
-            stubFor(post("/language")
+            stubFor(post("/api/v2/language")
                     .withRequestBody(equalToJson("{\"file_ids\": [\"c5e41av1qk1er7odm79g\"]}"))
                     .willReturn(aResponse().withStatus(202).withBody(postResponseBody)));
 
@@ -34,7 +34,7 @@ public class LanguageRequestTest {
 
             // Testing getClassificationResult where processing is complete
             String getResponseBody = TestHelpers.resourceAsString(this, "language-request-complete.json");
-            stubFor(get("/language/" + requestId)
+            stubFor(get("/api/v2/language/" + requestId)
                     .willReturn(aResponse().withStatus(200).withBody(getResponseBody)));
 
             LanguageResult result = request.getStatus();

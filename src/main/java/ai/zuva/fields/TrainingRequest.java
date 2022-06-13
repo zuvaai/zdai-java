@@ -1,10 +1,8 @@
 package ai.zuva.fields;
 
 import ai.zuva.BaseRequest;
-import ai.zuva.ProcessingState;
 import ai.zuva.exception.ZdaiApiException;
 import ai.zuva.exception.ZdaiClientException;
-import ai.zuva.exception.ZdaiError;
 import ai.zuva.api.ZdaiApiClient;
 
 public class TrainingRequest extends BaseRequest {
@@ -28,7 +26,7 @@ public class TrainingRequest extends BaseRequest {
      */
     public static TrainingRequest createRequest(ZdaiApiClient client, String fieldId, TrainingExample[] trainingExamples) throws ZdaiClientException, ZdaiApiException {
         TrainingStatus trainingStatus  = client.authorizedJsonRequest("POST",
-                String.format("/fields/%s/train", fieldId),
+                String.format("api/v2/fields/%s/train", fieldId),
                 trainingExamples,
                 202,
                 TrainingStatus.class);
@@ -67,6 +65,6 @@ public class TrainingRequest extends BaseRequest {
      * @throws ZdaiClientException Error preparing, sending or processing the request/response
      */
     public TrainingStatus getStatus() throws ZdaiClientException, ZdaiApiException {
-        return client.authorizedGet(String.format("/fields/%s/train/%s", fieldId, requestId), 200, TrainingStatus.class);
+        return client.authorizedGet(String.format("api/v2/fields/%s/train/%s", fieldId, requestId), 200, TrainingStatus.class);
     }
 }
