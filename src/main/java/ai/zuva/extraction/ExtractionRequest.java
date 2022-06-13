@@ -13,14 +13,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 public class ExtractionRequest extends BaseRequest {
     public final String fileId;
     public final String[] fieldIds;
-    public ProcessingState status;
-    public ZdaiError error;
-
-    public ExtractionRequest(ZdaiApiClient client, String requestId) {
-        super(client, requestId);
-        this.fileId = null;
-        this.fieldIds = null;
-    }
 
     static class ExtractionRequestBody {
 
@@ -102,11 +94,15 @@ public class ExtractionRequest extends BaseRequest {
 
     // Constructor is private since it is only used by the above static factory methods
     private ExtractionRequest(ZdaiApiClient client, ExtractionStatus extractionStatus) {
-        super(client, extractionStatus.requestId);
+        super(client, extractionStatus);
         this.fileId = extractionStatus.fileId;
         this.fieldIds = extractionStatus.fieldIds;
-        this.status = extractionStatus.status;
-        this.error = extractionStatus.error;
+    }
+
+    public ExtractionRequest(ZdaiApiClient client, String requestId) {
+        super(client, requestId, null, null);
+        this.fileId = null;
+        this.fieldIds = null;
     }
 
     /**

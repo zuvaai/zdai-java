@@ -1,9 +1,11 @@
 package ai.zuva.ocr;
 
 import ai.zuva.BaseRequest;
+import ai.zuva.ProcessingState;
 import ai.zuva.api.ZdaiApiClient;
 import ai.zuva.exception.ZdaiApiException;
 import ai.zuva.exception.ZdaiClientException;
+import ai.zuva.exception.ZdaiError;
 import ai.zuva.files.ZdaiFile;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -69,14 +71,19 @@ public class OcrRequest extends BaseRequest {
         OcrStatuses resp = client.authorizedJsonRequest("POST", "/ocr", new OcrRequestBody(files), 202, OcrStatuses.class);
         OcrRequest[] ocrRequests = new OcrRequest[resp.statuses.length];
         for (int i = 0; i < ocrRequests.length; i++) {
-            ocrRequests[i] = new OcrRequest(client, resp.statuses[i].fileId, resp.statuses[i].requestId);
+            ocrRequests[i] = new OcrRequest(client, resp.statuses[i]);
         }
         return ocrRequests;
     }
 
-    public OcrRequest(ZdaiApiClient client, String fileId, String requestId) {
-        super(client, requestId);
-        this.fileId = fileId;
+    private OcrRequest(ZdaiApiClient client, OcrStatus status) {
+        super(client, status);
+        this.fileId = status.fileId;
+    }
+
+    public OcrRequest(ZdaiApiClient client, String requestId) {
+        super(client, requestId, null, null);
+        this.fileId = null;
     }
 
     /**

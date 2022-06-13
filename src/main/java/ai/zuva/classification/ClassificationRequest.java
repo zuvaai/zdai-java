@@ -66,9 +66,14 @@ public class ClassificationRequest extends BaseRequest {
 
         ClassificationRequest[] classificationRequests = new ClassificationRequest[resp.results.length];
         for (int i = 0; i < classificationRequests.length; i++) {
-            classificationRequests[i] = new ClassificationRequest(client, resp.results[i].fileId, resp.results[i].requestId);
+            classificationRequests[i] = new ClassificationRequest(client, resp.results[i]);
         }
         return classificationRequests;
+    }
+
+    private ClassificationRequest(ZdaiApiClient client, ClassificationResult result) {
+        super(client, result);
+        this.fileId = result.fileId;
     }
 
     /**
@@ -83,7 +88,7 @@ public class ClassificationRequest extends BaseRequest {
      * @param requestId The ID of an existing request.
      */
     public ClassificationRequest(ZdaiApiClient client, String fileId, String requestId) {
-        super(client, requestId);
+        super(client, requestId, null, null);
         this.fileId = fileId;
     }
 

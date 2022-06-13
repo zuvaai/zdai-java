@@ -1,6 +1,7 @@
 package ai.zuva.fields;
 
 import ai.zuva.BaseRequest;
+import ai.zuva.ProcessingState;
 import ai.zuva.exception.ZdaiApiException;
 import ai.zuva.exception.ZdaiClientException;
 import ai.zuva.exception.ZdaiError;
@@ -9,8 +10,6 @@ import ai.zuva.api.ZdaiApiClient;
 public class TrainingRequest extends BaseRequest {
 
     public final String fieldId;
-    public TrainingStatus status;
-    public ZdaiError error;
 
     /**
      * Send a request to train a field from examples
@@ -48,14 +47,13 @@ public class TrainingRequest extends BaseRequest {
      * @param requestId The ID of an existing request.
      */
     public TrainingRequest(ZdaiApiClient client, String fieldId, String requestId) {
-        super(client, requestId);
+        super(client, requestId, null, null);
         this.fieldId = fieldId;
     }
 
     private TrainingRequest(ZdaiApiClient client, TrainingStatus trainingStatus) {
-        super(client, trainingStatus.requestId);
+        super(client, trainingStatus);
         this.fieldId = trainingStatus.fieldId;
-        this.status = trainingStatus;
     }
 
     /**
@@ -69,8 +67,6 @@ public class TrainingRequest extends BaseRequest {
      * @throws ZdaiClientException Error preparing, sending or processing the request/response
      */
     public TrainingStatus getStatus() throws ZdaiClientException, ZdaiApiException {
-        TrainingStatus status = client.authorizedGet(String.format("/fields/%s/train/%s", fieldId, requestId), 200, TrainingStatus.class);
-        this.status = status;
-        return status;
+        return client.authorizedGet(String.format("/fields/%s/train/%s", fieldId, requestId), 200, TrainingStatus.class);
     }
 }

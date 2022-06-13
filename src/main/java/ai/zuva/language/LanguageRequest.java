@@ -69,6 +69,11 @@ public class LanguageRequest extends BaseRequest {
         return languageRequests;
     }
 
+    private LanguageRequest(ZdaiApiClient client, LanguageResult result) {
+        super(client, result);
+        this.fileId = result.fileId;
+    }
+
     /**
      * Construct a new object representing a pre-existing language request
      * <p>
@@ -81,7 +86,7 @@ public class LanguageRequest extends BaseRequest {
      * @param requestId The request ID of the existing request
      */
     public LanguageRequest(ZdaiApiClient client, String fileId, String requestId) {
-        super(client, requestId);
+        super(client, requestId, null, null);
         this.fileId = fileId;
     }
 
