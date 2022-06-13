@@ -1,19 +1,14 @@
 package ai.zuva.language;
 
+import ai.zuva.BaseRequest;
 import ai.zuva.exception.ZdaiApiException;
 import ai.zuva.exception.ZdaiClientException;
 import ai.zuva.files.ZdaiFile;
 import ai.zuva.api.ZdaiApiClient;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-public class LanguageRequest {
-    /**
-     * A map of file IDs to their corresponding classification request IDs.
-     */
+public class LanguageRequest extends BaseRequest {
     public final String fileId;
-    public final String requestId;
-
-    private final ZdaiApiClient client;
 
     // This class is used internally to construct the JSON body for the POST /language request
     static class LanguageRequestBody {
@@ -86,9 +81,8 @@ public class LanguageRequest {
      * @param requestId The request ID of the existing request
      */
     public LanguageRequest(ZdaiApiClient client, String fileId, String requestId) {
-        this.client = client;
+        super(client, requestId);
         this.fileId = fileId;
-        this.requestId = requestId;
     }
 
     /**
@@ -101,7 +95,7 @@ public class LanguageRequest {
      * @throws ZdaiApiException    Unsuccessful response code from server
      * @throws ZdaiClientException Error preparing, sending or processing the request/response
      */
-    public LanguageResult getResult() throws ZdaiClientException, ZdaiApiException {
+    public LanguageResult getStatus() throws ZdaiClientException, ZdaiApiException {
         return client.authorizedGet("/language/" + requestId, 200, LanguageResult.class);
     }
 }

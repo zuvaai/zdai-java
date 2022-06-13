@@ -1,15 +1,14 @@
 package ai.zuva.fields;
 
+import ai.zuva.BaseRequest;
 import ai.zuva.exception.ZdaiApiException;
 import ai.zuva.exception.ZdaiClientException;
 import ai.zuva.exception.ZdaiError;
 import ai.zuva.api.ZdaiApiClient;
 
-public class TrainingRequest {
+public class TrainingRequest extends BaseRequest {
 
-    public final ZdaiApiClient client;
     public final String fieldId;
-    public final String requestId;
     public TrainingStatus status;
     public ZdaiError error;
 
@@ -49,15 +48,13 @@ public class TrainingRequest {
      * @param requestId The ID of an existing request.
      */
     public TrainingRequest(ZdaiApiClient client, String fieldId, String requestId) {
-        this.client = client;
+        super(client, requestId);
         this.fieldId = fieldId;
-        this.requestId = requestId;
     }
 
     private TrainingRequest(ZdaiApiClient client, TrainingStatus trainingStatus) {
-        this.client = client;
+        super(client, trainingStatus.requestId);
         this.fieldId = trainingStatus.fieldId;
-        this.requestId = trainingStatus.requestId;
         this.status = trainingStatus;
     }
 

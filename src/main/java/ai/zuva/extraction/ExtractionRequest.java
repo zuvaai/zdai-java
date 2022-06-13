@@ -1,5 +1,6 @@
 package ai.zuva.extraction;
 
+import ai.zuva.BaseRequest;
 import ai.zuva.ProcessingState;
 import ai.zuva.api.ZdaiApiClient;
 import ai.zuva.exception.ZdaiApiException;
@@ -9,17 +10,14 @@ import ai.zuva.files.ZdaiFile;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-public class ExtractionRequest {
+public class ExtractionRequest extends BaseRequest {
     public final String fileId;
     public final String[] fieldIds;
-    public final String requestId;
     public ProcessingState status;
     public ZdaiError error;
-    private final ZdaiApiClient client;
 
     public ExtractionRequest(ZdaiApiClient client, String requestId) {
-        this.client = client;
-        this.requestId = requestId;
+        super(client, requestId);
         this.fileId = null;
         this.fieldIds = null;
     }
@@ -104,10 +102,9 @@ public class ExtractionRequest {
 
     // Constructor is private since it is only used by the above static factory methods
     private ExtractionRequest(ZdaiApiClient client, ExtractionStatus extractionStatus) {
-        this.client = client;
+        super(client, extractionStatus.requestId);
         this.fileId = extractionStatus.fileId;
         this.fieldIds = extractionStatus.fieldIds;
-        this.requestId = extractionStatus.requestId;
         this.status = extractionStatus.status;
         this.error = extractionStatus.error;
     }

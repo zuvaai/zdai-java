@@ -1,15 +1,14 @@
 package ai.zuva.classification;
 
+import ai.zuva.BaseRequest;
 import ai.zuva.api.ZdaiApiClient;
 import ai.zuva.exception.ZdaiApiException;
 import ai.zuva.exception.ZdaiClientException;
 import ai.zuva.files.ZdaiFile;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-public class ClassificationRequest {
+public class ClassificationRequest extends BaseRequest {
     public final String fileId;
-    public final String requestId;
-    private final ZdaiApiClient client;
 
     // This class is used internally to construct the JSON body for the POST /classification request
     static class ClassificationRequestBody {
@@ -84,9 +83,8 @@ public class ClassificationRequest {
      * @param requestId The ID of an existing request.
      */
     public ClassificationRequest(ZdaiApiClient client, String fileId, String requestId) {
-        this.client = client;
+        super(client, requestId);
         this.fileId = fileId;
-        this.requestId = requestId;
     }
 
     /**
@@ -100,7 +98,7 @@ public class ClassificationRequest {
      * @throws ZdaiApiException    Unsuccessful response code from server
      * @throws ZdaiClientException Error preparing, sending or processing the request/response
      */
-    public ClassificationResult getResult() throws ZdaiClientException, ZdaiApiException {
+    public ClassificationResult getStatus() throws ZdaiClientException, ZdaiApiException {
         return client.authorizedGet("/classification/" + requestId, 200, ClassificationResult.class);
     }
 }

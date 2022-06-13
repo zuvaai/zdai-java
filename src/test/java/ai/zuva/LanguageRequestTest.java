@@ -37,7 +37,7 @@ public class LanguageRequestTest {
             stubFor(get("/language/" + requestId)
                     .willReturn(aResponse().withStatus(200).withBody(getResponseBody)));
 
-            LanguageResult result = request.getResult();
+            LanguageResult result = request.getStatus();
 
             assertTrue(result.status.isComplete());
             assertEquals("English", result.language);
