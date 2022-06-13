@@ -39,12 +39,20 @@ public class ZdaiApiClient {
         }
     }
 
-    private <T> T jsonToObject(String s, Class<T> type) throws ZdaiClientException {
+    private <T> T jsonResponseToObject(String s, Class<T> type) throws ZdaiClientException {
         try {
             return mapper.readValue(s, type);
         } catch (JsonProcessingException e) {
             throw (new ZdaiClientException("Unable to parse response", e));
         }
+    }
+
+    private static MediaType toMediaType(String... contentType) {
+        MediaType mediaType = null;
+        if (contentType.length > 0) {
+            mediaType = MediaType.parse(contentType[0]);
+        }
+        return mediaType;
     }
 
     private String sendRequest(Request request, int expectedStatusCode) throws ZdaiClientException, ZdaiApiException {
@@ -79,7 +87,7 @@ public class ZdaiApiClient {
                 .header("Authorization", "Bearer " + token)
                 .get()
                 .build();
-        return jsonToObject(sendRequest(request, expectedStatusCode), type);
+        return jsonResponseToObject(sendRequest(request, expectedStatusCode), type);
     }
 
     /**
@@ -106,17 +114,22 @@ public class ZdaiApiClient {
     }
 
     // Shared functionality of the requests which do have bodies
-    private String authorizedRequest(String method, String path, RequestBody body, int expectedStatusCode) throws ZdaiClientException, ZdaiApiException {
+    private <T> T authorizedRequest(String method, String path, RequestBody body, int expectedStatusCode, Class<T> responseType) throws ZdaiClientException, ZdaiApiException {
         Request.Builder builder = new Request.Builder()
                 .url(this.baseURL + path)
                 .header("Authorization", "Bearer " + token)
                 .method(method, body);
 
-        return sendRequest(builder.build(), expectedStatusCode);
+        String response = sendRequest(builder.build(), expectedStatusCode);
+        if (responseType != null) {
+            return jsonResponseToObject(response, responseType);
+        } else {
+            return null;
+        }
     }
 
     /**
-     * Makes an authorized Zuva API request with a JSON body, returning the body of the (successful) response as a String.
+     * Makes an authorized Zuva API request with a JSON body, returning the body of the (successful) response as and object of type responseType
      * <p>
      * This function makes a request using the specified HTTP method to the specified URI (comprised of the Client's
      * baseURL + the given path), adding the required authorization header (using the client's token). If the status
@@ -134,12 +147,7 @@ public class ZdaiApiClient {
     public <T> T authorizedJsonRequest(String method, String path, Object body, int expectedStatusCode, Class<T> responseType) throws ZdaiClientException, ZdaiApiException {
         String stringBody = this.JsonToStringBody(body);
         RequestBody requestBody = RequestBody.create(stringBody, null);
-        String response = authorizedRequest(method, path, requestBody, expectedStatusCode);
-        if (response.length() > 0) {
-            return jsonToObject(response, responseType);
-        } else {
-            return null;
-        }
+        return authorizedRequest(method, path, requestBody, expectedStatusCode, responseType);
     }
 
     /**
@@ -160,13 +168,8 @@ public class ZdaiApiClient {
      * @throws ZdaiApiException The status code in the response was anything other than expectedStatusCode
      */
     public <T> T authorizedRequest(String method, String path, String body, int expectedStatusCode, Class<T> responseType, String... contentType) throws ZdaiClientException, ZdaiApiException {
-        MediaType mediaType = null;
-        if (contentType.length > 0) {
-            mediaType = MediaType.parse(contentType[0]);
-        }
-        RequestBody requestBody = RequestBody.create(body, mediaType);
-        String response = authorizedRequest(method, path, requestBody, expectedStatusCode);
-        return jsonToObject(response, responseType);
+        RequestBody requestBody = RequestBody.create(body, toMediaType(contentType));
+        return authorizedRequest(method, path, requestBody, expectedStatusCode, responseType);
     }
 
     /**
@@ -187,13 +190,8 @@ public class ZdaiApiClient {
      * @throws ZdaiApiException The status code in the response was anything other than expectedStatusCode
      */
     public <T> T authorizedRequest(String method, String path, byte[] body, int expectedStatusCode, Class<T> responseType, String... contentType) throws ZdaiClientException, ZdaiApiException {
-        MediaType mediaType = null;
-        if (contentType.length > 0) {
-            mediaType = MediaType.parse(contentType[0]);
-        }
-        RequestBody requestBody = RequestBody.create(body, mediaType);
-        String response = authorizedRequest(method, path, requestBody, expectedStatusCode);
-        return jsonToObject(response, responseType);
+        RequestBody requestBody = RequestBody.create(body, toMediaType(contentType));
+        return authorizedRequest(method, path, requestBody, expectedStatusCode, responseType);
     }
 
     /**
@@ -215,18 +213,13 @@ public class ZdaiApiClient {
      * @throws FileNotFoundException The File to be used as the request body could not be found
      */
     public <T> T authorizedRequest(String method, String path, File body, int expectedStatusCode,  Class<T> responseType, String... contentType) throws ZdaiClientException, ZdaiApiException, FileNotFoundException, SecurityException {
-        MediaType mediaType = null;
-        if (contentType.length > 0) {
-            mediaType = MediaType.parse(contentType[0]);
-        }
-
         Request.Builder builder = new Request.Builder()
                 .url(this.baseURL + path)
                 .header("Authorization", "Bearer " + token)
-                .method(method, RequestBody.create(body, mediaType));
+                .method(method, RequestBody.create(body, toMediaType(contentType)));
 
         String response = sendRequest(builder.build(), expectedStatusCode);
-        return jsonToObject(response, responseType);
+        return jsonResponseToObject(response, responseType);
     }
 
     /**
