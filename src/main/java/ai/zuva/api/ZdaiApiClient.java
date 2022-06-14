@@ -12,7 +12,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 
 public class ZdaiApiClient {
-    private final String baseURL;
+    private final HttpUrl baseUrl;
     private final String token;
     private final OkHttpClient client;
     private final ObjectMapper mapper;
@@ -20,19 +20,28 @@ public class ZdaiApiClient {
     /**
      * Constructs a ZdaiApiClient to interface with the Zuva DocAI API
      *
-     * @param baseURL The url to make requests to (e.g. https://us.app.zuva.ai)
+     * @param baseUrl The url to make requests to (e.g. us.app.zuva.ai). The scheme and port may optionally be included.
      * @param token The Zuva token to use to authenticate all requests
      */
-    public ZdaiApiClient(String baseURL, String token) {
-        this.baseURL = baseURL;
+    public ZdaiApiClient(String baseUrl, String token) {
         this.token = token;
         client = new OkHttpClient();
         mapper = new ObjectMapper();
         mapper.enable(DeserializationFeature.READ_UNKNOWN_ENUM_VALUES_USING_DEFAULT_VALUE);
+
+        // Set default scheme to https
+        String scheme = "https";
+        try{
+            scheme = HttpUrl.parse(baseUrl).scheme();
+        } catch (NullPointerException ignored){};
+
+        this.baseUrl = HttpUrl.parse(baseUrl).newBuilder()
+                .scheme(scheme)
+                .build();
     }
 
-    private String buildUrl(String path){
-        return this.baseURL + "/" + path;
+    private HttpUrl buildUrl(String path){
+        return baseUrl.newBuilder().addPathSegments(path).build();
     }
 
     private String JsonToStringBody(Object obj) throws ZdaiClientException {
