@@ -81,12 +81,12 @@ public class ZdaiApiClient {
     }
 
     /**
-     * Makes an authorized Zuva API request, returning the body of the (successful) response as a String.
+     * Makes an authorized Zuva API request, returning the body of the (successful) response as an object
      * <p>
      * This function makes a request using the specified HTTP method to the specified URI (comprised of the Client's
      * baseURL + the given path), adding the required authorization header (using the client's token). If the status
-     * code of the response matches expectedStatusCode, the response body is returned as a String. Otherwise, a
-     * ZdaiApiException is thrown.
+     * code of the response matches expectedStatusCode, the response body is parsed to the specified responseType and
+     * returned. Otherwise, a ZdaiApiException is thrown.
      *
      * @param path The path part of the URI to send the request to
      * @param expectedStatusCode The status code expected for a successful response
@@ -94,13 +94,13 @@ public class ZdaiApiClient {
      * @throws ZdaiClientException There was a problem sending the request, such as an IOException or InterruptedException
      * @throws ZdaiApiException The status code in the response was anything other than expectedStatusCode
      */
-    public <T> T authorizedGet(String path, int expectedStatusCode, Class<T> type) throws ZdaiClientException, ZdaiApiException {
+    public <T> T authorizedGet(String path, int expectedStatusCode, Class<T> responseType) throws ZdaiClientException, ZdaiApiException {
         Request request = new Request.Builder()
                 .url(buildUrl(path))
                 .header("Authorization", "Bearer " + token)
                 .get()
                 .build();
-        return jsonResponseToObject(sendRequest(request, expectedStatusCode), type);
+        return jsonResponseToObject(sendRequest(request, expectedStatusCode), responseType);
     }
 
     /**
@@ -142,12 +142,12 @@ public class ZdaiApiClient {
     }
 
     /**
-     * Makes an authorized Zuva API request with a JSON body, returning the body of the (successful) response as and object of type responseType
+     * Makes an authorized Zuva API request with a JSON body, returning the body of the (successful) response as an object of type responseType
      * <p>
      * This function makes a request using the specified HTTP method to the specified URI (comprised of the Client's
      * baseURL + the given path), adding the required authorization header (using the client's token). If the status
-     * code of the response matches expectedStatusCode, the response body is returned as a String. Otherwise, a
-     * ZdaiApiException is thrown.
+     * code of the response matches expectedStatusCode, the response body is parsed to the specified responseType and
+     * returned. Otherwise, a ZdaiApiException is thrown.
      *
      * @param method The HTTP method to use
      * @param path The path part of the URI to send the request to
@@ -168,8 +168,8 @@ public class ZdaiApiClient {
      * <p>
      * This function makes a request using the specified HTTP method to the specified URI (comprised of the Client's
      * baseURL + the given path), adding the required authorization header (using the client's token). If the status
-     * code of the response matches expectedStatusCode, the response body is returned as a String. Otherwise, a
-     * ZdaiApiException is thrown.
+     * code of the response matches expectedStatusCode, the response body is parsed to the specified responseType and
+     * returned. Otherwise, a ZdaiApiException is thrown.
      *
      * @param method The HTTP method to use
      * @param path The path part of the URI to send the request to
@@ -190,8 +190,8 @@ public class ZdaiApiClient {
      * <p>
      * This function makes a request using the specified HTTP method to the specified URI (comprised of the Client's
      * baseURL + the given path), adding the required authorization header (using the client's token). If the status
-     * code of the response matches expectedStatusCode, the response body is returned as a String. Otherwise, a
-     * ZdaiApiException is thrown.
+     * code of the response matches expectedStatusCode, the response body is parsed to the specified responseType and
+     * returned. Otherwise, a ZdaiApiException is thrown.
      *
      * @param method The HTTP method to use
      * @param path The path part of the URI to send the request to
@@ -212,8 +212,8 @@ public class ZdaiApiClient {
      * <p>
      * This function makes a request using the specified HTTP method to the specified URI (comprised of the Client's
      * baseURL + the given path), adding the required authorization header (using the client's token). If the status
-     * code of the response matches expectedStatusCode, the response body is returned as a String. Otherwise, a
-     * ZdaiApiException is thrown.
+     * code of the response matches expectedStatusCode, the response body is parsed to the specified responseType and
+     * returned. Otherwise, a ZdaiApiException is thrown.
      *
      * @param method The HTTP method to use
      * @param path The path part of the URI to send the request to
@@ -240,7 +240,7 @@ public class ZdaiApiClient {
      * <p>
      * This function makes a request using the specified HTTP method to the specified URI (comprised of the Client's
      * baseURL + the given path), adding the required authorization header (using the client's token). If the status
-     * code of the response matches expectedStatusCode, the response body is returned as a String. Otherwise, a
+     * code of the response matches expectedStatusCode, the response body is returned as a Byte array. Otherwise, a
      * ZdaiApiException is thrown.
      *
      * @param path The path part of the URI to send the request to
