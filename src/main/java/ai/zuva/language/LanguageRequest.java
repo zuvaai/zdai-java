@@ -1,10 +1,10 @@
 package ai.zuva.language;
 
 import ai.zuva.BaseRequest;
-import ai.zuva.exception.ZdaiApiException;
-import ai.zuva.exception.ZdaiClientException;
-import ai.zuva.files.ZdaiFile;
-import ai.zuva.api.ZdaiApiClient;
+import ai.zuva.exception.DocAIApiException;
+import ai.zuva.exception.DocAIClientException;
+import ai.zuva.files.File;
+import ai.zuva.api.DocAIClient;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class LanguageRequest extends BaseRequest {
@@ -15,8 +15,8 @@ public class LanguageRequest extends BaseRequest {
         @JsonProperty("file_ids")
         public String[] fileIds;
 
-        public LanguageRequestBody(ZdaiFile[] files) {
-            this.fileIds = ZdaiFile.toFileIdArray(files);
+        public LanguageRequestBody(File[] files) {
+            this.fileIds = File.toFileIdArray(files);
         }
     }
 
@@ -36,11 +36,11 @@ public class LanguageRequest extends BaseRequest {
      * @param client The client to use to make the request
      * @param file   The file to classify
      * @return A LanguageRequest object, which can be used to check the status and results of the request
-     * @throws ZdaiApiException    Unsuccessful response code from server
-     * @throws ZdaiClientException Error preparing, sending or processing the request/response
+     * @throws DocAIApiException    Unsuccessful response code from server
+     * @throws DocAIClientException Error preparing, sending or processing the request/response
      */
-    public static LanguageRequest createRequest(ZdaiApiClient client, ZdaiFile file) throws ZdaiClientException, ZdaiApiException {
-        return createRequests(client, new ZdaiFile[]{file})[0];
+    public static LanguageRequest createRequest(DocAIClient client, File file) throws DocAIClientException, DocAIApiException {
+        return createRequests(client, new File[]{file})[0];
     }
 
     /**
@@ -53,10 +53,10 @@ public class LanguageRequest extends BaseRequest {
      * @param client The client to use to make the request
      * @param files  The files to classify
      * @return An array of LanguageRequest objects, which can be used to check the status and results of the requests
-     * @throws ZdaiApiException    Unsuccessful response code from server
-     * @throws ZdaiClientException Error preparing, sending or processing the request/response
+     * @throws DocAIApiException    Unsuccessful response code from server
+     * @throws DocAIClientException Error preparing, sending or processing the request/response
      */
-    public static LanguageRequest[] createRequests(ZdaiApiClient client, ZdaiFile[] files) throws ZdaiClientException, ZdaiApiException {
+    public static LanguageRequest[] createRequests(DocAIClient client, File[] files) throws DocAIClientException, DocAIApiException {
         LanguageResults resp = client.authorizedJsonRequest(
                 "POST",
                 "api/v2/language",
@@ -69,7 +69,7 @@ public class LanguageRequest extends BaseRequest {
         return languageRequests;
     }
 
-    private LanguageRequest(ZdaiApiClient client, LanguageResult result) {
+    private LanguageRequest(DocAIClient client, LanguageResult result) {
         super(client, result);
         this.fileId = result.fileId;
     }
@@ -85,7 +85,7 @@ public class LanguageRequest extends BaseRequest {
      * @param fileId    The file ID of the existing request
      * @param requestId The request ID of the existing request
      */
-    public LanguageRequest(ZdaiApiClient client, String fileId, String requestId) {
+    public LanguageRequest(DocAIClient client, String fileId, String requestId) {
         super(client, requestId, null, null);
         this.fileId = fileId;
     }
@@ -97,10 +97,10 @@ public class LanguageRequest extends BaseRequest {
      * request and the language result (if available).
      *
      * @return A LanguageResult object, containing both the status of the request and, if available, the results.
-     * @throws ZdaiApiException    Unsuccessful response code from server
-     * @throws ZdaiClientException Error preparing, sending or processing the request/response
+     * @throws DocAIApiException    Unsuccessful response code from server
+     * @throws DocAIClientException Error preparing, sending or processing the request/response
      */
-    public LanguageResult getStatus() throws ZdaiClientException, ZdaiApiException {
+    public LanguageResult getStatus() throws DocAIClientException, DocAIApiException {
         return client.authorizedGet("api/v2/language/" + requestId, 200, LanguageResult.class);
     }
 }

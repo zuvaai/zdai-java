@@ -1,10 +1,10 @@
 package ai.zuva.classification;
 
 import ai.zuva.BaseRequest;
-import ai.zuva.api.ZdaiApiClient;
-import ai.zuva.exception.ZdaiApiException;
-import ai.zuva.exception.ZdaiClientException;
-import ai.zuva.files.ZdaiFile;
+import ai.zuva.api.DocAIClient;
+import ai.zuva.exception.DocAIApiException;
+import ai.zuva.exception.DocAIClientException;
+import ai.zuva.files.File;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class ClassificationRequest extends BaseRequest {
@@ -15,8 +15,8 @@ public class ClassificationRequest extends BaseRequest {
         @JsonProperty("file_ids")
         public String[] fileIds;
 
-        public ClassificationRequestBody(ZdaiFile[] files) {
-            this.fileIds = ZdaiFile.toFileIdArray(files);
+        public ClassificationRequestBody(File[] files) {
+            this.fileIds = File.toFileIdArray(files);
         }
     }
 
@@ -36,11 +36,11 @@ public class ClassificationRequest extends BaseRequest {
      * @param client The client to use to make the request
      * @param file   The file to classify
      * @return A ClassificationRequest, which can be used to check the status and results of the request
-     * @throws ZdaiApiException    Unsuccessful response code from server
-     * @throws ZdaiClientException Error preparing, sending or processing the request/response
+     * @throws DocAIApiException    Unsuccessful response code from server
+     * @throws DocAIClientException Error preparing, sending or processing the request/response
      */
-    public static ClassificationRequest createRequest(ZdaiApiClient client, ZdaiFile file) throws ZdaiClientException, ZdaiApiException {
-        return createRequests(client, new ZdaiFile[]{file})[0];
+    public static ClassificationRequest createRequest(DocAIClient client, File file) throws DocAIClientException, DocAIApiException {
+        return createRequests(client, new File[]{file})[0];
     }
 
     /**
@@ -53,10 +53,10 @@ public class ClassificationRequest extends BaseRequest {
      * @param client The client to use to make the request
      * @param files  The files to classify
      * @return An array of ClassificationRequests, which can be used to check the status and results of the requests
-     * @throws ZdaiApiException    Unsuccessful response code from server
-     * @throws ZdaiClientException Error preparing, sending or processing the request/response
+     * @throws DocAIApiException    Unsuccessful response code from server
+     * @throws DocAIClientException Error preparing, sending or processing the request/response
      */
-    public static ClassificationRequest[] createRequests(ZdaiApiClient client, ZdaiFile[] files) throws ZdaiClientException, ZdaiApiException {
+    public static ClassificationRequest[] createRequests(DocAIClient client, File[] files) throws DocAIClientException, DocAIApiException {
         ClassificationResultsBody resp = client.authorizedJsonRequest(
                 "POST",
                 "api/v2/classification",
@@ -71,7 +71,7 @@ public class ClassificationRequest extends BaseRequest {
         return classificationRequests;
     }
 
-    private ClassificationRequest(ZdaiApiClient client, ClassificationResult result) {
+    private ClassificationRequest(DocAIClient client, ClassificationResult result) {
         super(client, result);
         this.fileId = result.fileId;
     }
@@ -87,7 +87,7 @@ public class ClassificationRequest extends BaseRequest {
      * @param fileId    The ID of the file being classified
      * @param requestId The ID of an existing request.
      */
-    public ClassificationRequest(ZdaiApiClient client, String fileId, String requestId) {
+    public ClassificationRequest(DocAIClient client, String fileId, String requestId) {
         super(client, requestId, null, null);
         this.fileId = fileId;
     }
@@ -100,10 +100,10 @@ public class ClassificationRequest extends BaseRequest {
      * result (if available).
      *
      * @return A ClassificationResult, with the status and results of the request
-     * @throws ZdaiApiException    Unsuccessful response code from server
-     * @throws ZdaiClientException Error preparing, sending or processing the request/response
+     * @throws DocAIApiException    Unsuccessful response code from server
+     * @throws DocAIClientException Error preparing, sending or processing the request/response
      */
-    public ClassificationResult getStatus() throws ZdaiClientException, ZdaiApiException {
+    public ClassificationResult getStatus() throws DocAIClientException, DocAIApiException {
         return client.authorizedGet("api/v2/classification/" + requestId, 200, ClassificationResult.class);
     }
 }

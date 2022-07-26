@@ -10,16 +10,16 @@ This SDK provides a Java wrapper around the [Zuva DocAI API](https://zuva.ai/doc
 
 ### Quick start
 
-Start by instantiating a `ZdaiApiClient` with the url of the Zuva region you are using and your token:
+Start by instantiating a `DocAIApiClient` with the url of the Zuva region you are using and your token:
 
 ```java
-ZdaiApiClient client = new ZdaiApiClient(url, token);
+DocAIApiClient client = new DocAIApiClient(url, token);
 ```
 
 Submit your file to Zuva:
 
 ```java
-ZdaiFile file = ZdaiFile.submitFile(client, Paths.get(fileName));
+File file = File.submitFile(client, Paths.get(fileName));
 ```
 
 Obtain field IDs of the fields you are interested in from the [field library](https://docai.zuva.ai/field-library),
@@ -82,10 +82,10 @@ and fetching the results of OCR. The example expect certain environment variable
 
 ## Exceptions
 
-The general `ZdaiException` class has two subclasses:
-- `ZdaiApiException` captures unexpected status codes (4xx, 5xx) returned from the API request and includes
+The general `DocAIException` class has two subclasses:
+- `DocAIApiException` captures unexpected status codes (4xx, 5xx) returned from the API request and includes
 the status code and response from the server
-- `ZdaiClientException` captures all other errors and always includes the original `cause` (e.g. `IOException`,`JsonProcessingException` etc.)
+- `DocAIClientException` captures all other errors and always includes the original `cause` (e.g. `IOException`,`JsonProcessingException` etc.)
 
 ## HTTP Library
 

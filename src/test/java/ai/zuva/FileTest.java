@@ -1,8 +1,8 @@
 package ai.zuva;
 
-import ai.zuva.exception.ZdaiApiException;
-import ai.zuva.files.ZdaiFile;
-import ai.zuva.api.ZdaiApiClient;
+import ai.zuva.exception.DocAIApiException;
+import ai.zuva.files.File;
+import ai.zuva.api.DocAIClient;
 import com.github.tomakehurst.wiremock.junit5.WireMockRuntimeInfo;
 import com.github.tomakehurst.wiremock.junit5.WireMockTest;
 import org.junit.jupiter.api.Test;
@@ -13,7 +13,7 @@ import static com.github.tomakehurst.wiremock.client.WireMock.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 @WireMockTest
-public class ZdaiFileTest {
+public class FileTest {
 
 
     @Test
@@ -27,10 +27,10 @@ public class ZdaiFileTest {
                 .withRequestBody(equalTo(content))
                 .willReturn(created().withBody(responseBody)));
 
-        ZdaiApiClient zClient = new ZdaiApiClient("http://localhost:"+ port, "my-token");
+        DocAIClient zClient = new DocAIClient("http://localhost:"+ port, "my-token");
 
         try {
-            ZdaiFile result = ZdaiFile.submitFile(zClient, "Sample text", "text/plain");
+            File result = File.submitFile(zClient, "Sample text", "text/plain");
             assertEquals("c5e40jn1qk1er7odm71g", result.fileId);
             assertEquals("text/plain", result.attributes.contentType);
             assertEquals("", result.permissions[0]);
@@ -50,10 +50,10 @@ public class ZdaiFileTest {
                 .withRequestBody(equalTo(content))
                 .willReturn(created().withBody(responseBody)));
 
-        ZdaiApiClient zClient = new ZdaiApiClient("http://localhost:"+ port, "my-token");
+        DocAIClient zClient = new DocAIClient("http://localhost:"+ port, "my-token");
 
         try {
-            ZdaiFile result = ZdaiFile.submitFile(zClient, content);
+            File result = File.submitFile(zClient, content);
             assertEquals("c5e407f1qk1er7odm6tg", result.fileId);
             assertEquals("application/pdf", result.attributes.contentType);
             assertEquals("", result.permissions[0]);
@@ -74,10 +74,10 @@ public class ZdaiFileTest {
                 .withRequestBody(binaryEqualTo(content))
                 .willReturn(created().withBody(responseBody)));
 
-        ZdaiApiClient zClient = new ZdaiApiClient("http://localhost:"+ port, "my-token");
+        DocAIClient zClient = new DocAIClient("http://localhost:"+ port, "my-token");
 
 
-        ZdaiFile result =assertDoesNotThrow(()->ZdaiFile.submitFile(zClient, content, "application/kiraocr"));
+        File result =assertDoesNotThrow(()-> File.submitFile(zClient, content, "application/kiraocr"));
         assertEquals("c5e40of1qk1er7odm740", result.fileId);
         assertEquals("application/kiraocr", result.attributes.contentType);
         assertEquals("", result.permissions[0]);
@@ -90,11 +90,11 @@ public class ZdaiFileTest {
         stubFor(delete("/api/v2/files/123")
                 .willReturn(noContent().withBody("1")));
 
-        ZdaiApiClient zClient = new ZdaiApiClient("http://localhost:"+ port, "my-token");
-        ZdaiFile zdaiFile = new ZdaiFile(zClient,"123");
+        DocAIClient zClient = new DocAIClient("http://localhost:"+ port, "my-token");
+        File file = new File(zClient,"123");
 
         // Implied success if no error is thrown
-        assertDoesNotThrow(()->zdaiFile.delete());
+        assertDoesNotThrow(()-> file.delete());
     }
 
     @Test
@@ -105,10 +105,10 @@ public class ZdaiFileTest {
         stubFor(delete("/api/v2/files/123")
                 .willReturn(notFound().withBody(responseBody)));
 
-        ZdaiApiClient zClient = new ZdaiApiClient("http://localhost:"+ port, "my-token");
-        ZdaiFile zdaiFile = new ZdaiFile(zClient,"123");
+        DocAIClient zClient = new DocAIClient("http://localhost:"+ port, "my-token");
+        File file = new File(zClient,"123");
 
-        ZdaiApiException thrown = assertThrows(ZdaiApiException.class, ()->zdaiFile.delete());
+        DocAIApiException thrown = assertThrows(DocAIApiException.class, ()-> file.delete());
         assertEquals(404, thrown.statusCode);
     }
 }

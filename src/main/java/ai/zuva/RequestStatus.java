@@ -1,6 +1,6 @@
 package ai.zuva;
 
-import ai.zuva.exception.ZdaiError;
+import ai.zuva.exception.DocAIError;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class RequestStatus {
@@ -11,7 +11,7 @@ public class RequestStatus {
 
     // Expect this to be populated only when status is failed
     @JsonProperty("error")
-    public ZdaiError error;
+    public DocAIError error;
 
     public boolean isQueued() {
         return status.isQueued();

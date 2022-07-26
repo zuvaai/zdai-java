@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-public class ZdaiApiException extends ZdaiException {
+public class DocAIApiException extends DocAIException {
     public final int statusCode;
     public final String method;
     public final String uri;
@@ -18,10 +18,10 @@ public class ZdaiApiException extends ZdaiException {
     // See https://zuva.ai/documentation/using-the-apis/error-handling/
     static class ErrorBody {
         @JsonProperty("error")
-        public ZdaiError error;
+        public DocAIError error;
     }
 
-    public ZdaiApiException(ObjectMapper mapper, String method, String uri, int statusCode, String body) {
+    public DocAIApiException(ObjectMapper mapper, String method, String uri, int statusCode, String body) {
         super(String.format("%s %s failed with status code %s.%nMessage:%n%s", method, uri, statusCode, body));
 
         this.method = method;

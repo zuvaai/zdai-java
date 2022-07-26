@@ -1,21 +1,21 @@
 package ai.zuva.fields;
 
-import ai.zuva.api.ZdaiApiClient;
-import ai.zuva.exception.ZdaiApiException;
-import ai.zuva.exception.ZdaiClientException;
+import ai.zuva.api.DocAIClient;
+import ai.zuva.exception.DocAIApiException;
+import ai.zuva.exception.DocAIClientException;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Field {
-    private ZdaiApiClient client;
+    private DocAIClient client;
     public String fieldId;
 
     /**
      * @param client  The client to use when interacting with this field
      * @param fieldId The ID of the field
      */
-    public Field(ZdaiApiClient client, String fieldId) {
+    public Field(DocAIClient client, String fieldId) {
         this.client = client;
         this.fieldId = fieldId;
     }
@@ -25,10 +25,10 @@ public class Field {
      *
      * @param client The client to use to make the request
      * @return A list of all the fields available to the client
-     * @throws ZdaiApiException    Unsuccessful response code from server
-     * @throws ZdaiClientException Error preparing, sending or processing the request/response
+     * @throws DocAIApiException    Unsuccessful response code from server
+     * @throws DocAIClientException Error preparing, sending or processing the request/response
      */
-    public static FieldListElement[] listFields(ZdaiApiClient client) throws ZdaiClientException, ZdaiApiException {
+    public static FieldListElement[] listFields(DocAIClient client) throws DocAIClientException, DocAIApiException {
         return client.authorizedGet("api/v2/fields", 200, FieldListElement[].class);
     }
 
@@ -36,10 +36,10 @@ public class Field {
      * Queries the Zuva DocAI API for metadata about the field
      *
      * @return A FieldMetadata object containing metadata about this field
-     * @throws ZdaiApiException    Unsuccessful response code from server
-     * @throws ZdaiClientException Error preparing, sending or processing the request/response
+     * @throws DocAIApiException    Unsuccessful response code from server
+     * @throws DocAIClientException Error preparing, sending or processing the request/response
      */
-    public FieldMetadata getMetadata() throws ZdaiClientException, ZdaiApiException {
+    public FieldMetadata getMetadata() throws DocAIClientException, DocAIApiException {
         return client.authorizedGet(String.format("api/v2/fields/%s/metadata", fieldId), 200, FieldMetadata.class);
     }
 
@@ -59,10 +59,10 @@ public class Field {
      *
      * @param name        The new name for the field
      * @param description The new descriptionf of the field
-     * @throws ZdaiApiException    Unsuccessful response code from server
-     * @throws ZdaiClientException Error preparing, sending or processing the request/response
+     * @throws DocAIApiException    Unsuccessful response code from server
+     * @throws DocAIClientException Error preparing, sending or processing the request/response
      */
-    public void updateMetadata(String name, String description) throws ZdaiClientException, ZdaiApiException {
+    public void updateMetadata(String name, String description) throws DocAIClientException, DocAIApiException {
         client.authorizedJsonRequest("PUT",
                 String.format("api/v2/fields/%s/metadata", fieldId),
                 new NameAndDescription(name, description),
@@ -74,10 +74,10 @@ public class Field {
      * Queries the Zuva DocAI API for the field's accuracy scores
      *
      * @return A FieldAccuracy object that includes the precision, recall and f-score of the field
-     * @throws ZdaiApiException    Unsuccessful response code from server
-     * @throws ZdaiClientException Error preparing, sending or processing the request/response
+     * @throws DocAIApiException    Unsuccessful response code from server
+     * @throws DocAIClientException Error preparing, sending or processing the request/response
      */
-    public FieldAccuracy getAccuracy() throws ZdaiClientException, ZdaiApiException {
+    public FieldAccuracy getAccuracy() throws DocAIClientException, DocAIApiException {
         return client.authorizedGet(String.format("api/v2/fields/%s/accuracy", fieldId), 200, FieldAccuracy.class);
     }
 
@@ -85,10 +85,10 @@ public class Field {
      * Queries the Zuva DocAI API for the field's validation details
      *
      * @return An array of FieldValidation objects
-     * @throws ZdaiApiException    Unsuccessful response code from server
-     * @throws ZdaiClientException Error preparing, sending or processing the request/response
+     * @throws DocAIApiException    Unsuccessful response code from server
+     * @throws DocAIClientException Error preparing, sending or processing the request/response
      */
-    public FieldValidation[] getValidationDetails() throws ZdaiClientException, ZdaiApiException {
+    public FieldValidation[] getValidationDetails() throws DocAIClientException, DocAIApiException {
         return client.authorizedGet(String.format("api/v2/fields/%s/validation-details", fieldId), 200, FieldValidation[].class);
     }
 
@@ -103,10 +103,10 @@ public class Field {
      * @param trainingExamples An array of Training examples describing the character spans that this
      *                         field should extract from each training file
      * @return A TrainingRequest object, which can be used to check the status of the training request
-     * @throws ZdaiApiException    Unsuccessful response code from server
-     * @throws ZdaiClientException Error preparing, sending or processing the request/response
+     * @throws DocAIApiException    Unsuccessful response code from server
+     * @throws DocAIClientException Error preparing, sending or processing the request/response
      */
-    public TrainingRequest createTrainingRequest(TrainingExample[] trainingExamples) throws ZdaiClientException, ZdaiApiException {
+    public TrainingRequest createTrainingRequest(TrainingExample[] trainingExamples) throws DocAIClientException, DocAIApiException {
         return TrainingRequest.createRequest(client, fieldId, trainingExamples);
     }
 
@@ -134,10 +134,10 @@ public class Field {
      * @param name        The name of the field
      * @param description The description of the field
      * @return A Field object representing the new untrained field
-     * @throws ZdaiApiException    Unsuccessful response code from server
-     * @throws ZdaiClientException Error preparing, sending or processing the request/response
+     * @throws DocAIApiException    Unsuccessful response code from server
+     * @throws DocAIClientException Error preparing, sending or processing the request/response
      */
-    public static Field createField(ZdaiApiClient client, String name, String description) throws ZdaiClientException, ZdaiApiException {
+    public static Field createField(DocAIClient client, String name, String description) throws DocAIClientException, DocAIApiException {
         CreateFieldResponse response = client.authorizedJsonRequest(
                 "POST",
                 "api/v2/fields",

@@ -1,16 +1,15 @@
 package ai.zuva.files;
 
-import ai.zuva.exception.ZdaiApiException;
-import ai.zuva.exception.ZdaiClientException;
-import ai.zuva.api.ZdaiApiClient;
+import ai.zuva.exception.DocAIApiException;
+import ai.zuva.exception.DocAIClientException;
+import ai.zuva.api.DocAIClient;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import java.io.File;
 import java.io.FileNotFoundException;
 
-public class ZdaiFile {
-    private ZdaiApiClient client;
+public class File {
+    private DocAIClient client;
     public String fileId;
     public FileAttributes attributes;
     public String[] permissions;
@@ -28,27 +27,27 @@ public class ZdaiFile {
         public String expiration;
     }
 
-    public static ZdaiFile submitFile(ZdaiApiClient client, File f, String... contentType) throws ZdaiClientException, ZdaiApiException, FileNotFoundException, SecurityException {
+    public static File submitFile(DocAIClient client, java.io.File f, String... contentType) throws DocAIClientException, DocAIApiException, FileNotFoundException, SecurityException {
         SubmitFileResponse resp = client.authorizedRequest("POST", "api/v2/files", f, 201, SubmitFileResponse.class, contentType);
-        return new ZdaiFile(client, resp);
+        return new File(client, resp);
     }
 
-    public static ZdaiFile submitFile(ZdaiApiClient client, String s, String... contentType) throws ZdaiClientException, ZdaiApiException {
+    public static File submitFile(DocAIClient client, String s, String... contentType) throws DocAIClientException, DocAIApiException {
         SubmitFileResponse resp = client.authorizedRequest("POST", "api/v2/files", s, 201, SubmitFileResponse.class, contentType);
-        return new ZdaiFile(client, resp);
+        return new File(client, resp);
     }
 
-    public static ZdaiFile submitFile(ZdaiApiClient client, byte[] ba, String... contentType) throws ZdaiClientException, ZdaiApiException {
+    public static File submitFile(DocAIClient client, byte[] ba, String... contentType) throws DocAIClientException, DocAIApiException {
         SubmitFileResponse resp = client.authorizedRequest("POST", "api/v2/files", ba, 201,SubmitFileResponse.class, contentType);
-        return new ZdaiFile(client, resp);
+        return new File(client, resp);
     }
 
-    public ZdaiFile(ZdaiApiClient client, String fileId) {
+    public File(DocAIClient client, String fileId) {
         this.client = client;
         this.fileId = fileId;
     }
 
-    public ZdaiFile(ZdaiApiClient client, SubmitFileResponse resp) {
+    public File(DocAIClient client, SubmitFileResponse resp) {
         this.client = client;
         this.fileId = resp.fileId;
         this.attributes = resp.attributes;
@@ -56,12 +55,12 @@ public class ZdaiFile {
         this.expiration= resp.expiration;
     }
 
-    public void delete() throws ZdaiClientException, ZdaiApiException {
+    public void delete() throws DocAIClientException, DocAIApiException {
         client.authorizedDelete("api/v2/files/" + fileId, 204);
     }
 
     // Returns an array of the file IDs of the given files
-    public static String[] toFileIdArray(ZdaiFile[] files) {
+    public static String[] toFileIdArray(File[] files) {
         String[] fileIds = new String[files.length];
 
         for (int i = 0; i < files.length; i++) {

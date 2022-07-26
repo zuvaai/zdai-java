@@ -1,7 +1,7 @@
 package ai.zuva;
 
-import ai.zuva.files.ZdaiFile;
-import ai.zuva.api.ZdaiApiClient;
+import ai.zuva.files.File;
+import ai.zuva.api.DocAIClient;
 import ai.zuva.language.LanguageRequest;
 import ai.zuva.language.LanguageResult;
 import com.github.tomakehurst.wiremock.junit5.WireMockRuntimeInfo;
@@ -27,8 +27,8 @@ public class LanguageRequestTest {
                     .withRequestBody(equalToJson("{\"file_ids\": [\"c5e41av1qk1er7odm79g\"]}"))
                     .willReturn(aResponse().withStatus(202).withBody(postResponseBody)));
 
-            ZdaiApiClient client = new ZdaiApiClient("http://localhost:" + port, "my-token");
-            LanguageRequest request = LanguageRequest.createRequest(client, new ZdaiFile(client, fileId));
+            DocAIClient client = new DocAIClient("http://localhost:" + port, "my-token");
+            LanguageRequest request = LanguageRequest.createRequest(client, new File(client, fileId));
 
             assertEquals(requestId, request.requestId);
 

@@ -1,9 +1,9 @@
 package ai.zuva;
 
-import ai.zuva.exception.ZdaiApiException;
+import ai.zuva.exception.DocAIApiException;
 import ai.zuva.fields.TrainingExample;
 import ai.zuva.fields.TrainingRequest;
-import ai.zuva.api.ZdaiApiClient;
+import ai.zuva.api.DocAIClient;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.tomakehurst.wiremock.junit5.WireMockRuntimeInfo;
 import com.github.tomakehurst.wiremock.junit5.WireMockTest;
@@ -34,7 +34,7 @@ public class TrainingRequestTest {
                 .withRequestBody(equalToJson(postRequestBody))
                 .willReturn(aResponse().withStatus(202).withBody(postResponseBody)));
 
-        ZdaiApiClient client = new ZdaiApiClient("http://localhost:" + port, "my-token");
+        DocAIClient client = new DocAIClient("http://localhost:" + port, "my-token");
         TrainingRequest request = TrainingRequest.createRequest(client, fieldId, td);
 
         assertEquals(requestId, request.requestId);
@@ -62,7 +62,7 @@ public class TrainingRequestTest {
                 .withRequestBody(equalToJson(postRequestBody))
                 .willReturn(aResponse().withStatus(409).withBody(postResponseBody)));
 
-        ZdaiApiClient client = new ZdaiApiClient("http://localhost:" + port, "my-token");
+        DocAIClient client = new DocAIClient("http://localhost:" + port, "my-token");
 
         assertThrows(Exception.class, () -> {
             TrainingRequest.createRequest(client, fieldId, td);
@@ -76,7 +76,7 @@ public class TrainingRequestTest {
         String fieldId = "2efa79d4-854d-46de-8087-f70778157dbf";
         String requestId = "c71qfbbo2ua8dqja2d70";
 
-        ZdaiApiClient client = new ZdaiApiClient("http://localhost:" + port, "my-token");
+        DocAIClient client = new DocAIClient("http://localhost:" + port, "my-token");
         TrainingRequest request = new TrainingRequest(client, fieldId, requestId);
 
         assertEquals(fieldId, request.fieldId);
@@ -87,6 +87,6 @@ public class TrainingRequestTest {
         stubFor(get(String.format("/api/v2/fields/%s/train/%s", fieldId, requestId))
                 .willReturn(notFound().withBody(statusResponseBody)));
 
-        assertThrows(ZdaiApiException.class, request::getStatus);
+        assertThrows(DocAIApiException.class, request::getStatus);
     }
 }

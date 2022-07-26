@@ -1,12 +1,10 @@
 package ai.zuva.ocr;
 
 import ai.zuva.BaseRequest;
-import ai.zuva.ProcessingState;
-import ai.zuva.api.ZdaiApiClient;
-import ai.zuva.exception.ZdaiApiException;
-import ai.zuva.exception.ZdaiClientException;
-import ai.zuva.exception.ZdaiError;
-import ai.zuva.files.ZdaiFile;
+import ai.zuva.api.DocAIClient;
+import ai.zuva.exception.DocAIApiException;
+import ai.zuva.exception.DocAIClientException;
+import ai.zuva.files.File;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -30,8 +28,8 @@ public class OcrRequest extends BaseRequest {
         @JsonProperty("file_ids")
         public String[] fileIds;
 
-        public OcrRequestBody(ZdaiFile[] files) {
-            this.fileIds = ZdaiFile.toFileIdArray(files);
+        public OcrRequestBody(File[] files) {
+            this.fileIds = File.toFileIdArray(files);
         }
     }
 
@@ -46,11 +44,11 @@ public class OcrRequest extends BaseRequest {
      * @param client The client to use to make the request
      * @param file   The file to analyze
      * @return An OcrRequest object, which can be used to check the status and results of the request
-     * @throws ZdaiApiException    Unsuccessful response code from server
-     * @throws ZdaiClientException Error preparing, sending or processing the request/response
+     * @throws DocAIApiException    Unsuccessful response code from server
+     * @throws DocAIClientException Error preparing, sending or processing the request/response
      */
-    public static OcrRequest createRequest(ZdaiApiClient client, ZdaiFile file) throws ZdaiClientException, ZdaiApiException {
-        return createRequests(client, new ZdaiFile[]{file})[0];
+    public static OcrRequest createRequest(DocAIClient client, File file) throws DocAIClientException, DocAIApiException {
+        return createRequests(client, new File[]{file})[0];
     }
 
     /**
@@ -64,10 +62,10 @@ public class OcrRequest extends BaseRequest {
      * @param client The client to use to make the request
      * @param files  The files to analyze
      * @return An array of OcrRequest objects, which can be used to check the status and results of the requests
-     * @throws ZdaiApiException    Unsuccessful response code from server
-     * @throws ZdaiClientException Error preparing, sending or processing the request/response
+     * @throws DocAIApiException    Unsuccessful response code from server
+     * @throws DocAIClientException Error preparing, sending or processing the request/response
      */
-    public static OcrRequest[] createRequests(ZdaiApiClient client, ZdaiFile[] files) throws ZdaiClientException, ZdaiApiException {
+    public static OcrRequest[] createRequests(DocAIClient client, File[] files) throws DocAIClientException, DocAIApiException {
         OcrStatuses resp = client.authorizedJsonRequest("POST", "api/v2/ocr", new OcrRequestBody(files), 202, OcrStatuses.class);
         OcrRequest[] ocrRequests = new OcrRequest[resp.statuses.length];
         for (int i = 0; i < ocrRequests.length; i++) {
@@ -76,12 +74,12 @@ public class OcrRequest extends BaseRequest {
         return ocrRequests;
     }
 
-    private OcrRequest(ZdaiApiClient client, OcrStatus status) {
+    private OcrRequest(DocAIClient client, OcrStatus status) {
         super(client, status);
         this.fileId = status.fileId;
     }
 
-    public OcrRequest(ZdaiApiClient client, String requestId) {
+    public OcrRequest(DocAIClient client, String requestId) {
         super(client, requestId, null, null);
         this.fileId = null;
     }
@@ -93,10 +91,10 @@ public class OcrRequest extends BaseRequest {
      * request.
      *
      * @return The request status as a String (one of "queued", "processing", "complete" or "failed")
-     * @throws ZdaiApiException    Unsuccessful response code from server
-     * @throws ZdaiClientException Error preparing, sending or processing the request/response
+     * @throws DocAIApiException    Unsuccessful response code from server
+     * @throws DocAIClientException Error preparing, sending or processing the request/response
      */
-    public OcrStatus getStatus() throws ZdaiClientException, ZdaiApiException {
+    public OcrStatus getStatus() throws DocAIClientException, DocAIApiException {
         return client.authorizedGet("api/v2/ocr/" + requestId, 200, OcrStatus.class);
     }
 
@@ -107,10 +105,10 @@ public class OcrRequest extends BaseRequest {
      * a String.
      *
      * @return The text of the document as a String
-     * @throws ZdaiApiException    Unsuccessful response code from server
-     * @throws ZdaiClientException Error preparing, sending or processing the request/response
+     * @throws DocAIApiException    Unsuccessful response code from server
+     * @throws DocAIClientException Error preparing, sending or processing the request/response
      */
-    public String getText() throws ZdaiClientException, ZdaiApiException {
+    public String getText() throws DocAIClientException, DocAIApiException {
         return client.authorizedGet("api/v2/ocr/" + requestId + "/text", 200, OcrText.class).text;
     }
 
@@ -118,10 +116,10 @@ public class OcrRequest extends BaseRequest {
      * Get image results of an OCR request from the Zuva server
      *
      * @return A byte array of the OCR images of the document as a zip file containing a PNG image of each page.
-     * @throws ZdaiApiException    Unsuccessful response code from server
-     * @throws ZdaiClientException Error preparing, sending or processing the request/response
+     * @throws DocAIApiException    Unsuccessful response code from server
+     * @throws DocAIClientException Error preparing, sending or processing the request/response
      */
-    public byte[] getImages() throws ZdaiClientException, ZdaiApiException {
+    public byte[] getImages() throws DocAIClientException, DocAIApiException {
         return client.authorizedGetBinary("api/v2/ocr/" + requestId + "/images", 200);
     }
 
@@ -129,10 +127,10 @@ public class OcrRequest extends BaseRequest {
      * Get layout results of an OCR request from the Zuva server
      *
      * @return The layout of the document in a protobuff format, as a byte array
-     * @throws ZdaiApiException    Unsuccessful response code from server
-     * @throws ZdaiClientException Error preparing, sending or processing the request/response
+     * @throws DocAIApiException    Unsuccessful response code from server
+     * @throws DocAIClientException Error preparing, sending or processing the request/response
      */
-    public byte[] getLayouts() throws ZdaiClientException, ZdaiApiException {
+    public byte[] getLayouts() throws DocAIClientException, DocAIApiException {
         return client.authorizedGetBinary("api/v2/ocr/" + requestId + "/layouts", 200);
     }
 }
