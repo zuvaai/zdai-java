@@ -18,14 +18,14 @@ import java.io.FileOutputStream;
 
 public class Example {
     public static void main(String[] args) throws Exception {
-        String token = System.getenv("ZUVA_TOKEN");
+        String token = System.getenv("DOCAI_TOKEN");
         if (token == null) {
-            throw(new Exception("Environment variable ZUVA_TOKEN not set"));
+            throw(new Exception("Environment variable DOCAI_TOKEN not set"));
         }
 
-        String url = System.getenv("ZUVA_URL");
+        String url = System.getenv("DOCAI_URL");
         if (url == null) {
-            throw(new Exception("Environment variable ZUVA_URL not set"));
+            throw(new Exception("Environment variable DOCAI_URL not set"));
         }
 
         String documentPath = System.getenv("ZUVA_DEMO_DOC");

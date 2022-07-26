@@ -76,8 +76,8 @@ A command line demo is provided in the [examples folder](src/main/java/ai/zuva/e
 the document analysis workflow, including uploading a document, determining its document type and language, extracting text fields
 and fetching the results of OCR. The example expect certain environment variables to be set:
 
-- `ZUVA_URL`: the URL of the Zuva environment to connect to
-- `ZUVA_TOKEN`: your token for the Zuva environment
+- `DOCAI_URL`: the URL of the Zuva environment to connect to
+- `DOCAI_TOKEN`: your token for the Zuva environment
 - `ZUVA_DEMO_DOC`: the path to the demo document to analyze (defaults to "CANADAGOOS-F1Securiti-2152017.PDF" in the current working directory)
 
 ## Exceptions
