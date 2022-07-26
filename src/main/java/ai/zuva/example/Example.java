@@ -4,6 +4,7 @@ import ai.zuva.RequestStatus;
 import ai.zuva.classification.ClassificationRequest;
 import ai.zuva.extraction.ExtractionRequest;
 import ai.zuva.fields.Field;
+import ai.zuva.fields.FieldListElement;
 import ai.zuva.files.File;
 import ai.zuva.api.DocAIClient;
 import ai.zuva.language.LanguageRequest;
@@ -13,6 +14,7 @@ import ai.zuva.extraction.ExtractionResults;
 import ai.zuva.fields.FieldMetadata;
 
 import java.io.FileOutputStream;
+import java.util.HashMap;
 
 
 public class Example {
@@ -62,6 +64,13 @@ public class Example {
             System.out.println("Classification failed.");
         }
 
+        System.out.println("Getting the list of available fields");
+        HashMap<String, FieldListElement> fieldMetadata = new HashMap<>();
+        FieldListElement[] fields = Field.listFields(client);
+        for (FieldListElement field : fields) {
+            fieldMetadata.put(field.fieldId, field);
+        }
+
         System.out.printf("%nPerforming Field extraction%n");
         String[] fieldIds = new String[]{
                 "668ee3b5-e15a-439f-9475-05a21755a5c1",
@@ -78,8 +87,7 @@ public class Example {
 
 
             for (ExtractionResults ex : extractions) {
-                FieldMetadata fm = (new Field(client, ex.fieldId)).getMetadata();
-                System.out.println(String.format("%s:", fm.name));
+                System.out.println(String.format("%s:", fieldMetadata.get(ex.fieldId).name));
 
                 for (ExtractionData ed : ex.extractions) {
                     System.out.println("> " + ed.text);
