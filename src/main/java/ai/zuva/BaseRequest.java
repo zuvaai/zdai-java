@@ -5,6 +5,8 @@ import ai.zuva.exception.DocAIApiException;
 import ai.zuva.exception.DocAIClientException;
 import ai.zuva.exception.DocAIError;
 
+import java.time.Instant;
+
 public abstract class BaseRequest {
     public final String requestId;
     protected final DocAIClient client;
@@ -35,4 +37,28 @@ public abstract class BaseRequest {
     }
 
     public abstract RequestStatus getStatus() throws DocAIClientException, DocAIApiException;
+
+    public RequestStatus waitUntilFinished(long pollingIntervalSeconds, long timeoutSeconds) throws DocAIClientException, DocAIApiException, InterruptedException {
+        return waitUntilFinished(pollingIntervalSeconds, timeoutSeconds, false);
+    }
+
+    public RequestStatus waitUntilFinished(long pollingIntervalSeconds, long timeoutSeconds, boolean showProgress) throws DocAIClientException, DocAIApiException, InterruptedException {
+        RequestStatus status = null;
+
+        long tStart = Instant.now().toEpochMilli();
+        if (showProgress) System.out.print("Wait for processing");
+        while (Instant.now().toEpochMilli() - tStart < timeoutSeconds * 1000) {
+            status = this.getStatus();
+            if (showProgress) System.out.print(".");
+            if (status.isComplete()|| status.isFailed()) {
+                if (showProgress) System.out.println(status.status.name());
+                return status;
+            }
+            Thread.sleep(pollingIntervalSeconds * 1000);
+        }
+        if (showProgress && status != null) {
+            System.out.println("Timed out waiting for request to be processed. Last status: " + status.status.toString());
+        }
+        throw new DocAIClientException("Timed out waiting for request to be processed");
+    }
 }

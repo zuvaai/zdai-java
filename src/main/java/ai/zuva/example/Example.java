@@ -1,17 +1,19 @@
 package ai.zuva.example;
 
-import ai.zuva.RequestStatus;
 import ai.zuva.classification.ClassificationRequest;
+import ai.zuva.classification.ClassificationResult;
 import ai.zuva.extraction.ExtractionRequest;
+import ai.zuva.extraction.ExtractionStatus;
 import ai.zuva.fields.Field;
 import ai.zuva.fields.FieldListElement;
 import ai.zuva.files.File;
 import ai.zuva.api.DocAIClient;
 import ai.zuva.language.LanguageRequest;
+import ai.zuva.language.LanguageResult;
 import ai.zuva.ocr.OcrRequest;
 import ai.zuva.extraction.ExtractionData;
 import ai.zuva.extraction.ExtractionResults;
-import ai.zuva.fields.FieldMetadata;
+import ai.zuva.ocr.OcrStatus;
 
 import java.io.FileOutputStream;
 import java.util.HashMap;
@@ -40,25 +42,40 @@ public class Example {
         File file = File.submitFile(client, new java.io.File(documentPath));
         System.out.println(String.format("Uploaded file with id %s expires at %s", file.fileId, file.expiration));
 
+        System.out.printf("%nObtaining OCR results:%n");
+        OcrRequest ocrRequest = OcrRequest.createRequest(client, file);
+        System.out.println("Request ID: " + ocrRequest.requestId);
+
+        OcrStatus ocrStatus = ocrRequest.waitUntilFinished( 1, 60, true);
+        if (ocrStatus.isComplete()) {
+            System.out.println(String.format("Character count: %d", ocrRequest.getText().length()));
+            System.out.println("Downloading and saving images as temp.zip");
+
+            try (FileOutputStream outputStream = new FileOutputStream("temp.zip")) {
+                outputStream.write(ocrRequest.getImages());
+            }
+        }
+
         System.out.printf("%nClassifying Document type:%n");
         ClassificationRequest classificationRequest = ClassificationRequest.createRequest(client, file);
         System.out.println("Request ID: " + classificationRequest.requestId);
 
-        RequestStatus status = StatusChecker.waitForStatus(classificationRequest, 1, 60);
-        if (status.isComplete()) {
-            System.out.println("Document type is: " + classificationRequest.getStatus().classification);
+        ClassificationResult classificationResult = classificationRequest.waitUntilFinished(1, 60, true);
+
+        if (classificationResult.isComplete()) {
+            System.out.println("Document type is: " + classificationResult.classification);
         }
         else {
             System.out.println("Classification failed.");
         }
 
-        System.out.println("%nDetermining Document Language:");
+        System.out.printf("%nDetermining Document Language:%n");
         LanguageRequest languageRequest = LanguageRequest.createRequest(client, file);
         System.out.println("Request ID: " + languageRequest.requestId);
 
-        status = StatusChecker.waitForStatus(languageRequest, 1, 60);
-        if (status.isComplete()) {
-            System.out.println("Document language is: " + languageRequest.getStatus().language);
+        LanguageResult languageResult = languageRequest.waitUntilFinished(1, 60, true);
+        if (languageResult.isComplete()) {
+            System.out.println("Document language is: " + languageResult.language);
         }
         else {
             System.out.println("Classification failed.");
@@ -81,10 +98,12 @@ public class Example {
         ExtractionRequest extractionRequest = ExtractionRequest.createRequest(client, file, fieldIds);
         System.out.println("Request ID: " + extractionRequest.requestId);
 
-        status = StatusChecker.waitForStatus(extractionRequest, 1, 60);
-        if (status.isComplete()) {
-            ExtractionResults[] extractions = extractionRequest.getResults();
+        ExtractionStatus extractionStatus = extractionRequest.waitUntilFinished(1, 60, true);
 
+        if (extractionStatus.isComplete()) {
+            System.out.println("Getting results");
+            ExtractionResults[] extractions = extractionRequest.getResults();
+            System.out.println("Got results");
 
             for (ExtractionResults ex : extractions) {
                 System.out.println(String.format("%s:", fieldMetadata.get(ex.fieldId).name));
@@ -95,19 +114,6 @@ public class Example {
             }
         }
 
-        System.out.printf("%nObtaining OCR results:%n");
-        OcrRequest ocrRequest = OcrRequest.createRequest(client, file);
-        System.out.println("Request ID: " + ocrRequest.requestId);
-
-        status = StatusChecker.waitForStatus(ocrRequest, 1, 60);
-        if (status.isComplete()) {
-            System.out.println(String.format("Character count: %d", ocrRequest.getText().length()));
-            System.out.println("Downloading and saving images as temp.zip");
-
-            try (FileOutputStream outputStream = new FileOutputStream("temp.zip")) {
-                outputStream.write(ocrRequest.getImages());
-            }
-        }
         System.out.printf("%nDeleting file from server.%n");
         file.delete();
     }

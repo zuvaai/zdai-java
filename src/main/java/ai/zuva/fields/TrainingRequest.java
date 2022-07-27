@@ -67,4 +67,29 @@ public class TrainingRequest extends BaseRequest {
     public TrainingStatus getStatus() throws DocAIClientException, DocAIApiException {
         return client.authorizedGet(String.format("api/v2/fields/%s/train/%s", fieldId, requestId), 200, TrainingStatus.class);
     }
+
+    /**
+     * @param pollingIntervalSeconds The time in seconds to wait between status requests
+     * @param timeoutSeconds The time in seconds to wait for a complete (or failed) status before timing out the operation
+     * @return A TrainingStatus, with the status and results of the request
+     * @throws DocAIClientException Unsuccessful response code from server
+     * @throws DocAIApiException Error preparing, sending or processing the request/response
+     * @throws InterruptedException Thread interrupted during Thread.sleep()
+     */
+    public TrainingStatus waitUntilFinished(long pollingIntervalSeconds, long timeoutSeconds) throws DocAIClientException, DocAIApiException, InterruptedException {
+        return (TrainingStatus) super.waitUntilFinished(pollingIntervalSeconds, timeoutSeconds);
+    }
+
+    /**
+     * @param pollingIntervalSeconds The time in seconds to wait between status requests
+     * @param timeoutSeconds The time in seconds to wait for a complete (or failed) status before timing out the operation
+     * @param showProgress Flag indicating whether to print a progress indicator while waiting for completion
+     * @return A TrainingStatus, with the status and results of the request
+     * @throws DocAIClientException Unsuccessful response code from server
+     * @throws DocAIApiException Error preparing, sending or processing the request/response
+     * @throws InterruptedException Thread interrupted during Thread.sleep()
+     */
+    public TrainingStatus waitUntilFinished(long pollingIntervalSeconds, long timeoutSeconds, boolean showProgress) throws DocAIClientException, DocAIApiException, InterruptedException {
+        return (TrainingStatus) super.waitUntilFinished(pollingIntervalSeconds, timeoutSeconds, showProgress);
+    }
 }

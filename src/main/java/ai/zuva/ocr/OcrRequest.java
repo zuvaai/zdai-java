@@ -99,6 +99,30 @@ public class OcrRequest extends BaseRequest {
     }
 
     /**
+     * @param pollingIntervalSeconds The time in seconds to wait between status requests
+     * @param timeoutSeconds The time in seconds to wait for a complete (or failed) status before timing out the operation
+     * @return A OcrStatus, with the status and results of the request
+     * @throws DocAIClientException Unsuccessful response code from server
+     * @throws DocAIApiException Error preparing, sending or processing the request/response
+     * @throws InterruptedException Thread interrupted during Thread.sleep()
+     */
+    public OcrStatus waitUntilFinished(long pollingIntervalSeconds, long timeoutSeconds) throws DocAIClientException, DocAIApiException, InterruptedException {
+        return (OcrStatus) super.waitUntilFinished(pollingIntervalSeconds, timeoutSeconds);
+    }
+
+    /**
+     * @param pollingIntervalSeconds The time in seconds to wait between status requests
+     * @param timeoutSeconds The time in seconds to wait for a complete (or failed) status before timing out the operation
+     * @param showProgress Flag indicating whether to print a progress indicator while waiting for completion
+     * @return A OcrStatus, with the status and results of the request
+     * @throws DocAIClientException Unsuccessful response code from server
+     * @throws DocAIApiException Error preparing, sending or processing the request/response
+     * @throws InterruptedException Thread interrupted during Thread.sleep()
+     */
+    public OcrStatus waitUntilFinished(long pollingIntervalSeconds, long timeoutSeconds, boolean showProgress) throws DocAIClientException, DocAIApiException, InterruptedException {
+        return (OcrStatus) super.waitUntilFinished(pollingIntervalSeconds, timeoutSeconds, showProgress);
+    }
+    /**
      * Get text results of an OCR request from the Zuva server
      * <p>
      * Given a ZdaiApiClient, return the OCR text of the document as

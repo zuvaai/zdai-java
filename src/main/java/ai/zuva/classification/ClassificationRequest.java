@@ -106,4 +106,29 @@ public class ClassificationRequest extends BaseRequest {
     public ClassificationResult getStatus() throws DocAIClientException, DocAIApiException {
         return client.authorizedGet("api/v2/classification/" + requestId, 200, ClassificationResult.class);
     }
+
+    /**
+     * @param pollingIntervalSeconds The time in seconds to wait between status requests
+     * @param timeoutSeconds The time in seconds to wait for a complete (or failed) status before timing out the operation
+     * @return A ClassificationResult, with the status and results of the request
+     * @throws DocAIClientException Unsuccessful response code from server
+     * @throws DocAIApiException Error preparing, sending or processing the request/response
+     * @throws InterruptedException Thread interrupted during Thread.sleep()
+     */
+    public ClassificationResult waitUntilFinished(long pollingIntervalSeconds, long timeoutSeconds) throws DocAIClientException, DocAIApiException, InterruptedException {
+        return (ClassificationResult) super.waitUntilFinished(pollingIntervalSeconds, timeoutSeconds);
+    }
+
+    /**
+     * @param pollingIntervalSeconds The time in seconds to wait between status requests
+     * @param timeoutSeconds The time in seconds to wait for a complete (or failed) status before timing out the operation
+     * @param showProgress Flag indicating whether to print a progress indicator while waiting for completion
+     * @return A ClassificationResult, with the status and results of the request
+     * @throws DocAIClientException Unsuccessful response code from server
+     * @throws DocAIApiException Error preparing, sending or processing the request/response
+     * @throws InterruptedException Thread interrupted during Thread.sleep()
+     */
+    public ClassificationResult waitUntilFinished(long pollingIntervalSeconds, long timeoutSeconds, boolean showProgress) throws DocAIClientException, DocAIApiException, InterruptedException {
+        return (ClassificationResult) super.waitUntilFinished(pollingIntervalSeconds, timeoutSeconds, showProgress);
+    }
 }
