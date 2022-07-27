@@ -6,6 +6,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class OcrStatus extends RequestStatus {
-    @JsonProperty("file_id")
-    public String fileId;
+  @JsonProperty("file_id")
+  public String fileId;
 }

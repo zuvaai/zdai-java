@@ -4,5 +4,7 @@
   "description": "This field was created as part of a Postman API call",
   "read_only": false,
   "is_trained": true,
-  "file_ids": ["c71pmdbo2ua691f0fkog"]
+  "file_ids": [
+    "c71pmdbo2ua691f0fkog"
+  ]
 }

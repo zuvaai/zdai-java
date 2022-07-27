@@ -6,6 +6,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class TrainingStatus extends RequestStatus {
-    @JsonProperty("field_id")
-    public String fieldId;
+  @JsonProperty("field_id")
+  public String fieldId;
 }

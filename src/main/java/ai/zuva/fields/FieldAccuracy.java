@@ -5,9 +5,9 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class FieldAccuracy {
-    @JsonProperty("f_score")
-    public float fScore;
+  @JsonProperty("f_score")
+  public float fScore;
 
-    public float precision;
-    public float recall;
+  public float precision;
+  public float recall;
 }

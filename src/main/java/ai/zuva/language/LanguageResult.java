@@ -6,7 +6,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class LanguageResult extends RequestStatus {
-    @JsonProperty("file_id")
-    public String fileId;
-    public String language;
+  @JsonProperty("file_id")
+  public String fileId;
+
+  public String language;
 }

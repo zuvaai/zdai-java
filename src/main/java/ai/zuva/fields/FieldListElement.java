@@ -5,25 +5,25 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class FieldListElement {
-    @JsonProperty("field_id")
-    public String fieldId;
+  @JsonProperty("field_id")
+  public String fieldId;
 
-    public String name;
-    public String description;
+  public String name;
+  public String description;
 
-    @JsonProperty("document_count")
-    public int documentCount;
+  @JsonProperty("document_count")
+  public int documentCount;
 
-    public float bias;
-    public float precision;
-    public float recall;
+  public float bias;
+  public float precision;
+  public float recall;
 
-    @JsonProperty("f_score")
-    public float fScore;
+  @JsonProperty("f_score")
+  public float fScore;
 
-    @JsonProperty("is_custom")
-    public boolean isCustom;
+  @JsonProperty("is_custom")
+  public boolean isCustom;
 
-    @JsonProperty("is_trained")
-    public boolean isTrained;
+  @JsonProperty("is_trained")
+  public boolean isTrained;
 }

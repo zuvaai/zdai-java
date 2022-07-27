@@ -4,28 +4,28 @@ import ai.zuva.exception.DocAIError;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class RequestStatus {
-    @JsonProperty("request_id")
-    public String requestId;
+  @JsonProperty("request_id")
+  public String requestId;
 
-    public ProcessingState status;
+  public ProcessingState status;
 
-    // Expect this to be populated only when status is failed
-    @JsonProperty("error")
-    public DocAIError error;
+  // Expect this to be populated only when status is failed
+  @JsonProperty("error")
+  public DocAIError error;
 
-    public boolean isQueued() {
-        return status.isQueued();
-    }
+  public boolean isQueued() {
+    return status.isQueued();
+  }
 
-    public boolean isProcessing() {
-        return status.isProcessing();
-    }
+  public boolean isProcessing() {
+    return status.isProcessing();
+  }
 
-    public boolean isComplete() {
-        return status.isComplete();
-    }
+  public boolean isComplete() {
+    return status.isComplete();
+  }
 
-    public boolean isFailed() {
-        return status.isFailed();
-    }
+  public boolean isFailed() {
+    return status.isFailed();
+  }
 }

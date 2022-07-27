@@ -9,150 +9,163 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class ExtractionRequest extends BaseRequest {
-    public final String fileId;
-    public final String[] fieldIds;
+  public final String fileId;
+  public final String[] fieldIds;
 
-    static class ExtractionRequestBody {
+  static class ExtractionRequestBody {
 
-        @JsonProperty("file_ids")
-        public String[] fileIds;
+    @JsonProperty("file_ids")
+    public String[] fileIds;
 
-        @JsonProperty("field_ids")
-        public String[] fieldIds;
+    @JsonProperty("field_ids")
+    public String[] fieldIds;
 
-        public ExtractionRequestBody(File[] files, String[] fieldIds) {
-            this.fileIds = File.toFileIdArray(files);
-            this.fieldIds = fieldIds;
-        }
+    public ExtractionRequestBody(File[] files, String[] fieldIds) {
+      this.fileIds = File.toFileIdArray(files);
+      this.fieldIds = fieldIds;
     }
+  }
 
-    @JsonIgnoreProperties(ignoreUnknown = true)
-    static class ExtractionResultsBody {
-        @JsonProperty("file_id")
-        public String fileId;
+  @JsonIgnoreProperties(ignoreUnknown = true)
+  static class ExtractionResultsBody {
+    @JsonProperty("file_id")
+    public String fileId;
 
-        @JsonProperty("request_id")
-        public String requestId;
+    @JsonProperty("request_id")
+    public String requestId;
 
-        public ExtractionResults[] results;
+    public ExtractionResults[] results;
+  }
+
+  @JsonIgnoreProperties(ignoreUnknown = true)
+  static class ExtractionStatuses {
+    @JsonProperty("file_ids")
+    public ExtractionStatus[] statuses;
+  }
+
+  /**
+   * Construct and send a request to extract fields from a file
+   *
+   * <p>Given a ZdaiApiClient, a fileId, and an array of field IDs, this constructor makes a request
+   * to the Zuva servers to asynchronously extract the specified fields from the file
+   *
+   * @param client The client to use to make the request
+   * @param file The file to analyze
+   * @param fieldIds The IDs of the fields to extract from the file
+   * @return An ExtractionRequest object, which can be used to check the status and results of the
+   *     request
+   * @throws DocAIApiException Unsuccessful response code from server
+   * @throws DocAIClientException Error preparing, sending or processing the request/response
+   */
+  public static ExtractionRequest createRequest(DocAIClient client, File file, String[] fieldIds)
+      throws DocAIClientException, DocAIApiException {
+    return createRequests(client, new File[] {file}, fieldIds)[0];
+  }
+
+  /**
+   * Construct and send a request to extract fields from multiple files
+   *
+   * <p>Given a ZdaiApiClient, a fileId, and an array of field IDs, this constructor makes a request
+   * to the Zuva servers to asynchronously extract the specified fields from the file
+   *
+   * @param client The client to use to make the request
+   * @param files The files to analyze
+   * @param fieldIds The IDs of the fields to extract from the file
+   * @return An array of ExtractionRequest objects, which can be used to check the status and
+   *     results of the requests
+   * @throws DocAIApiException Unsuccessful response code from server
+   * @throws DocAIClientException Error preparing, sending or processing the request/response
+   */
+  public static ExtractionRequest[] createRequests(
+      DocAIClient client, File[] files, String[] fieldIds)
+      throws DocAIClientException, DocAIApiException {
+    ExtractionStatuses resp =
+        client.authorizedJsonRequest(
+            "POST",
+            "api/v2/extraction",
+            new ExtractionRequestBody(files, fieldIds),
+            202,
+            ExtractionStatuses.class);
+
+    ExtractionRequest[] extractionRequests = new ExtractionRequest[resp.statuses.length];
+    for (int i = 0; i < extractionRequests.length; i++) {
+      extractionRequests[i] = new ExtractionRequest(client, resp.statuses[i]);
     }
+    return extractionRequests;
+  }
 
-    @JsonIgnoreProperties(ignoreUnknown = true)
-    static class ExtractionStatuses {
-        @JsonProperty("file_ids")
-        public ExtractionStatus[] statuses;
-    }
+  // Constructor is private since it is only used by the above static factory methods
+  private ExtractionRequest(DocAIClient client, ExtractionStatus extractionStatus) {
+    super(client, extractionStatus);
+    this.fileId = extractionStatus.fileId;
+    this.fieldIds = extractionStatus.fieldIds;
+  }
 
-    /**
-     * Construct and send a request to extract fields from a file
-     * <p>
-     * Given a ZdaiApiClient, a fileId, and an array of field IDs, this
-     * constructor makes a request to the Zuva servers to asynchronously extract
-     * the specified fields from the file
-     *
-     * @param client   The client to use to make the request
-     * @param file     The file to analyze
-     * @param fieldIds The IDs of the fields to extract from the file
-     * @return An ExtractionRequest object, which can be used to check the status and results of the request
-     * @throws DocAIApiException    Unsuccessful response code from server
-     * @throws DocAIClientException Error preparing, sending or processing the request/response
-     */
-    public static ExtractionRequest createRequest(DocAIClient client, File file, String[] fieldIds) throws DocAIClientException, DocAIApiException {
-        return createRequests(client, new File[]{file}, fieldIds)[0];
-    }
+  public ExtractionRequest(DocAIClient client, String requestId) {
+    super(client, requestId, null, null);
+    this.fileId = null;
+    this.fieldIds = null;
+  }
 
-    /**
-     * Construct and send a request to extract fields from multiple files
-     * <p>
-     * Given a ZdaiApiClient, a fileId, and an array of field IDs, this
-     * constructor makes a request to the Zuva servers to asynchronously extract
-     * the specified fields from the file
-     *
-     * @param client   The client to use to make the request
-     * @param files    The files to analyze
-     * @param fieldIds The IDs of the fields to extract from the file
-     * @return An array of ExtractionRequest objects, which can be used to check the status and results of the requests
-     * @throws DocAIApiException    Unsuccessful response code from server
-     * @throws DocAIClientException Error preparing, sending or processing the request/response
-     */
-    public static ExtractionRequest[] createRequests(DocAIClient client, File[] files, String[] fieldIds) throws DocAIClientException, DocAIApiException {
-        ExtractionStatuses resp = client.authorizedJsonRequest(
-                "POST",
-                "api/v2/extraction",
-                new ExtractionRequestBody(files, fieldIds),
-                202,
-                ExtractionStatuses.class);
+  /**
+   * Get status of extraction request from the Zuva server
+   *
+   * <p>Given a ZdaiApiClient, return a String indicating the status of the request.
+   *
+   * @return The request status as a String (one of "queued", "processing", "complete" or "failed")
+   * @throws DocAIApiException Unsuccessful response code from server
+   * @throws DocAIClientException Error preparing, sending or processing the request/response
+   */
+  public ExtractionStatus fetchStatus() throws DocAIClientException, DocAIApiException {
+    return client.authorizedGet(
+        String.format("api/v2/extraction/%s", requestId), 200, ExtractionStatus.class);
+  }
 
-        ExtractionRequest[] extractionRequests = new ExtractionRequest[resp.statuses.length];
-        for (int i = 0; i < extractionRequests.length; i++) {
-            extractionRequests[i] = new ExtractionRequest(client, resp.statuses[i]);
-        }
-        return extractionRequests;
-    }
+  /**
+   * @param pollingIntervalSeconds The time in seconds to wait between status requests
+   * @param timeoutSeconds The time in seconds to wait for a complete (or failed) status before
+   *     timing out the operation
+   * @return An ExtractionStatus containing the status of the request
+   * @throws DocAIClientException Unsuccessful response code from server
+   * @throws DocAIApiException Error preparing, sending or processing the request/response
+   * @throws InterruptedException Thread interrupted during Thread.sleep()
+   */
+  public ExtractionStatus waitUntilFinished(long pollingIntervalSeconds, long timeoutSeconds)
+      throws DocAIClientException, DocAIApiException, InterruptedException {
+    return (ExtractionStatus) super.waitUntilFinished(pollingIntervalSeconds, timeoutSeconds);
+  }
 
-    // Constructor is private since it is only used by the above static factory methods
-    private ExtractionRequest(DocAIClient client, ExtractionStatus extractionStatus) {
-        super(client, extractionStatus);
-        this.fileId = extractionStatus.fileId;
-        this.fieldIds = extractionStatus.fieldIds;
-    }
+  /**
+   * @param pollingIntervalSeconds The time in seconds to wait between status requests
+   * @param timeoutSeconds The time in seconds to wait for a complete (or failed) status before
+   *     timing out the operation
+   * @param showProgress Flag indicating whether to print a progress indicator while waiting for
+   *     completion
+   * @return An ExtractionStatus containing the status of the request
+   * @throws DocAIClientException Unsuccessful response code from server
+   * @throws DocAIApiException Error preparing, sending or processing the request/response
+   * @throws InterruptedException Thread interrupted during Thread.sleep()
+   */
+  public ExtractionStatus waitUntilFinished(
+      long pollingIntervalSeconds, long timeoutSeconds, boolean showProgress)
+      throws DocAIClientException, DocAIApiException, InterruptedException {
+    return (ExtractionStatus)
+        super.waitUntilFinished(pollingIntervalSeconds, timeoutSeconds, showProgress);
+  }
 
-    public ExtractionRequest(DocAIClient client, String requestId) {
-        super(client, requestId, null, null);
-        this.fileId = null;
-        this.fieldIds = null;
-    }
-
-    /**
-     * Get status of extraction request from the Zuva server
-     * <p>
-     * Given a ZdaiApiClient, return a String indicating the status of the
-     * request.
-     *
-     * @return The request status as a String (one of "queued", "processing", "complete" or "failed")
-     * @throws DocAIApiException    Unsuccessful response code from server
-     * @throws DocAIClientException Error preparing, sending or processing the request/response
-     */
-    public ExtractionStatus fetchStatus() throws DocAIClientException, DocAIApiException {
-        return client.authorizedGet(String.format("api/v2/extraction/%s", requestId), 200, ExtractionStatus.class);
-    }
-
-    /**
-     * @param pollingIntervalSeconds The time in seconds to wait between status requests
-     * @param timeoutSeconds The time in seconds to wait for a complete (or failed) status before timing out the operation
-     * @return An ExtractionStatus containing the status of the request
-     * @throws DocAIClientException Unsuccessful response code from server
-     * @throws DocAIApiException Error preparing, sending or processing the request/response
-     * @throws InterruptedException Thread interrupted during Thread.sleep()
-     */
-    public ExtractionStatus waitUntilFinished(long pollingIntervalSeconds, long timeoutSeconds) throws DocAIClientException, DocAIApiException, InterruptedException {
-        return (ExtractionStatus) super.waitUntilFinished(pollingIntervalSeconds, timeoutSeconds);
-    }
-
-    /**
-     * @param pollingIntervalSeconds The time in seconds to wait between status requests
-     * @param timeoutSeconds The time in seconds to wait for a complete (or failed) status before timing out the operation
-     * @param showProgress Flag indicating whether to print a progress indicator while waiting for completion
-     * @return An ExtractionStatus containing the status of the request
-     * @throws DocAIClientException Unsuccessful response code from server
-     * @throws DocAIApiException Error preparing, sending or processing the request/response
-     * @throws InterruptedException Thread interrupted during Thread.sleep()
-     */
-    public ExtractionStatus waitUntilFinished(long pollingIntervalSeconds, long timeoutSeconds, boolean showProgress) throws DocAIClientException, DocAIApiException, InterruptedException {
-        return (ExtractionStatus) super.waitUntilFinished(pollingIntervalSeconds, timeoutSeconds, showProgress);
-    }
-    
-    /**
-     * Get results of a successful extraction request from the Zuva server
-     * <p>
-     * Given a ZdaiApiClient, return an array of ExtractionResults containing
-     * the text and location of all extractions for each field.
-     *
-     * @return An array of ExtractionResult objects, containing the results of the extraction
-     * @throws DocAIApiException    Unsuccessful response code from server
-     * @throws DocAIClientException Error preparing, sending or processing the request/response
-     */
-    public ExtractionResults[] getResults() throws DocAIClientException, DocAIApiException {
-        return client.authorizedGet("api/v2/extraction/" + requestId + "/results/text", 200, ExtractionResultsBody.class).results;
-    }
+  /**
+   * Get results of a successful extraction request from the Zuva server
+   *
+   * <p>Given a ZdaiApiClient, return an array of ExtractionResults containing the text and location
+   * of all extractions for each field.
+   *
+   * @return An array of ExtractionResult objects, containing the results of the extraction
+   * @throws DocAIApiException Unsuccessful response code from server
+   * @throws DocAIClientException Error preparing, sending or processing the request/response
+   */
+  public ExtractionResults[] getResults() throws DocAIClientException, DocAIApiException {
+    return client.authorizedGet(
+            "api/v2/extraction/" + requestId + "/results/text", 200, ExtractionResultsBody.class)
+        .results;
+  }
 }

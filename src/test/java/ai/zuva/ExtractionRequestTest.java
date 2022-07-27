@@ -1,9 +1,9 @@
 package ai.zuva;
 
+import ai.zuva.api.DocAIClient;
 import ai.zuva.extraction.ExtractionRequest;
 import ai.zuva.extraction.ExtractionResults;
 import ai.zuva.files.File;
-import ai.zuva.api.DocAIClient;
 import com.github.tomakehurst.wiremock.junit5.WireMockRuntimeInfo;
 import com.github.tomakehurst.wiremock.junit5.WireMockTest;
 import org.junit.jupiter.api.Test;
@@ -14,49 +14,54 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @WireMockTest
 public class ExtractionRequestTest {
-    @Test
-    void theTest(WireMockRuntimeInfo wmRuntimeInfo) throws RuntimeException {
-        try {
-            int port = wmRuntimeInfo.getHttpPort();
-            String fileId = "c5e41av1qk1er7odm79g";
-            String[] fieldIds = new String[]{
-                    "292b0a57-556b-4904-acfa-c3f845eb2879",
-                    "4d34c0dc-a3d4-4172-92d0-5fad8b3860a7",
-                    "5c971bd8-fc3b-4a26-8a95-674203871dfd",
-                    "c83868ae-269a-4a1b-b2af-c53e1f91efca",
-                    "f743f363-1d8b-435b-8812-204a6d883835"
-            };
-            String requestId = "c5e463f1qk154j5e3sjg";
+  @Test
+  void theTest(WireMockRuntimeInfo wmRuntimeInfo) throws RuntimeException {
+    try {
+      int port = wmRuntimeInfo.getHttpPort();
+      String fileId = "c5e41av1qk1er7odm79g";
+      String[] fieldIds =
+          new String[] {
+            "292b0a57-556b-4904-acfa-c3f845eb2879",
+            "4d34c0dc-a3d4-4172-92d0-5fad8b3860a7",
+            "5c971bd8-fc3b-4a26-8a95-674203871dfd",
+            "c83868ae-269a-4a1b-b2af-c53e1f91efca",
+            "f743f363-1d8b-435b-8812-204a6d883835"
+          };
+      String requestId = "c5e463f1qk154j5e3sjg";
 
-            // Test constructing and sending a request for a single file
-            String postRequestBody = TestHelpers.resourceAsString(this, "extraction-request.json");
-            String postResponseBody = TestHelpers.resourceAsString(this, "extraction-request-created.json");
+      // Test constructing and sending a request for a single file
+      String postRequestBody = TestHelpers.resourceAsString(this, "extraction-request.json");
+      String postResponseBody =
+          TestHelpers.resourceAsString(this, "extraction-request-created.json");
 
-            stubFor(post("/api/v2/extraction")
-                    .withRequestBody(equalToJson(postRequestBody))
-                    .willReturn(aResponse().withStatus(202).withBody(postResponseBody)));
+      stubFor(
+          post("/api/v2/extraction")
+              .withRequestBody(equalToJson(postRequestBody))
+              .willReturn(aResponse().withStatus(202).withBody(postResponseBody)));
 
-            DocAIClient client = new DocAIClient("http://localhost:" + port, "my-token");
-            ExtractionRequest request = ExtractionRequest.createRequest(client, new File(client, fileId), fieldIds);
+      DocAIClient client = new DocAIClient("http://localhost:" + port, "my-token");
+      ExtractionRequest request =
+          ExtractionRequest.createRequest(client, new File(client, fileId), fieldIds);
 
-            assertEquals(requestId, request.requestId);
+      assertEquals(requestId, request.requestId);
 
-            // Test checking the status of a file
-            String statusResponseBody = TestHelpers.resourceAsString(this, "extraction-status-complete.json");
-            stubFor(get("/api/v2/extraction/" + requestId)
-                    .willReturn(ok().withBody(statusResponseBody)));
+      // Test checking the status of a file
+      String statusResponseBody =
+          TestHelpers.resourceAsString(this, "extraction-status-complete.json");
+      stubFor(get("/api/v2/extraction/" + requestId).willReturn(ok().withBody(statusResponseBody)));
 
-            assertTrue(request.fetchStatus().isComplete());
+      assertTrue(request.fetchStatus().isComplete());
 
-            // Test checking the results for a file
-            String textResponseBody = TestHelpers.resourceAsString(this, "extraction-results.json");
-            stubFor(get("/api/v2/extraction/" + requestId + "/results/text")
-                    .willReturn(ok().withBody(textResponseBody)));
+      // Test checking the results for a file
+      String textResponseBody = TestHelpers.resourceAsString(this, "extraction-results.json");
+      stubFor(
+          get("/api/v2/extraction/" + requestId + "/results/text")
+              .willReturn(ok().withBody(textResponseBody)));
 
-            ExtractionResults[] results = request.getResults();
-            assertEquals(2,  results.length);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
+      ExtractionResults[] results = request.getResults();
+      assertEquals(2, results.length);
+    } catch (Exception e) {
+      throw new RuntimeException(e);
     }
+  }
 }
