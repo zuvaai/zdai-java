@@ -36,7 +36,7 @@ public abstract class BaseRequest {
         this.error = status.error;
     }
 
-    public abstract RequestStatus getStatus() throws DocAIClientException, DocAIApiException;
+    public abstract RequestStatus fetchStatus() throws DocAIClientException, DocAIApiException;
 
     public RequestStatus waitUntilFinished(long pollingIntervalSeconds, long timeoutSeconds) throws DocAIClientException, DocAIApiException, InterruptedException {
         return waitUntilFinished(pollingIntervalSeconds, timeoutSeconds, false);
@@ -48,7 +48,7 @@ public abstract class BaseRequest {
         long tStart = Instant.now().toEpochMilli();
         if (showProgress) System.out.print("Wait for processing");
         while (Instant.now().toEpochMilli() - tStart < timeoutSeconds * 1000) {
-            status = this.getStatus();
+            status = this.fetchStatus();
             if (showProgress) System.out.print(".");
             if (status.isComplete()|| status.isFailed()) {
                 if (showProgress) System.out.println(status.status.name());

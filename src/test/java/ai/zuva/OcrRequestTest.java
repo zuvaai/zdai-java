@@ -34,7 +34,7 @@ class OcrRequestTest {
         stubFor(get("/api/v2/ocr/" + requestId)
                 .willReturn(aResponse().withStatus(200).withBody(getStatusResponseBody)));
 
-        assertTrue(request.getStatus().isComplete());
+        assertTrue(request.fetchStatus().isComplete());
 
 
         String getTextResponseBody = TestHelpers.resourceAsString(this, "ocr-text.json");

@@ -44,7 +44,7 @@ public class TrainingRequestTest {
         stubFor(get(String.format("/api/v2/fields/%s/train/%s", fieldId, requestId))
                 .willReturn(ok().withBody(statusResponseBody)));
 
-        assertTrue(request.getStatus().isComplete());
+        assertTrue(request.fetchStatus().isComplete());
     }
 
     @Test
@@ -87,6 +87,6 @@ public class TrainingRequestTest {
         stubFor(get(String.format("/api/v2/fields/%s/train/%s", fieldId, requestId))
                 .willReturn(notFound().withBody(statusResponseBody)));
 
-        assertThrows(DocAIApiException.class, request::getStatus);
+        assertThrows(DocAIApiException.class, request::fetchStatus);
     }
 }

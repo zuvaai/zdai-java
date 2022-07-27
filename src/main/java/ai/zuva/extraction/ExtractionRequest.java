@@ -113,7 +113,7 @@ public class ExtractionRequest extends BaseRequest {
      * @throws DocAIApiException    Unsuccessful response code from server
      * @throws DocAIClientException Error preparing, sending or processing the request/response
      */
-    public ExtractionStatus getStatus() throws DocAIClientException, DocAIApiException {
+    public ExtractionStatus fetchStatus() throws DocAIClientException, DocAIApiException {
         return client.authorizedGet(String.format("api/v2/extraction/%s", requestId), 200, ExtractionStatus.class);
     }
 

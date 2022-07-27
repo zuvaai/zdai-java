@@ -64,7 +64,7 @@ public class TrainingRequest extends BaseRequest {
      * @throws DocAIApiException    Unsuccessful response code from server
      * @throws DocAIClientException Error preparing, sending or processing the request/response
      */
-    public TrainingStatus getStatus() throws DocAIClientException, DocAIApiException {
+    public TrainingStatus fetchStatus() throws DocAIClientException, DocAIApiException {
         return client.authorizedGet(String.format("api/v2/fields/%s/train/%s", fieldId, requestId), 200, TrainingStatus.class);
     }
 

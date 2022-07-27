@@ -103,7 +103,7 @@ public class ClassificationRequest extends BaseRequest {
      * @throws DocAIApiException    Unsuccessful response code from server
      * @throws DocAIClientException Error preparing, sending or processing the request/response
      */
-    public ClassificationResult getStatus() throws DocAIClientException, DocAIApiException {
+    public ClassificationResult fetchStatus() throws DocAIClientException, DocAIApiException {
         return client.authorizedGet("api/v2/classification/" + requestId, 200, ClassificationResult.class);
     }
 

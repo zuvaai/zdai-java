@@ -37,7 +37,7 @@ class ClassificationRequestTest {
             stubFor(get("/api/v2/classification/" + requestId)
                     .willReturn(aResponse().withStatus(200).withBody(getResponseBody)));
 
-            ClassificationResult result = request.getStatus();
+            ClassificationResult result = request.fetchStatus();
 
             assertTrue(result.isComplete());
             assertEquals("Real Estate Agt", result.classification);

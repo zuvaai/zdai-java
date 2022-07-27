@@ -46,7 +46,7 @@ public class ExtractionRequestTest {
             stubFor(get("/api/v2/extraction/" + requestId)
                     .willReturn(ok().withBody(statusResponseBody)));
 
-            assertTrue(request.getStatus().isComplete());
+            assertTrue(request.fetchStatus().isComplete());
 
             // Test checking the results for a file
             String textResponseBody = TestHelpers.resourceAsString(this, "extraction-results.json");

@@ -94,7 +94,7 @@ public class OcrRequest extends BaseRequest {
      * @throws DocAIApiException    Unsuccessful response code from server
      * @throws DocAIClientException Error preparing, sending or processing the request/response
      */
-    public OcrStatus getStatus() throws DocAIClientException, DocAIApiException {
+    public OcrStatus fetchStatus() throws DocAIClientException, DocAIApiException {
         return client.authorizedGet("api/v2/ocr/" + requestId, 200, OcrStatus.class);
     }
 

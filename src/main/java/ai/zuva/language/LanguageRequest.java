@@ -100,7 +100,7 @@ public class LanguageRequest extends BaseRequest {
      * @throws DocAIApiException    Unsuccessful response code from server
      * @throws DocAIClientException Error preparing, sending or processing the request/response
      */
-    public LanguageResult getStatus() throws DocAIClientException, DocAIApiException {
+    public LanguageResult fetchStatus() throws DocAIClientException, DocAIApiException {
         return client.authorizedGet("api/v2/language/" + requestId, 200, LanguageResult.class);
     }
 
