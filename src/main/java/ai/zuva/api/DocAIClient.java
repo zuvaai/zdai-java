@@ -33,7 +33,7 @@ public class DocAIClient {
         String scheme = "https";
         try{
             scheme = HttpUrl.parse(baseUrl).scheme();
-        } catch (NullPointerException ignored){};
+        } catch (NullPointerException ignored){}
 
         this.baseUrl = HttpUrl.parse(baseUrl).newBuilder()
                 .scheme(scheme)

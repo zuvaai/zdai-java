@@ -9,7 +9,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import java.io.FileNotFoundException;
 
 public class File {
-    private DocAIClient client;
+    private final DocAIClient client;
     public String fileId;
     public FileAttributes attributes;
     public String[] permissions;

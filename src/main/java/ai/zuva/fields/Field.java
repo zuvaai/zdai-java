@@ -8,7 +8,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Field {
-    private DocAIClient client;
+    private final DocAIClient client;
     public String fieldId;
 
     /**
