@@ -1,6 +1,5 @@
 package ai.zuva;
 
-import ai.zuva.api.DocAIClient;
 import ai.zuva.exception.DocAIApiException;
 import ai.zuva.fields.TrainingExample;
 import ai.zuva.fields.TrainingRequest;
@@ -35,7 +34,7 @@ public class TrainingRequestTest {
             .willReturn(aResponse().withStatus(202).withBody(postResponseBody)));
 
     DocAIClient client = new DocAIClient("http://localhost:" + port, "my-token");
-    TrainingRequest request = TrainingRequest.createRequest(client, fieldId, td);
+    TrainingRequest request = TrainingRequest.submitRequest(client, fieldId, td);
 
     assertEquals(requestId, request.requestId);
 
@@ -46,7 +45,7 @@ public class TrainingRequestTest {
         get(String.format("/api/v2/fields/%s/train/%s", fieldId, requestId))
             .willReturn(ok().withBody(statusResponseBody)));
 
-    assertTrue(request.fetchStatus().isComplete());
+    assertTrue(request.getStatus().isComplete());
   }
 
   @Test
@@ -71,7 +70,7 @@ public class TrainingRequestTest {
     assertThrows(
         Exception.class,
         () -> {
-          TrainingRequest.createRequest(client, fieldId, td);
+          TrainingRequest.submitRequest(client, fieldId, td);
         });
   }
 
@@ -94,6 +93,6 @@ public class TrainingRequestTest {
         get(String.format("/api/v2/fields/%s/train/%s", fieldId, requestId))
             .willReturn(notFound().withBody(statusResponseBody)));
 
-    assertThrows(DocAIApiException.class, request::fetchStatus);
+    assertThrows(DocAIApiException.class, request::getStatus);
   }
 }

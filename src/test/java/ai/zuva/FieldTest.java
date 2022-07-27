@@ -1,6 +1,5 @@
 package ai.zuva;
 
-import ai.zuva.api.DocAIClient;
 import ai.zuva.fields.*;
 import com.github.tomakehurst.wiremock.junit5.WireMockRuntimeInfo;
 import com.github.tomakehurst.wiremock.junit5.WireMockTest;

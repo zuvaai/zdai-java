@@ -1,6 +1,5 @@
 package ai.zuva;
 
-import ai.zuva.api.DocAIClient;
 import ai.zuva.classification.ClassificationRequest;
 import ai.zuva.classification.ClassificationResult;
 import ai.zuva.files.File;
@@ -32,7 +31,7 @@ class ClassificationRequestTest {
 
       DocAIClient client = new DocAIClient("http://localhost:" + port, "my-token");
       ClassificationRequest request =
-          ClassificationRequest.createRequest(client, new File(client, fileId));
+          ClassificationRequest.submitRequest(client, new File(client, fileId));
 
       assertEquals(requestId, request.requestId);
 
@@ -43,7 +42,7 @@ class ClassificationRequestTest {
           get("/api/v2/classification/" + requestId)
               .willReturn(aResponse().withStatus(200).withBody(getResponseBody)));
 
-      ClassificationResult result = request.fetchStatus();
+      ClassificationResult result = request.getStatus();
 
       assertTrue(result.isComplete());
       assertEquals("Real Estate Agt", result.classification);

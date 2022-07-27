@@ -1,6 +1,5 @@
 package ai.zuva;
 
-import ai.zuva.api.DocAIClient;
 import ai.zuva.files.File;
 import ai.zuva.ocr.OcrRequest;
 import com.github.tomakehurst.wiremock.junit5.WireMockRuntimeInfo;
@@ -28,7 +27,7 @@ class OcrRequestTest {
 
     DocAIClient client = new DocAIClient("http://localhost:" + port, "my-token");
 
-    OcrRequest request = OcrRequest.createRequest(client, new File(client, fileId));
+    OcrRequest request = OcrRequest.submitRequest(client, new File(client, fileId));
     assertEquals(requestId, request.requestId);
 
     String getStatusResponseBody = TestHelpers.resourceAsString(this, "ocr-status-complete.json");
@@ -36,7 +35,7 @@ class OcrRequestTest {
         get("/api/v2/ocr/" + requestId)
             .willReturn(aResponse().withStatus(200).withBody(getStatusResponseBody)));
 
-    assertTrue(request.fetchStatus().isComplete());
+    assertTrue(request.getStatus().isComplete());
 
     String getTextResponseBody = TestHelpers.resourceAsString(this, "ocr-text.json");
     stubFor(

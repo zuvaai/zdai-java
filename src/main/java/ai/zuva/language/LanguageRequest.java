@@ -1,7 +1,7 @@
 package ai.zuva.language;
 
 import ai.zuva.BaseRequest;
-import ai.zuva.api.DocAIClient;
+import ai.zuva.DocAIClient;
 import ai.zuva.exception.DocAIApiException;
 import ai.zuva.exception.DocAIClientException;
 import ai.zuva.files.File;
@@ -27,11 +27,11 @@ public class LanguageRequest extends BaseRequest {
   }
 
   /**
-   * Send a request to classify the document's primary language.
+   * Sends a request to classify the document's primary language.
    *
-   * <p>Given a ZdaiApiClient and a fileId, make a request to the Zuva API to asynchronously
-   * classify the language of the file. The created LanguageRequest object can then be used to query
-   * the status and results of the request.
+   * <p>Given a ZdaiApiClient and a fileId, make a request to DocAI to asynchronously classify the
+   * language of the file. The created LanguageRequest object can then be used to query the status
+   * and results of the request.
    *
    * @param client The client to use to make the request
    * @param file The file to classify
@@ -40,17 +40,17 @@ public class LanguageRequest extends BaseRequest {
    * @throws DocAIApiException Unsuccessful response code from server
    * @throws DocAIClientException Error preparing, sending or processing the request/response
    */
-  public static LanguageRequest createRequest(DocAIClient client, File file)
+  public static LanguageRequest submitRequest(DocAIClient client, File file)
       throws DocAIClientException, DocAIApiException {
-    return createRequests(client, new File[] {file})[0];
+    return submitRequests(client, new File[] {file})[0];
   }
 
   /**
-   * Send a request to classify the primary language of multiple files
+   * Sends a request to classify the primary language of multiple files
    *
-   * <p>Given a ZdaiApiClient and a fileId, make a request to the Zuva API to asynchronously
-   * classify the language of the file. The created LanguageRequest object can then be used to query
-   * the status and results of the request.
+   * <p>Given a ZdaiApiClient and a fileId, make a request to DocAI to asynchronously classify the
+   * language of the file. The created LanguageRequest object can then be used to query the status
+   * and results of the request.
    *
    * @param client The client to use to make the request
    * @param files The files to classify
@@ -59,7 +59,7 @@ public class LanguageRequest extends BaseRequest {
    * @throws DocAIApiException Unsuccessful response code from server
    * @throws DocAIClientException Error preparing, sending or processing the request/response
    */
-  public static LanguageRequest[] createRequests(DocAIClient client, File[] files)
+  public static LanguageRequest[] submitRequests(DocAIClient client, File[] files)
       throws DocAIClientException, DocAIApiException {
     LanguageResults resp =
         client.authorizedJsonRequest(
@@ -78,7 +78,7 @@ public class LanguageRequest extends BaseRequest {
   }
 
   /**
-   * Construct a new object representing a pre-existing language request
+   * Constructs an object representing a pre-existing language request
    *
    * <p>Given a ZdaiApiClient, a file ID and a request ID, construct a new LanguageRequest object
    * that can be used to obtain the status and results of the given request.
@@ -93,7 +93,7 @@ public class LanguageRequest extends BaseRequest {
   }
 
   /**
-   * Get language status and results from the Zuva server
+   * Gets language status and results
    *
    * <p>Given a ZdaiApiClient, return a LanguageResult indicating the status of the request and the
    * language result (if available).
@@ -103,39 +103,50 @@ public class LanguageRequest extends BaseRequest {
    * @throws DocAIApiException Unsuccessful response code from server
    * @throws DocAIClientException Error preparing, sending or processing the request/response
    */
-  public LanguageResult fetchStatus() throws DocAIClientException, DocAIApiException {
+  public LanguageResult getStatus() throws DocAIClientException, DocAIApiException {
     return client.authorizedGet("api/v2/language/" + requestId, 200, LanguageResult.class);
   }
 
   /**
+   * Blocks until the request completes or fails, or the specified timeout is reached
+   *
+   * <p>Given a polling interval and timeout in second, polls the request status until it reaches a
+   * terminal state or the specified timeout, at which point it returns the result of the most
+   * recent status request.
+   *
    * @param pollingIntervalSeconds The time in seconds to wait between status requests
    * @param timeoutSeconds The time in seconds to wait for a complete (or failed) status before
    *     timing out the operation
-   * @return A LanguageResult, with the status and results of the request
+   * @return A LanguageResult, with the last reported status and results of the request
    * @throws DocAIClientException Unsuccessful response code from server
    * @throws DocAIApiException Error preparing, sending or processing the request/response
    * @throws InterruptedException Thread interrupted during Thread.sleep()
    */
-  public LanguageResult waitUntilFinished(long pollingIntervalSeconds, long timeoutSeconds)
+  public LanguageResult pollStatus(long pollingIntervalSeconds, long timeoutSeconds)
       throws DocAIClientException, DocAIApiException, InterruptedException {
-    return (LanguageResult) super.waitUntilFinished(pollingIntervalSeconds, timeoutSeconds);
+    return (LanguageResult) super.pollStatus(pollingIntervalSeconds, timeoutSeconds);
   }
 
   /**
+   * Blocks until the request completes or fails, or the specified timeout is reached
+   *
+   * <p>Given a polling interval and timeout in second, polls the request status until it reaches a
+   * terminal state or the specified timeout, at which point it returns the result of the most
+   * recent status request.
+   *
    * @param pollingIntervalSeconds The time in seconds to wait between status requests
    * @param timeoutSeconds The time in seconds to wait for a complete (or failed) status before
    *     timing out the operation
    * @param showProgress Flag indicating whether to print a progress indicator while waiting for
    *     completion
-   * @return A LanguageResult, with the status and results of the request
+   * @return A LanguageResult, with the last reported status and results of the request
    * @throws DocAIClientException Unsuccessful response code from server
    * @throws DocAIApiException Error preparing, sending or processing the request/response
    * @throws InterruptedException Thread interrupted during Thread.sleep()
    */
-  public LanguageResult waitUntilFinished(
+  public LanguageResult pollStatus(
       long pollingIntervalSeconds, long timeoutSeconds, boolean showProgress)
       throws DocAIClientException, DocAIApiException, InterruptedException {
-    return (LanguageResult)
-        super.waitUntilFinished(pollingIntervalSeconds, timeoutSeconds, showProgress);
+    return (LanguageResult) super.pollStatus(pollingIntervalSeconds, timeoutSeconds, showProgress);
   }
 }

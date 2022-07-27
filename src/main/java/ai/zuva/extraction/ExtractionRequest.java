@@ -1,7 +1,7 @@
 package ai.zuva.extraction;
 
 import ai.zuva.BaseRequest;
-import ai.zuva.api.DocAIClient;
+import ai.zuva.DocAIClient;
 import ai.zuva.exception.DocAIApiException;
 import ai.zuva.exception.DocAIClientException;
 import ai.zuva.files.File;
@@ -44,7 +44,7 @@ public class ExtractionRequest extends BaseRequest {
   }
 
   /**
-   * Construct and send a request to extract fields from a file
+   * Submits a request to extract fields from a file
    *
    * <p>Given a ZdaiApiClient, a fileId, and an array of field IDs, this constructor makes a request
    * to the Zuva servers to asynchronously extract the specified fields from the file
@@ -57,13 +57,13 @@ public class ExtractionRequest extends BaseRequest {
    * @throws DocAIApiException Unsuccessful response code from server
    * @throws DocAIClientException Error preparing, sending or processing the request/response
    */
-  public static ExtractionRequest createRequest(DocAIClient client, File file, String[] fieldIds)
+  public static ExtractionRequest submitRequest(DocAIClient client, File file, String[] fieldIds)
       throws DocAIClientException, DocAIApiException {
-    return createRequests(client, new File[] {file}, fieldIds)[0];
+    return submitRequests(client, new File[] {file}, fieldIds)[0];
   }
 
   /**
-   * Construct and send a request to extract fields from multiple files
+   * Submits a request to extract fields from one or more files
    *
    * <p>Given a ZdaiApiClient, a fileId, and an array of field IDs, this constructor makes a request
    * to the Zuva servers to asynchronously extract the specified fields from the file
@@ -76,7 +76,7 @@ public class ExtractionRequest extends BaseRequest {
    * @throws DocAIApiException Unsuccessful response code from server
    * @throws DocAIClientException Error preparing, sending or processing the request/response
    */
-  public static ExtractionRequest[] createRequests(
+  public static ExtractionRequest[] submitRequests(
       DocAIClient client, File[] files, String[] fieldIds)
       throws DocAIClientException, DocAIApiException {
     ExtractionStatuses resp =
@@ -101,6 +101,12 @@ public class ExtractionRequest extends BaseRequest {
     this.fieldIds = extractionStatus.fieldIds;
   }
 
+  /**
+   * Creates a request object for a pre-existing extraction request.
+   *
+   * @param client The client to use to make the request
+   * @param requestId The ID of an existing extraction request
+   */
   public ExtractionRequest(DocAIClient client, String requestId) {
     super(client, requestId, null, null);
     this.fileId = null;
@@ -108,53 +114,63 @@ public class ExtractionRequest extends BaseRequest {
   }
 
   /**
-   * Get status of extraction request from the Zuva server
+   * Gets status of the extraction request
    *
-   * <p>Given a ZdaiApiClient, return a String indicating the status of the request.
-   *
-   * @return The request status as a String (one of "queued", "processing", "complete" or "failed")
+   * @return The request status
    * @throws DocAIApiException Unsuccessful response code from server
    * @throws DocAIClientException Error preparing, sending or processing the request/response
    */
-  public ExtractionStatus fetchStatus() throws DocAIClientException, DocAIApiException {
+  public ExtractionStatus getStatus() throws DocAIClientException, DocAIApiException {
     return client.authorizedGet(
         String.format("api/v2/extraction/%s", requestId), 200, ExtractionStatus.class);
   }
 
   /**
+   * Blocks until the request completes or fails, or the specified timeout is reached
+   *
+   * <p>Given a polling interval and timeout in second, polls the request status until it reaches a
+   * terminal state or the specified timeout, at which point it returns the result of the most
+   * recent status request.
+   *
    * @param pollingIntervalSeconds The time in seconds to wait between status requests
    * @param timeoutSeconds The time in seconds to wait for a complete (or failed) status before
    *     timing out the operation
-   * @return An ExtractionStatus containing the status of the request
+   * @return An ExtractionStatus containing the last reported status of the request
    * @throws DocAIClientException Unsuccessful response code from server
    * @throws DocAIApiException Error preparing, sending or processing the request/response
    * @throws InterruptedException Thread interrupted during Thread.sleep()
    */
-  public ExtractionStatus waitUntilFinished(long pollingIntervalSeconds, long timeoutSeconds)
+  public ExtractionStatus pollStatus(long pollingIntervalSeconds, long timeoutSeconds)
       throws DocAIClientException, DocAIApiException, InterruptedException {
-    return (ExtractionStatus) super.waitUntilFinished(pollingIntervalSeconds, timeoutSeconds);
+    return (ExtractionStatus) super.pollStatus(pollingIntervalSeconds, timeoutSeconds);
   }
 
   /**
+   * Blocks until the request completes or fails, or the specified timeout is reached
+   *
+   * <p>Given a polling interval and timeout in second, polls the request status until it reaches a
+   * terminal state or the specified timeout, at which point it returns the result of the most
+   * recent status request.
+   *
    * @param pollingIntervalSeconds The time in seconds to wait between status requests
    * @param timeoutSeconds The time in seconds to wait for a complete (or failed) status before
    *     timing out the operation
    * @param showProgress Flag indicating whether to print a progress indicator while waiting for
    *     completion
-   * @return An ExtractionStatus containing the status of the request
+   * @return An ExtractionStatus containing the last reported status of the request
    * @throws DocAIClientException Unsuccessful response code from server
    * @throws DocAIApiException Error preparing, sending or processing the request/response
    * @throws InterruptedException Thread interrupted during Thread.sleep()
    */
-  public ExtractionStatus waitUntilFinished(
+  public ExtractionStatus pollStatus(
       long pollingIntervalSeconds, long timeoutSeconds, boolean showProgress)
       throws DocAIClientException, DocAIApiException, InterruptedException {
     return (ExtractionStatus)
-        super.waitUntilFinished(pollingIntervalSeconds, timeoutSeconds, showProgress);
+        super.pollStatus(pollingIntervalSeconds, timeoutSeconds, showProgress);
   }
 
   /**
-   * Get results of a successful extraction request from the Zuva server
+   * Get results of a successful extraction request
    *
    * <p>Given a ZdaiApiClient, return an array of ExtractionResults containing the text and location
    * of all extractions for each field.

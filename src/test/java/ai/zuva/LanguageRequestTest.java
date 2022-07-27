@@ -1,6 +1,5 @@
 package ai.zuva;
 
-import ai.zuva.api.DocAIClient;
 import ai.zuva.files.File;
 import ai.zuva.language.LanguageRequest;
 import ai.zuva.language.LanguageResult;
@@ -29,7 +28,7 @@ public class LanguageRequestTest {
               .willReturn(aResponse().withStatus(202).withBody(postResponseBody)));
 
       DocAIClient client = new DocAIClient("http://localhost:" + port, "my-token");
-      LanguageRequest request = LanguageRequest.createRequest(client, new File(client, fileId));
+      LanguageRequest request = LanguageRequest.submitRequest(client, new File(client, fileId));
 
       assertEquals(requestId, request.requestId);
 
@@ -39,7 +38,7 @@ public class LanguageRequestTest {
           get("/api/v2/language/" + requestId)
               .willReturn(aResponse().withStatus(200).withBody(getResponseBody)));
 
-      LanguageResult result = request.fetchStatus();
+      LanguageResult result = request.getStatus();
 
       assertTrue(result.status.isComplete());
       assertEquals("English", result.language);

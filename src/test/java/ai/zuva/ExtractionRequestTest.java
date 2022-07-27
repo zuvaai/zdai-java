@@ -1,6 +1,5 @@
 package ai.zuva;
 
-import ai.zuva.api.DocAIClient;
 import ai.zuva.extraction.ExtractionRequest;
 import ai.zuva.extraction.ExtractionResults;
 import ai.zuva.files.File;
@@ -41,7 +40,7 @@ public class ExtractionRequestTest {
 
       DocAIClient client = new DocAIClient("http://localhost:" + port, "my-token");
       ExtractionRequest request =
-          ExtractionRequest.createRequest(client, new File(client, fileId), fieldIds);
+          ExtractionRequest.submitRequest(client, new File(client, fileId), fieldIds);
 
       assertEquals(requestId, request.requestId);
 
@@ -50,7 +49,7 @@ public class ExtractionRequestTest {
           TestHelpers.resourceAsString(this, "extraction-status-complete.json");
       stubFor(get("/api/v2/extraction/" + requestId).willReturn(ok().withBody(statusResponseBody)));
 
-      assertTrue(request.fetchStatus().isComplete());
+      assertTrue(request.getStatus().isComplete());
 
       // Test checking the results for a file
       String textResponseBody = TestHelpers.resourceAsString(this, "extraction-results.json");

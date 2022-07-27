@@ -1,6 +1,6 @@
 package ai.zuva.example;
 
-import ai.zuva.api.DocAIClient;
+import ai.zuva.DocAIClient;
 import ai.zuva.classification.ClassificationRequest;
 import ai.zuva.classification.ClassificationResult;
 import ai.zuva.extraction.ExtractionData;
@@ -43,10 +43,10 @@ public class Example {
         String.format("Uploaded file with id %s expires at %s", file.fileId, file.expiration));
 
     System.out.printf("%nObtaining OCR results:%n");
-    OcrRequest ocrRequest = OcrRequest.createRequest(client, file);
+    OcrRequest ocrRequest = OcrRequest.submitRequest(client, file);
     System.out.println("Request ID: " + ocrRequest.requestId);
 
-    OcrStatus ocrStatus = ocrRequest.waitUntilFinished(1, 60, true);
+    OcrStatus ocrStatus = ocrRequest.pollStatus(1, 60, true);
     if (ocrStatus.isComplete()) {
       System.out.println(String.format("Character count: %d", ocrRequest.getText().length()));
       System.out.println("Downloading and saving images as temp.zip");
@@ -57,11 +57,10 @@ public class Example {
     }
 
     System.out.printf("%nClassifying Document type:%n");
-    ClassificationRequest classificationRequest = ClassificationRequest.createRequest(client, file);
+    ClassificationRequest classificationRequest = ClassificationRequest.submitRequest(client, file);
     System.out.println("Request ID: " + classificationRequest.requestId);
 
-    ClassificationResult classificationResult =
-        classificationRequest.waitUntilFinished(1, 60, true);
+    ClassificationResult classificationResult = classificationRequest.pollStatus(1, 60, true);
 
     if (classificationResult.isComplete()) {
       System.out.println("Document type is: " + classificationResult.classification);
@@ -70,10 +69,10 @@ public class Example {
     }
 
     System.out.printf("%nDetermining Document Language:%n");
-    LanguageRequest languageRequest = LanguageRequest.createRequest(client, file);
+    LanguageRequest languageRequest = LanguageRequest.submitRequest(client, file);
     System.out.println("Request ID: " + languageRequest.requestId);
 
-    LanguageResult languageResult = languageRequest.waitUntilFinished(1, 60, true);
+    LanguageResult languageResult = languageRequest.pollStatus(1, 60, true);
     if (languageResult.isComplete()) {
       System.out.println("Document language is: " + languageResult.language);
     } else {
@@ -95,10 +94,10 @@ public class Example {
           "4d34c0ac-a3d4-4172-92d0-5fad8b3860a7"
         };
 
-    ExtractionRequest extractionRequest = ExtractionRequest.createRequest(client, file, fieldIds);
+    ExtractionRequest extractionRequest = ExtractionRequest.submitRequest(client, file, fieldIds);
     System.out.println("Request ID: " + extractionRequest.requestId);
 
-    ExtractionStatus extractionStatus = extractionRequest.waitUntilFinished(1, 60, true);
+    ExtractionStatus extractionStatus = extractionRequest.pollStatus(1, 60, true);
 
     if (extractionStatus.isComplete()) {
       System.out.println("Getting results");

@@ -1,7 +1,7 @@
 package ai.zuva.ocr;
 
 import ai.zuva.BaseRequest;
-import ai.zuva.api.DocAIClient;
+import ai.zuva.DocAIClient;
 import ai.zuva.exception.DocAIApiException;
 import ai.zuva.exception.DocAIClientException;
 import ai.zuva.files.File;
@@ -47,9 +47,9 @@ public class OcrRequest extends BaseRequest {
    * @throws DocAIApiException Unsuccessful response code from server
    * @throws DocAIClientException Error preparing, sending or processing the request/response
    */
-  public static OcrRequest createRequest(DocAIClient client, File file)
+  public static OcrRequest submitRequest(DocAIClient client, File file)
       throws DocAIClientException, DocAIApiException {
-    return createRequests(client, new File[] {file})[0];
+    return submitRequests(client, new File[] {file})[0];
   }
 
   /**
@@ -66,7 +66,7 @@ public class OcrRequest extends BaseRequest {
    * @throws DocAIApiException Unsuccessful response code from server
    * @throws DocAIClientException Error preparing, sending or processing the request/response
    */
-  public static OcrRequest[] createRequests(DocAIClient client, File[] files)
+  public static OcrRequest[] submitRequests(DocAIClient client, File[] files)
       throws DocAIClientException, DocAIApiException {
     OcrStatuses resp =
         client.authorizedJsonRequest(
@@ -89,7 +89,7 @@ public class OcrRequest extends BaseRequest {
   }
 
   /**
-   * Get status of an OCR request from the Zuva server
+   * Gets status of an OCR request
    *
    * <p>Given a ZdaiApiClient, return a String indicating the status of the request.
    *
@@ -97,44 +97,55 @@ public class OcrRequest extends BaseRequest {
    * @throws DocAIApiException Unsuccessful response code from server
    * @throws DocAIClientException Error preparing, sending or processing the request/response
    */
-  public OcrStatus fetchStatus() throws DocAIClientException, DocAIApiException {
+  public OcrStatus getStatus() throws DocAIClientException, DocAIApiException {
     return client.authorizedGet("api/v2/ocr/" + requestId, 200, OcrStatus.class);
   }
 
   /**
+   * Blocks until the request completes or fails, or the specified timeout is reached
+   *
+   * <p>Given a polling interval and timeout in second, polls the request status until it reaches a
+   * terminal state or the specified timeout, at which point it returns the result of the most
+   * recent status request.
+   *
    * @param pollingIntervalSeconds The time in seconds to wait between status requests
    * @param timeoutSeconds The time in seconds to wait for a complete (or failed) status before
    *     timing out the operation
-   * @return A OcrStatus, with the status and results of the request
+   * @return A OcrStatus, with the last reported status of the request
    * @throws DocAIClientException Unsuccessful response code from server
    * @throws DocAIApiException Error preparing, sending or processing the request/response
    * @throws InterruptedException Thread interrupted during Thread.sleep()
    */
-  public OcrStatus waitUntilFinished(long pollingIntervalSeconds, long timeoutSeconds)
+  public OcrStatus pollStatus(long pollingIntervalSeconds, long timeoutSeconds)
       throws DocAIClientException, DocAIApiException, InterruptedException {
-    return (OcrStatus) super.waitUntilFinished(pollingIntervalSeconds, timeoutSeconds);
+    return (OcrStatus) super.pollStatus(pollingIntervalSeconds, timeoutSeconds);
   }
 
   /**
+   * Blocks until the request completes or fails, or the specified timeout is reached
+   *
+   * <p>Given a polling interval and timeout in second, polls the request status until it reaches a
+   * terminal state or the specified timeout, at which point it returns the result of the most
+   * recent status request.
+   *
    * @param pollingIntervalSeconds The time in seconds to wait between status requests
    * @param timeoutSeconds The time in seconds to wait for a complete (or failed) status before
    *     timing out the operation
    * @param showProgress Flag indicating whether to print a progress indicator while waiting for
    *     completion
-   * @return A OcrStatus, with the status and results of the request
+   * @return A OcrStatus, with the last reported status of the request
    * @throws DocAIClientException Unsuccessful response code from server
    * @throws DocAIApiException Error preparing, sending or processing the request/response
    * @throws InterruptedException Thread interrupted during Thread.sleep()
    */
-  public OcrStatus waitUntilFinished(
+  public OcrStatus pollStatus(
       long pollingIntervalSeconds, long timeoutSeconds, boolean showProgress)
       throws DocAIClientException, DocAIApiException, InterruptedException {
-    return (OcrStatus)
-        super.waitUntilFinished(pollingIntervalSeconds, timeoutSeconds, showProgress);
+    return (OcrStatus) super.pollStatus(pollingIntervalSeconds, timeoutSeconds, showProgress);
   }
 
   /**
-   * Get text results of an OCR request from the Zuva server
+   * Gets text results of an OCR request
    *
    * <p>Given a ZdaiApiClient, return the OCR text of the document as a String.
    *
@@ -147,7 +158,7 @@ public class OcrRequest extends BaseRequest {
   }
 
   /**
-   * Get image results of an OCR request from the Zuva server
+   * Gets image results of an OCR request
    *
    * @return A byte array of the OCR images of the document as a zip file containing a PNG image of
    *     each page.
@@ -159,7 +170,7 @@ public class OcrRequest extends BaseRequest {
   }
 
   /**
-   * Get layout results of an OCR request from the Zuva server
+   * Gets layout results of an OCR request
    *
    * @return The layout of the document in a protobuff format, as a byte array
    * @throws DocAIApiException Unsuccessful response code from server

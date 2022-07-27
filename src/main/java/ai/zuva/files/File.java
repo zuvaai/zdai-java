@@ -1,6 +1,6 @@
 package ai.zuva.files;
 
-import ai.zuva.api.DocAIClient;
+import ai.zuva.DocAIClient;
 import ai.zuva.exception.DocAIApiException;
 import ai.zuva.exception.DocAIClientException;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;

@@ -1,4 +1,4 @@
-package ai.zuva.api;
+package ai.zuva;
 
 import ai.zuva.exception.DocAIApiException;
 import ai.zuva.exception.DocAIClientException;
@@ -18,7 +18,7 @@ public class DocAIClient {
   private final ObjectMapper mapper;
 
   /**
-   * Constructs a ZdaiApiClient to interface with the Zuva DocAI API
+   * Client to interact with a DocAI server using a specific token
    *
    * @param baseUrl The url to make requests to (e.g. us.app.zuva.ai). The scheme and port may
    *     optionally be included.
@@ -52,9 +52,9 @@ public class DocAIClient {
     }
   }
 
-  private <T> T jsonResponseToObject(String s, Class<T> type) throws DocAIClientException {
+  private <T> T jsonResponseToObject(String s, Class<T> valueType) throws DocAIClientException {
     try {
-      return mapper.readValue(s, type);
+      return mapper.readValue(s, valueType);
     } catch (JsonProcessingException e) {
       throw (new DocAIClientException("Unable to parse response", e));
     }
@@ -87,8 +87,7 @@ public class DocAIClient {
   }
 
   /**
-   * Makes an authorized Zuva API request, returning the body of the (successful) response as an
-   * object
+   * Makes an authorized DocAI request, returning the body of the (successful) response as an object
    *
    * <p>This function makes a request using the specified HTTP method to the specified URI
    * (comprised of the Client's baseURL + the given path), adding the required authorization header
@@ -98,6 +97,7 @@ public class DocAIClient {
    *
    * @param path The path part of the URI to send the request to
    * @param expectedStatusCode The status code expected for a successful response
+   * @param responseType The object type to deserialize the response into
    * @return The response body as a String, if the request was successful
    * @throws DocAIClientException There was a problem sending the request, such as an IOException or
    *     InterruptedException
@@ -116,8 +116,7 @@ public class DocAIClient {
   }
 
   /**
-   * Makes an authorized Zuva API request, returning the body of the (successful) response as a
-   * String.
+   * Makes an authorized DocAI request, returning the body of the (successful) response as a String.
    *
    * <p>This function makes a request using the specified HTTP method to the specified URI
    * (comprised of the Client's baseURL + the given path), adding the required authorization header
@@ -162,7 +161,7 @@ public class DocAIClient {
   }
 
   /**
-   * Makes an authorized Zuva API request with a JSON body, returning the body of the (successful)
+   * Makes an authorized DocAI request with a JSON body, returning the body of the (successful)
    * response as an object of type responseType
    *
    * <p>This function makes a request using the specified HTTP method to the specified URI
@@ -175,6 +174,7 @@ public class DocAIClient {
    * @param path The path part of the URI to send the request to
    * @param body The request body as a String
    * @param expectedStatusCode The status code expected for a successful response
+   * @param responseType The object type to deserialize the response into
    * @return The response body as a String, if the request was successful
    * @throws DocAIClientException There was a problem sending the request, such as an IOException or
    *     InterruptedException
@@ -190,8 +190,7 @@ public class DocAIClient {
   }
 
   /**
-   * Makes an authorized Zuva API request, returning the body of the (successful) response as a
-   * String.
+   * Makes an authorized DocAI request, returning the body of the (successful) response as a String.
    *
    * <p>This function makes a request using the specified HTTP method to the specified URI
    * (comprised of the Client's baseURL + the given path), adding the required authorization header
@@ -203,6 +202,7 @@ public class DocAIClient {
    * @param path The path part of the URI to send the request to
    * @param body The request body as a String
    * @param expectedStatusCode The status code expected for a successful response
+   * @param responseType The object type to deserialize the response into
    * @param contentType The MIME content type to specify in the request
    * @return The response body as a String, if the request was successful
    * @throws DocAIClientException There was a problem sending the request, such as an IOException or
@@ -223,8 +223,7 @@ public class DocAIClient {
   }
 
   /**
-   * Makes an authorized Zuva API request, returning the body of the (successful) response as a
-   * String.
+   * Makes an authorized DocAI request, returning the body of the (successful) response as a String.
    *
    * <p>This function makes a request using the specified HTTP method to the specified URI
    * (comprised of the Client's baseURL + the given path), adding the required authorization header
@@ -236,6 +235,7 @@ public class DocAIClient {
    * @param path The path part of the URI to send the request to
    * @param body The request body as a byte array
    * @param expectedStatusCode The status code expected for a successful response
+   * @param responseType The object type to deserialize the response into
    * @param contentType The MIME content type to specify in the request
    * @return The response body as a String, if the request was successful
    * @throws DocAIClientException There was a problem sending the request, such as an IOException or
@@ -256,8 +256,7 @@ public class DocAIClient {
   }
 
   /**
-   * Makes an authorized Zuva API request, returning the body of the (successful) response as a
-   * String.
+   * Makes an authorized DocAI request, returning the body of the (successful) response as a String.
    *
    * <p>This function makes a request using the specified HTTP method to the specified URI
    * (comprised of the Client's baseURL + the given path), adding the required authorization header
@@ -269,6 +268,7 @@ public class DocAIClient {
    * @param path The path part of the URI to send the request to
    * @param body A Path specifying a file to upload as the request body
    * @param expectedStatusCode The status code expected for a successful response
+   * @param responseType The object type to deserialize the response into
    * @param contentType The MIME content type to specify in the request
    * @return The response body as a String, if the request was successful
    * @throws DocAIClientException There was a problem sending the request, such as an IOException or

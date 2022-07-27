@@ -32,7 +32,7 @@ String[] fieldIds = new String[]{
         "f743f363-1d8b-435b-8812-204a6d883834",
         "4d34c0ac-a3d4-4172-92d0-5fad8b3860a7"
         };
-ExtractionRequest extractionRequest = ExtractionRequest.createRequest(client, file, fieldIds);
+ExtractionRequest extractionRequest = ExtractionRequest.submitRequest(client, file, fieldIds);
 ```
 
 DocAI field extraction works asynchronously: you will need to poll the status of the request until it completes.

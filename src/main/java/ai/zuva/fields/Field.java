@@ -1,6 +1,6 @@
 package ai.zuva.fields;
 
-import ai.zuva.api.DocAIClient;
+import ai.zuva.DocAIClient;
 import ai.zuva.exception.DocAIApiException;
 import ai.zuva.exception.DocAIClientException;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -115,7 +115,7 @@ public class Field {
    */
   public TrainingRequest createTrainingRequest(TrainingExample[] trainingExamples)
       throws DocAIClientException, DocAIApiException {
-    return TrainingRequest.createRequest(client, fieldId, trainingExamples);
+    return TrainingRequest.submitRequest(client, fieldId, trainingExamples);
   }
 
   static class CreateFieldRequest {

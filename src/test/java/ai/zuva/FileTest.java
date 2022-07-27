@@ -1,6 +1,5 @@
 package ai.zuva;
 
-import ai.zuva.api.DocAIClient;
 import ai.zuva.exception.DocAIApiException;
 import ai.zuva.files.File;
 import com.github.tomakehurst.wiremock.junit5.WireMockRuntimeInfo;
