@@ -1,0 +1,6 @@
+{
+  "error": {
+    "code": "invalid_ocr_request",
+    "message": "The `file_ids` attribute of the request body is missing or contains an invalid value."
+  }
+}

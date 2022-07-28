@@ -1,0 +1,6 @@
+{
+  "error": {
+    "code": "field-being-trained",
+    "message": "The field ID 2efa79d4-854d-46de-8087-f70778157dbf has an on-going training session"
+  }
+}
