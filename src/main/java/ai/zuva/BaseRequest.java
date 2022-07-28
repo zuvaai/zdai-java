@@ -3,7 +3,6 @@ package ai.zuva;
 import ai.zuva.exception.DocAIApiException;
 import ai.zuva.exception.DocAIClientException;
 import ai.zuva.exception.DocAIError;
-
 import java.time.Instant;
 
 public abstract class BaseRequest {

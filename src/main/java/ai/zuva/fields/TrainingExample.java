@@ -1,7 +1,6 @@
 package ai.zuva.fields;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-
 import java.util.Arrays;
 
 public class TrainingExample {

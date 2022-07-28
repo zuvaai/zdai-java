@@ -5,11 +5,10 @@ import ai.zuva.exception.DocAIClientException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import okhttp3.*;
-
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import okhttp3.*;
 
 public class DocAIClient {
   private final HttpUrl baseUrl;

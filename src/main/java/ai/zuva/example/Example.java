@@ -14,7 +14,6 @@ import ai.zuva.language.LanguageRequest;
 import ai.zuva.language.LanguageResult;
 import ai.zuva.ocr.OcrRequest;
 import ai.zuva.ocr.OcrStatus;
-
 import java.io.FileOutputStream;
 import java.util.HashMap;
 

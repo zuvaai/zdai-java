@@ -1,5 +1,8 @@
 package ai.zuva;
 
+import static com.github.tomakehurst.wiremock.client.WireMock.*;
+import static org.junit.jupiter.api.Assertions.*;
+
 import ai.zuva.exception.DocAIApiException;
 import ai.zuva.fields.TrainingExample;
 import ai.zuva.fields.TrainingRequest;
@@ -7,9 +10,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.tomakehurst.wiremock.junit5.WireMockRuntimeInfo;
 import com.github.tomakehurst.wiremock.junit5.WireMockTest;
 import org.junit.jupiter.api.Test;
-
-import static com.github.tomakehurst.wiremock.client.WireMock.*;
-import static org.junit.jupiter.api.Assertions.*;
 
 @WireMockTest
 public class TrainingRequestTest {

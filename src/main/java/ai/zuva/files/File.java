@@ -5,7 +5,6 @@ import ai.zuva.exception.DocAIApiException;
 import ai.zuva.exception.DocAIClientException;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
-
 import java.io.FileNotFoundException;
 
 public class File {
