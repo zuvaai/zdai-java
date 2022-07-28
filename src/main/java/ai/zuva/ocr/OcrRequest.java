@@ -37,9 +37,9 @@ public class OcrRequest extends BaseRequest {
   /**
    * Send a request to perform OCR on a file
    *
-   * <p>Given a ZdaiApiClient, a fileId, this constructor makes a request to the Zuva servers to
-   * asynchronously perform OCR on the file, returning an OcrRequest object that can subsequently be
-   * used to obtain the file's text, images and layouts.
+   * <p>Given a ZdaiApiClient, a fileId, makes a request to the Zuva servers to asynchronously
+   * perform OCR on the file, returning an OcrRequest object that can subsequently be used to obtain
+   * the file's text, images and layouts.
    *
    * @param client The client to use to make the request
    * @param file The file to analyze
@@ -55,9 +55,9 @@ public class OcrRequest extends BaseRequest {
   /**
    * Send a request to extract fields from multiple files
    *
-   * <p>Given a ZdaiApiClient, a fileId, this constructor makes a request to the Zuva servers to
-   * asynchronously perform OCR on the file, returning an OcrRequest object that can subsequently be
-   * used to obtain the file's text, images and layouts.
+   * <p>Given a ZdaiApiClient, a fileId, makes a request to the Zuva servers to asynchronously
+   * perform OCR on the file, returning an OcrRequest object that can subsequently be used to obtain
+   * the file's text, images and layouts.
    *
    * @param client The client to use to make the request
    * @param files The files to analyze
