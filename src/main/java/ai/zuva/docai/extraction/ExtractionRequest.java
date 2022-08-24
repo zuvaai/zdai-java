@@ -44,7 +44,7 @@ public class ExtractionRequest extends BaseRequest {
   }
 
   /**
-   * Submits a request to extract fields from a file
+   * Creates a request to extract fields from a file
    *
    * <p>Given a ZdaiApiClient, a fileId, and an array of field IDs, this constructor makes a request
    * to the Zuva servers to asynchronously extract the specified fields from the file
@@ -57,13 +57,13 @@ public class ExtractionRequest extends BaseRequest {
    * @throws DocAIApiException Unsuccessful response code from server
    * @throws DocAIClientException Error preparing, sending or processing the request/response
    */
-  public static ExtractionRequest submitRequest(DocAIClient client, File file, String[] fieldIds)
+  public static ExtractionRequest createRequest(DocAIClient client, File file, String[] fieldIds)
       throws DocAIClientException, DocAIApiException {
-    return submitRequests(client, new File[] {file}, fieldIds)[0];
+    return createRequests(client, new File[] {file}, fieldIds)[0];
   }
 
   /**
-   * Submits a request to extract fields from one or more files
+   * Creates a request to extract fields from one or more files
    *
    * <p>Given a ZdaiApiClient, a fileId, and an array of field IDs, this constructor makes a request
    * to the Zuva servers to asynchronously extract the specified fields from the file
@@ -76,7 +76,7 @@ public class ExtractionRequest extends BaseRequest {
    * @throws DocAIApiException Unsuccessful response code from server
    * @throws DocAIClientException Error preparing, sending or processing the request/response
    */
-  public static ExtractionRequest[] submitRequests(
+  public static ExtractionRequest[] createRequests(
       DocAIClient client, File[] files, String[] fieldIds)
       throws DocAIClientException, DocAIApiException {
     ExtractionStatuses resp =

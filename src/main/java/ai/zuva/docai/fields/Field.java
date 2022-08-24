@@ -115,7 +115,7 @@ public class Field {
    */
   public TrainingRequest createTrainingRequest(TrainingExample[] trainingExamples)
       throws DocAIClientException, DocAIApiException {
-    return TrainingRequest.submitRequest(client, fieldId, trainingExamples);
+    return TrainingRequest.createRequest(client, fieldId, trainingExamples);
   }
 
   static class CreateFieldRequest {

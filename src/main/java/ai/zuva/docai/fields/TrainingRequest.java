@@ -23,7 +23,7 @@ public class TrainingRequest extends BaseRequest {
    * @throws DocAIApiException Unsuccessful response code from server
    * @throws DocAIClientException Error preparing, sending or processing the request/response
    */
-  public static TrainingRequest submitRequest(
+  public static TrainingRequest createRequest(
       DocAIClient client, String fieldId, TrainingExample[] trainingExamples)
       throws DocAIClientException, DocAIApiException {
     TrainingStatus trainingStatus =

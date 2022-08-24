@@ -47,9 +47,9 @@ public class OcrRequest extends BaseRequest {
    * @throws DocAIApiException Unsuccessful response code from server
    * @throws DocAIClientException Error preparing, sending or processing the request/response
    */
-  public static OcrRequest submitRequest(DocAIClient client, File file)
+  public static OcrRequest createRequest(DocAIClient client, File file)
       throws DocAIClientException, DocAIApiException {
-    return submitRequests(client, new File[] {file})[0];
+    return createRequests(client, new File[] {file})[0];
   }
 
   /**
@@ -66,7 +66,7 @@ public class OcrRequest extends BaseRequest {
    * @throws DocAIApiException Unsuccessful response code from server
    * @throws DocAIClientException Error preparing, sending or processing the request/response
    */
-  public static OcrRequest[] submitRequests(DocAIClient client, File[] files)
+  public static OcrRequest[] createRequests(DocAIClient client, File[] files)
       throws DocAIClientException, DocAIApiException {
     OcrStatuses resp =
         client.authorizedJsonRequest(

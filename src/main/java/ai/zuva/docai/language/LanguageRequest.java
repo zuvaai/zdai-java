@@ -40,9 +40,9 @@ public class LanguageRequest extends BaseRequest {
    * @throws DocAIApiException Unsuccessful response code from server
    * @throws DocAIClientException Error preparing, sending or processing the request/response
    */
-  public static LanguageRequest submitRequest(DocAIClient client, File file)
+  public static LanguageRequest createRequest(DocAIClient client, File file)
       throws DocAIClientException, DocAIApiException {
-    return submitRequests(client, new File[] {file})[0];
+    return createRequests(client, new File[] {file})[0];
   }
 
   /**
@@ -59,7 +59,7 @@ public class LanguageRequest extends BaseRequest {
    * @throws DocAIApiException Unsuccessful response code from server
    * @throws DocAIClientException Error preparing, sending or processing the request/response
    */
-  public static LanguageRequest[] submitRequests(DocAIClient client, File[] files)
+  public static LanguageRequest[] createRequests(DocAIClient client, File[] files)
       throws DocAIClientException, DocAIApiException {
     LanguageResults resp =
         client.authorizedJsonRequest(

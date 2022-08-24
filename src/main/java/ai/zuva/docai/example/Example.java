@@ -42,7 +42,7 @@ public class Example {
         String.format("Uploaded file with id %s expires at %s", file.fileId, file.expiration));
 
     System.out.printf("%nObtaining OCR results:%n");
-    OcrRequest ocrRequest = OcrRequest.submitRequest(client, file);
+    OcrRequest ocrRequest = OcrRequest.createRequest(client, file);
     System.out.println("Request ID: " + ocrRequest.requestId);
 
     OcrStatus ocrStatus = ocrRequest.pollStatus(1, 60, true);
@@ -56,7 +56,7 @@ public class Example {
     }
 
     System.out.printf("%nClassifying Document type:%n");
-    ClassificationRequest classificationRequest = ClassificationRequest.submitRequest(client, file);
+    ClassificationRequest classificationRequest = ClassificationRequest.createRequest(client, file);
     System.out.println("Request ID: " + classificationRequest.requestId);
 
     ClassificationResult classificationResult = classificationRequest.pollStatus(1, 60, true);
@@ -68,7 +68,7 @@ public class Example {
     }
 
     System.out.printf("%nDetermining Document Language:%n");
-    LanguageRequest languageRequest = LanguageRequest.submitRequest(client, file);
+    LanguageRequest languageRequest = LanguageRequest.createRequest(client, file);
     System.out.println("Request ID: " + languageRequest.requestId);
 
     LanguageResult languageResult = languageRequest.pollStatus(1, 60, true);
@@ -93,7 +93,7 @@ public class Example {
           "4d34c0ac-a3d4-4172-92d0-5fad8b3860a7"
         };
 
-    ExtractionRequest extractionRequest = ExtractionRequest.submitRequest(client, file, fieldIds);
+    ExtractionRequest extractionRequest = ExtractionRequest.createRequest(client, file, fieldIds);
     System.out.println("Request ID: " + extractionRequest.requestId);
 
     ExtractionStatus extractionStatus = extractionRequest.pollStatus(1, 60, true);

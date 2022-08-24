@@ -42,7 +42,7 @@ public class TrainingRequestTest {
             .willReturn(aResponse().withStatus(202).withBody(postResponseBody)));
 
     DocAIClient client = new DocAIClient("http://localhost:" + port, "my-token");
-    TrainingRequest request = TrainingRequest.submitRequest(client, fieldId, td);
+    TrainingRequest request = TrainingRequest.createRequest(client, fieldId, td);
 
     assertEquals(requestId, request.requestId);
 
@@ -78,7 +78,7 @@ public class TrainingRequestTest {
     assertThrows(
         Exception.class,
         () -> {
-          TrainingRequest.submitRequest(client, fieldId, td);
+          TrainingRequest.createRequest(client, fieldId, td);
         });
   }
 

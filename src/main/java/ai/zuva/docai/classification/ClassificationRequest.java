@@ -40,9 +40,9 @@ public class ClassificationRequest extends BaseRequest {
    * @throws DocAIApiException Unsuccessful response code from server
    * @throws DocAIClientException Error preparing, sending or processing the request/response
    */
-  public static ClassificationRequest submitRequest(DocAIClient client, File file)
+  public static ClassificationRequest createRequest(DocAIClient client, File file)
       throws DocAIClientException, DocAIApiException {
-    return submitRequests(client, new File[] {file})[0];
+    return createRequests(client, new File[] {file})[0];
   }
 
   /**
@@ -59,7 +59,7 @@ public class ClassificationRequest extends BaseRequest {
    * @throws DocAIApiException Unsuccessful response code from server
    * @throws DocAIClientException Error preparing, sending or processing the request/response
    */
-  public static ClassificationRequest[] submitRequests(DocAIClient client, File[] files)
+  public static ClassificationRequest[] createRequests(DocAIClient client, File[] files)
       throws DocAIClientException, DocAIApiException {
     ClassificationResultsBody resp =
         client.authorizedJsonRequest(

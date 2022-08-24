@@ -34,7 +34,7 @@ class OcrRequestTest {
 
     DocAIClient client = new DocAIClient("http://localhost:" + port, "my-token");
 
-    OcrRequest request = OcrRequest.submitRequest(client, new File(client, fileId));
+    OcrRequest request = OcrRequest.createRequest(client, new File(client, fileId));
     assertEquals(requestId, request.requestId);
 
     String getStatusResponseBody = TestHelpers.resourceAsString(this, "ocr-status-complete.json");

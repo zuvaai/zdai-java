@@ -35,7 +35,7 @@ class ClassificationRequestTest {
 
       DocAIClient client = new DocAIClient("http://localhost:" + port, "my-token");
       ClassificationRequest request =
-          ClassificationRequest.submitRequest(client, new File(client, fileId));
+          ClassificationRequest.createRequest(client, new File(client, fileId));
 
       assertEquals(requestId, request.requestId);
 

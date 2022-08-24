@@ -32,7 +32,7 @@ public class LanguageRequestTest {
               .willReturn(aResponse().withStatus(202).withBody(postResponseBody)));
 
       DocAIClient client = new DocAIClient("http://localhost:" + port, "my-token");
-      LanguageRequest request = LanguageRequest.submitRequest(client, new File(client, fileId));
+      LanguageRequest request = LanguageRequest.createRequest(client, new File(client, fileId));
 
       assertEquals(requestId, request.requestId);
 

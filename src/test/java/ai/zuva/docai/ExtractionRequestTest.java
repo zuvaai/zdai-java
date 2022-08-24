@@ -45,7 +45,7 @@ public class ExtractionRequestTest {
 
       DocAIClient client = new DocAIClient("http://localhost:" + port, "my-token");
       ExtractionRequest request =
-          ExtractionRequest.submitRequest(client, new File(client, fileId), fieldIds);
+          ExtractionRequest.createRequest(client, new File(client, fileId), fieldIds);
 
       assertEquals(requestId, request.requestId);
 
