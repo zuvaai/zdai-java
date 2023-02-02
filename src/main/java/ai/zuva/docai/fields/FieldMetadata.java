@@ -22,4 +22,19 @@ public class FieldMetadata {
 
   @JsonProperty("file_ids")
   public String[] fileIds;
+
+  @JsonProperty("document_types")
+  public DocumentType[] documentType;
+
+  @JsonProperty("languages")
+  public Languages[] languages;
+
+  @JsonProperty("jurisdictions")
+  public Jurisdictions[] jurisdictions;
+
+  @JsonProperty("tags")
+  public String[] tags;
+
+  @JsonProperty("normalization_type")
+  public String normalizationType;
 }
