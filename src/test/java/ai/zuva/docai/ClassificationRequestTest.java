@@ -63,8 +63,7 @@ class ClassificationRequestTest {
             new File(client, "ce7ks62b08o78qsc6qv0"),
             new File(client, "ce7m85s2nt5r5uan68hg")
           };
-      postResponseBody =
-          TestHelpers.resourceAsString(this, "doc-multiple-classification-request.json");
+      postResponseBody = TestHelpers.resourceAsString(this, "multiple-status-request.json");
       stubFor(
           post("/api/v2/classification")
               .withRequestBody(
@@ -80,7 +79,7 @@ class ClassificationRequestTest {
       classificationsQueryParams.put("request_id", "ce7m85s2nt5r5uan68hg");
 
       String getMultipleResponseBody =
-          TestHelpers.resourceAsString(this, "doc-multiple-classification-response.json");
+          TestHelpers.resourceAsString(this, "multiple-classification-response.json");
       stubFor(
           get("/api/v2/classifications&" + client.mapToQueryParams(classificationsQueryParams))
               .willReturn(aResponse().withStatus(200).withBody(getMultipleResponseBody)));

@@ -9,10 +9,13 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import ai.zuva.docai.files.File;
+import ai.zuva.docai.language.LanguageMultipleResults;
 import ai.zuva.docai.language.LanguageRequest;
 import ai.zuva.docai.language.LanguageResult;
 import com.github.tomakehurst.wiremock.junit5.WireMockRuntimeInfo;
 import com.github.tomakehurst.wiremock.junit5.WireMockTest;
+import java.util.HashMap;
+import java.util.Map;
 import org.junit.jupiter.api.Test;
 
 @WireMockTest
@@ -46,6 +49,52 @@ public class LanguageRequestTest {
 
       assertTrue(result.status.isComplete());
       assertEquals("English", result.language);
+
+      // Testing get Multiple Language Results
+      File[] files =
+          new File[] {
+            new File(client, "ce7ks02b08o78qsc6qog"),
+            new File(client, "ce7ks3qb08o78qsc6qsg"),
+            new File(client, "ce7ks62b08o78qsc6qv0"),
+            new File(client, "ce7m85s2nt5r5uan68hg")
+          };
+
+      postResponseBody = TestHelpers.resourceAsString(this, "multiple-status-request.json");
+      stubFor(
+          post("/api/v2/language")
+              .withRequestBody(
+                  equalToJson(
+                      "{\"file_ids\": [\"ce7ks02b08o78qsc6qog\", \"ce7ks3qb08o78qsc6qsg\", \"ce7ks62b08o78qsc6qv0\", \"ce7m85s2nt5r5uan68hg\"]}"))
+              .willReturn(aResponse().withStatus(202).withBody(postResponseBody)));
+      LanguageRequest[] requests = LanguageRequest.createRequests(client, files);
+
+      Map<String, String> languagesQueryParams = new HashMap<>();
+      languagesQueryParams.put("request_id", "ce7m85s2nt5r5uan68g0");
+      languagesQueryParams.put("request_id", "ce7m85s2nt5r5uan68gg");
+      languagesQueryParams.put("request_id", "ce7m85s2nt5r5uan68h0");
+      languagesQueryParams.put("request_id", "ce7m85s2nt5r5uan68hg");
+
+      String getMultipleResponseBody =
+          TestHelpers.resourceAsString(this, "multiple-language-response.json");
+      stubFor(
+          get("/api/v2/languages&" + client.mapToQueryParams(languagesQueryParams))
+              .willReturn(aResponse().withStatus(200).withBody(getMultipleResponseBody)));
+
+      LanguageMultipleResults results = requests[0].getStatuses();
+
+      assertEquals(results.numFound, 3);
+      assertEquals(results.numErrors, 1);
+
+      assertEquals(
+          results.requestErrors.get("ce7m85s2nt5r5uan68hg").reqError.code, "request_not_found");
+
+      assertTrue(results.statuses.get("ce7m85s2nt5r5uan68g0").status.isComplete());
+      assertEquals(results.statuses.get("ce7m85s2nt5r5uan68g0").language, "English");
+
+      assertTrue(results.statuses.get("ce7m85s2nt5r5uan68gg").status.isProcessing());
+
+      assertTrue(results.statuses.get("ce7m85s2nt5r5uan68h0").status.isComplete());
+      assertEquals(results.statuses.get("ce7m85s2nt5r5uan68h0").language, "English");
 
     } catch (Exception e) {
       throw new RuntimeException(e);

@@ -6,9 +6,13 @@ import ai.zuva.docai.exception.DocAIApiException;
 import ai.zuva.docai.exception.DocAIClientException;
 import ai.zuva.docai.files.File;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 public class LanguageRequest extends BaseRequest {
   public final String fileId;
+  public static List<String> languageRequestIds = new ArrayList<>();
 
   // This class is used internally to construct the JSON body for the POST /language request
   static class LanguageRequestBody {
@@ -68,6 +72,7 @@ public class LanguageRequest extends BaseRequest {
     for (int i = 0; i < languageRequests.length; i++) {
       languageRequests[i] =
           new LanguageRequest(client, resp.results[i].fileId, resp.results[i].requestId);
+      languageRequestIds.add(languageRequests[i].requestId);
     }
     return languageRequests;
   }
@@ -105,6 +110,22 @@ public class LanguageRequest extends BaseRequest {
    */
   public LanguageResult getStatus() throws DocAIClientException, DocAIApiException {
     return client.authorizedGet("api/v2/language/" + requestId, 200, LanguageResult.class);
+  }
+
+  /**
+   * Gets multiple language statuses and results
+   *
+   * @return A LanguageMultipleResults object, containing the statuses of all requests and, if
+   *     available, the results
+   * @throws DocAIClientException Unsuccessful response code from server
+   * @throws DocAIApiException Error preparing, sending or processing the request/response
+   */
+  public LanguageMultipleResults getStatuses() throws DocAIClientException, DocAIApiException {
+    Map<String, String> queryParamsMap = client.listToMapQueryParams(languageRequestIds);
+    return client.authorizedGet(
+        "api/v2/languages&" + client.mapToQueryParams(queryParamsMap),
+        200,
+        LanguageMultipleResults.class);
   }
 
   /**

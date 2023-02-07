@@ -116,6 +116,14 @@ public class ClassificationRequest extends BaseRequest {
         "api/v2/classification/" + requestId, 200, ClassificationResult.class);
   }
 
+  /**
+   * Get multiple classification statuses and results
+   *
+   * @return A ClassificationMultipleResults object, containing the statuses of all requests and, if
+   *     available, the results
+   * @throws DocAIClientException Unsuccessful response code from server
+   * @throws DocAIApiException Error preparing, sending or processing the request/response
+   */
   public ClassificationMultipleResults getStatuses()
       throws DocAIClientException, DocAIApiException {
     Map<String, String> queryParamsMap = client.listToMapQueryParams(classificationRequestIds);
