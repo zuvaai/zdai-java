@@ -1,0 +1,11 @@
+{
+  "request_id": "cfgsfd97eqvt37vg2ui0",
+  "text": "The contract expires 4 months after termination",
+  "sha-256": "97d7dfd38b649cd6109d0be3f757d65f485d483cce6235294938ca02cd99ed18",
+  "duration": [
+    {
+      "unit": "months",
+      "value": 4
+    }
+  ]
+}

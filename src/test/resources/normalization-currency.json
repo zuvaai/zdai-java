@@ -1,0 +1,12 @@
+{
+  "request_id": "cfekvb7tsh6nkc845ck0",
+  "text": "The rent is two thousand three hundred forty seven dollars",
+  "sha-256": "9e5073c23ea12c7eb74682089380f9a5b891e3fe2cbe04a3ec89d9d5c004de17",
+  "currency": [
+    {
+      "value": "2347.00",
+      "symbol": "dollars",
+      "precision": 2
+    }
+  ]
+}
