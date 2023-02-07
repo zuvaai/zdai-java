@@ -62,11 +62,7 @@ public class MLCRequest extends BaseRequest {
       throws DocAIClientException, DocAIApiException {
     MLCResultsBody resp =
         client.authorizedJsonRequest(
-            "POST",
-            "api/v2/mlc",
-            new MLCRequestBody(files),
-            202,
-            MLCResultsBody.class);
+            "POST", "api/v2/mlc", new MLCRequestBody(files), 202, MLCResultsBody.class);
 
     MLCRequest[] mlcRequests = new MLCRequest[resp.results.length];
     for (int i = 0; i < mlcRequests.length; i++) {
@@ -80,34 +76,33 @@ public class MLCRequest extends BaseRequest {
     this.fileId = result.fileId;
   }
 
-    /**
-     * Constructs a new object representing a pre-existing mlc request
-     *
-     * <p>Given a ZdaiApiClient and a map of file IDs to request IDs, this constructor makes a new
-     * MLCRequest that can be used to obtain the status and results of the given request.
-     *
-     * @param client The client to use to make the request
-     * @param fileId The ID of the file being classified
-     * @param requestID The ID of an existing request.
-     */
+  /**
+   * Constructs a new object representing a pre-existing mlc request
+   *
+   * <p>Given a ZdaiApiClient and a map of file IDs to request IDs, this constructor makes a new
+   * MLCRequest that can be used to obtain the status and results of the given request.
+   *
+   * @param client The client to use to make the request
+   * @param fileId The ID of the file being classified
+   * @param requestID The ID of an existing request.
+   */
   public MLCRequest(DocAIClient client, String fileId, String requestID) {
-      super(client, requestID, null, null);
-      this.fileId = fileId;
+    super(client, requestID, null, null);
+    this.fileId = fileId;
   }
 
   /**
    * Get mlc status and results.
    *
-   * <p>Given a ZdaiApiClient, return a MLCResult indicating the status of the
-   * MLC request for that file and the MLC result (if available).
+   * <p>Given a ZdaiApiClient, return a MLCResult indicating the status of the MLC request for that
+   * file and the MLC result (if available).
    *
    * @return A MLCResult, with the status and results of the request
    * @throws DocAIClientException Unsuccessful response code from server
    * @throws DocAIApiException Error preparing, sending or processing the request/response
    */
   public MLCResult getStatus() throws DocAIClientException, DocAIApiException {
-      return client.authorizedGet(
-        "api/v2/mlc/" + requestId, 200, MLCResult.class);
+    return client.authorizedGet("api/v2/mlc/" + requestId, 200, MLCResult.class);
   }
 
   /**
@@ -127,7 +122,7 @@ public class MLCRequest extends BaseRequest {
    */
   public MLCResult pollStatus(long pollingIntervalSeconds, long timeoutSeconds)
       throws DocAIClientException, DocAIApiException, InterruptedException {
-      return (MLCResult) super.pollStatus(pollingIntervalSeconds, timeoutSeconds);
+    return (MLCResult) super.pollStatus(pollingIntervalSeconds, timeoutSeconds);
   }
 
   /**
@@ -148,8 +143,8 @@ public class MLCRequest extends BaseRequest {
    * @throws InterruptedException Thread interrupted during Thread.sleep()
    */
   public MLCResult pollStatus(
-          long pollingIntervalSeconds, long timeoutSeconds, boolean showProgress)
+      long pollingIntervalSeconds, long timeoutSeconds, boolean showProgress)
       throws DocAIClientException, DocAIApiException, InterruptedException {
-   return (MLCResult) super.pollStatus(pollingIntervalSeconds, timeoutSeconds, showProgress);
+    return (MLCResult) super.pollStatus(pollingIntervalSeconds, timeoutSeconds, showProgress);
   }
 }
