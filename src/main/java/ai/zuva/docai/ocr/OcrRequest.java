@@ -7,9 +7,13 @@ import ai.zuva.docai.exception.DocAIClientException;
 import ai.zuva.docai.files.File;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 public class OcrRequest extends BaseRequest {
   public final String fileId;
+  public static List<String> ocrRequestIds = new ArrayList<>();
 
   @JsonIgnoreProperties(ignoreUnknown = true)
   static class OcrStatuses {
@@ -74,6 +78,7 @@ public class OcrRequest extends BaseRequest {
     OcrRequest[] ocrRequests = new OcrRequest[resp.statuses.length];
     for (int i = 0; i < ocrRequests.length; i++) {
       ocrRequests[i] = new OcrRequest(client, resp.statuses[i]);
+      ocrRequestIds.add(ocrRequests[i].requestId);
     }
     return ocrRequests;
   }
@@ -99,6 +104,19 @@ public class OcrRequest extends BaseRequest {
    */
   public OcrStatus getStatus() throws DocAIClientException, DocAIApiException {
     return client.authorizedGet("api/v2/ocr/" + requestId, 200, OcrStatus.class);
+  }
+
+  /**
+   * Get multiple ocr statuses
+   *
+   * @return An OcrMultipleStatuses object, containing the statuses of all requests
+   * @throws DocAIClientException Unsuccessful response code from server
+   * @throws DocAIApiException Error preparing, sending or processing the request/response
+   */
+  public OcrMultipleStatuses getStatuses() throws DocAIClientException, DocAIApiException {
+    Map<String, String> queryParamsMap = client.listToMapQueryParams(ocrRequestIds);
+    return client.authorizedGet(
+        "api/v2/ocrs&" + client.mapToQueryParams(queryParamsMap), 200, OcrMultipleStatuses.class);
   }
 
   /**
