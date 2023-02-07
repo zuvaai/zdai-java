@@ -6,9 +6,13 @@ import ai.zuva.docai.exception.DocAIApiException;
 import ai.zuva.docai.exception.DocAIClientException;
 import ai.zuva.docai.files.File;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 public class MLCRequest extends BaseRequest {
   public final String fileId;
+  public static List<String> mlcRequestIds = new ArrayList<>();
 
   // This class is used internally to construct the JSON body for the POST /mlc request
   static class MLCRequestBody {
@@ -67,6 +71,7 @@ public class MLCRequest extends BaseRequest {
     MLCRequest[] mlcRequests = new MLCRequest[resp.results.length];
     for (int i = 0; i < mlcRequests.length; i++) {
       mlcRequests[i] = new MLCRequest(client, resp.results[i]);
+      mlcRequestIds.add(mlcRequests[i].requestId);
     }
     return mlcRequests;
   }
@@ -103,6 +108,20 @@ public class MLCRequest extends BaseRequest {
    */
   public MLCResult getStatus() throws DocAIClientException, DocAIApiException {
     return client.authorizedGet("api/v2/mlc/" + requestId, 200, MLCResult.class);
+  }
+
+  /**
+   * Get multiple MLC statuses and results
+   *
+   * @return A MLCMultipleResults object, containing the statuses of all requests and, if available,
+   *     the results
+   * @throws DocAIClientException Unsuccessful response code from server
+   * @throws DocAIApiException Error preparing, sending or processing the request/response
+   */
+  public MLCMultipleResults getStatuses() throws DocAIClientException, DocAIApiException {
+    Map<String, String> queryParamsMap = client.listToMapQueryParams(mlcRequestIds);
+    return client.authorizedGet(
+        "api/v2/mlcs&" + client.mapToQueryParams(queryParamsMap), 200, MLCMultipleResults.class);
   }
 
   /**
