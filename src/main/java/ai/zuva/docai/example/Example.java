@@ -12,6 +12,8 @@ import ai.zuva.docai.fields.FieldListElement;
 import ai.zuva.docai.files.File;
 import ai.zuva.docai.language.LanguageRequest;
 import ai.zuva.docai.language.LanguageResult;
+import ai.zuva.docai.mlc.MLCRequest;
+import ai.zuva.docai.mlc.MLCResult;
 import ai.zuva.docai.ocr.OcrRequest;
 import ai.zuva.docai.ocr.OcrStatus;
 import java.io.FileOutputStream;
@@ -65,6 +67,18 @@ public class Example {
       System.out.println("Document type is: " + classificationResult.classification);
     } else {
       System.out.println("Classification failed.");
+    }
+
+    System.out.printf("%nDetermining MLC Classification:%n");
+    MLCRequest mlcRequest = MLCRequest.createRequest(client, file);
+    System.out.println("Request ID: " + mlcRequest.requestId);
+
+    MLCResult mlcResult = mlcRequest.pollStatus(1, 60, true);
+
+    if (mlcResult.isComplete()) {
+      System.out.println("MLC classifications are: " + mlcResult.classifications);
+    } else {
+      System.out.println("MLC classification failed.");
     }
 
     System.out.printf("%nDetermining Document Language:%n");
