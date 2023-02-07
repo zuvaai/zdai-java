@@ -7,10 +7,14 @@ import ai.zuva.docai.exception.DocAIClientException;
 import ai.zuva.docai.files.File;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 public class ExtractionRequest extends BaseRequest {
   public final String fileId;
   public final String[] fieldIds;
+  public static List<String> extractionRequestIds = new ArrayList<>();
 
   static class ExtractionRequestBody {
 
@@ -90,6 +94,7 @@ public class ExtractionRequest extends BaseRequest {
     ExtractionRequest[] extractionRequests = new ExtractionRequest[resp.statuses.length];
     for (int i = 0; i < extractionRequests.length; i++) {
       extractionRequests[i] = new ExtractionRequest(client, resp.statuses[i]);
+      extractionRequestIds.add(extractionRequests[i].requestId);
     }
     return extractionRequests;
   }
@@ -123,6 +128,21 @@ public class ExtractionRequest extends BaseRequest {
   public ExtractionStatus getStatus() throws DocAIClientException, DocAIApiException {
     return client.authorizedGet(
         String.format("api/v2/extraction/%s", requestId), 200, ExtractionStatus.class);
+  }
+
+  /**
+   * Get multiple extraction statuses
+   *
+   * @return An ExtractionMultipleStatuses object, containing the statuses of all requests
+   * @throws DocAIClientException Unsuccessful response code from server
+   * @throws DocAIApiException Error preparing, sending or processing the request/response
+   */
+  public ExtractionMultipleStatuses getStatuses() throws DocAIClientException, DocAIApiException {
+    Map<String, String> queryParamsMap = client.listToMapQueryParams(extractionRequestIds);
+    return client.authorizedGet(
+        "api/v2/extractions&" + client.mapToQueryParams(queryParamsMap),
+        200,
+        ExtractionMultipleStatuses.class);
   }
 
   /**
