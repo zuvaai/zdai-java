@@ -8,6 +8,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import okhttp3.HttpUrl;
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
@@ -70,6 +73,22 @@ public class DocAIClient {
       mediaType = MediaType.parse(contentType[0]);
     }
     return mediaType;
+  }
+
+  public Map<String, String> listToMapQueryParams(List<String> requestIds) {
+    Map<String, String> queryParamMap = new HashMap<>();
+    for (String requestId : requestIds) {
+      queryParamMap.put("request_id", requestId);
+    }
+    return queryParamMap;
+  }
+
+  public String mapToQueryParams(Map<String, String> queryParamMap) {
+    StringBuilder sb = new StringBuilder();
+    for (Map.Entry<String, String> param : queryParamMap.entrySet()) {
+      sb.append(String.format("%s=%s", param.getKey(), param.getValue()));
+    }
+    return sb.toString();
   }
 
   private String sendRequest(Request request, int expectedStatusCode)

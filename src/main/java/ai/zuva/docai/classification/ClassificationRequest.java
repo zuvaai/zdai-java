@@ -6,9 +6,13 @@ import ai.zuva.docai.exception.DocAIApiException;
 import ai.zuva.docai.exception.DocAIClientException;
 import ai.zuva.docai.files.File;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 public class ClassificationRequest extends BaseRequest {
   public final String fileId;
+  public static List<String> classificationRequestIds = new ArrayList<>();
 
   // This class is used internally to construct the JSON body for the POST /classification request
   static class ClassificationRequestBody {
@@ -72,6 +76,7 @@ public class ClassificationRequest extends BaseRequest {
     ClassificationRequest[] classificationRequests = new ClassificationRequest[resp.results.length];
     for (int i = 0; i < classificationRequests.length; i++) {
       classificationRequests[i] = new ClassificationRequest(client, resp.results[i]);
+      classificationRequestIds.add(classificationRequests[i].requestId);
     }
     return classificationRequests;
   }
@@ -109,6 +114,15 @@ public class ClassificationRequest extends BaseRequest {
   public ClassificationResult getStatus() throws DocAIClientException, DocAIApiException {
     return client.authorizedGet(
         "api/v2/classification/" + requestId, 200, ClassificationResult.class);
+  }
+
+  public ClassificationMultipleResults getStatuses()
+      throws DocAIClientException, DocAIApiException {
+    Map<String, String> queryParamsMap = client.listToMapQueryParams(classificationRequestIds);
+    return client.authorizedGet(
+        "api/v2/classifications&" + client.mapToQueryParams(queryParamsMap),
+        200,
+        ClassificationMultipleResults.class);
   }
 
   /**
