@@ -10,7 +10,6 @@ import ai.zuva.docai.exception.DocAIClientException;
 import ai.zuva.docai.files.File;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -117,9 +116,10 @@ public class OcrRequest extends BaseRequest {
    * @throws DocAIClientException Unsuccessful response code from server
    * @throws DocAIApiException Error preparing, sending or processing the request/response
    */
-  public static OcrMultipleStatuses getStatuses(DocAIClient client, OcrRequest[] ocrRequests) throws DocAIClientException, DocAIApiException {
+  public static OcrMultipleStatuses getStatuses(DocAIClient client, OcrRequest[] ocrRequests)
+      throws DocAIClientException, DocAIApiException {
     List<String> ocrRequestIds = new ArrayList<>();
-    for (OcrRequest request: ocrRequests) {
+    for (OcrRequest request : ocrRequests) {
       ocrRequestIds.add(request.requestId);
     }
     return getStatuses(client, ocrRequestIds);

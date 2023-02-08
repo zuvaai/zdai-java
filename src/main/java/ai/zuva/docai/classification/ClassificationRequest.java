@@ -150,7 +150,8 @@ public class ClassificationRequest extends BaseRequest {
   public static ClassificationMultipleResults getStatuses(
       DocAIClient client, List<String> classificationRequestIds)
       throws DocAIClientException, DocAIApiException {
-    Map<String, String> queryParamsMap = listToMapQueryParams("request_id", classificationRequestIds);
+    Map<String, String> queryParamsMap =
+        listToMapQueryParams("request_id", classificationRequestIds);
     return client.authorizedGet(
         "api/v2/classifications&" + mapToQueryParams(queryParamsMap),
         200,

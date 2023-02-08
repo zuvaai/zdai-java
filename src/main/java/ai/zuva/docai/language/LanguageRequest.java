@@ -123,7 +123,8 @@ public class LanguageRequest extends BaseRequest {
    * @throws DocAIClientException Unsuccessful response code from server
    * @throws DocAIApiException Error preparing, sending or processing the request/response
    */
-  public static LanguageMultipleResults getStatuses(DocAIClient client, LanguageRequest[] languageRequests)
+  public static LanguageMultipleResults getStatuses(
+      DocAIClient client, LanguageRequest[] languageRequests)
       throws DocAIClientException, DocAIApiException {
     List<String> languageRequestIds = new ArrayList<>();
     for (LanguageRequest request : languageRequests) {
@@ -142,7 +143,8 @@ public class LanguageRequest extends BaseRequest {
    * @throws DocAIClientException Unsuccessful response code from server
    * @throws DocAIApiException Error preparing, sending or processing the request/response
    */
-  public static LanguageMultipleResults getStatuses(DocAIClient client, List<String> languageRequestIds)
+  public static LanguageMultipleResults getStatuses(
+      DocAIClient client, List<String> languageRequestIds)
       throws DocAIClientException, DocAIApiException {
     Map<String, String> queryParamsMap = listToMapQueryParams("request_id", languageRequestIds);
     return client.authorizedGet(
