@@ -1,5 +1,8 @@
 package ai.zuva.docai.mlc;
 
+import static ai.zuva.docai.DocAIClient.listToMapQueryParams;
+import static ai.zuva.docai.DocAIClient.mapToQueryParams;
+
 import ai.zuva.docai.BaseRequest;
 import ai.zuva.docai.DocAIClient;
 import ai.zuva.docai.exception.DocAIApiException;
@@ -12,7 +15,6 @@ import java.util.Map;
 
 public class MLCRequest extends BaseRequest {
   public final String fileId;
-  public static List<String> mlcRequestIds = new ArrayList<>();
 
   // This class is used internally to construct the JSON body for the POST /mlc request
   static class MLCRequestBody {
@@ -71,7 +73,6 @@ public class MLCRequest extends BaseRequest {
     MLCRequest[] mlcRequests = new MLCRequest[resp.results.length];
     for (int i = 0; i < mlcRequests.length; i++) {
       mlcRequests[i] = new MLCRequest(client, resp.results[i]);
-      mlcRequestIds.add(mlcRequests[i].requestId);
     }
     return mlcRequests;
   }
@@ -113,15 +114,37 @@ public class MLCRequest extends BaseRequest {
   /**
    * Get multiple MLC statuses and results
    *
+   * @param client The client to use to make the request
+   * @param mlcRequests array of MLCRequest objects
    * @return A MLCMultipleResults object, containing the statuses of all requests and, if available,
    *     the results
    * @throws DocAIClientException Unsuccessful response code from server
    * @throws DocAIApiException Error preparing, sending or processing the request/response
    */
-  public MLCMultipleResults getStatuses() throws DocAIClientException, DocAIApiException {
-    Map<String, String> queryParamsMap = client.listToMapQueryParams("request_id", mlcRequestIds);
+  public static MLCMultipleResults getStatuses(DocAIClient client, MLCRequest[] mlcRequests)
+      throws DocAIClientException, DocAIApiException {
+    List<String> mlcRequestIds = new ArrayList<>();
+    for (MLCRequest request : mlcRequests) {
+      mlcRequestIds.add(request.requestId);
+    }
+    return getStatuses(client, mlcRequestIds);
+  }
+
+  /**
+   * Get multiple MLC statuses and results
+   *
+   * @param client The client to use to make the request
+   * @param mlcRequestIds list of MLC Request IDs
+   * @return A MLCMultipleResults object, containing the statuses of all requests and, if available,
+   *     the results
+   * @throws DocAIClientException Unsuccessful response code from server
+   * @throws DocAIApiException Error preparing, sending or processing the request/response
+   */
+  public static MLCMultipleResults getStatuses(DocAIClient client, List<String> mlcRequestIds)
+      throws DocAIClientException, DocAIApiException {
+    Map<String, String> queryParamsMap = listToMapQueryParams("request_id", mlcRequestIds);
     return client.authorizedGet(
-        "api/v2/mlcs&" + client.mapToQueryParams(queryParamsMap), 200, MLCMultipleResults.class);
+        "api/v2/mlcs&" + mapToQueryParams(queryParamsMap), 200, MLCMultipleResults.class);
   }
 
   /**

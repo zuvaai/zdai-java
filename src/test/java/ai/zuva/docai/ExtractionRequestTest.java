@@ -1,5 +1,8 @@
 package ai.zuva.docai;
 
+import static ai.zuva.docai.DocAIClient.listToMapQueryParams;
+import static ai.zuva.docai.DocAIClient.mapToQueryParams;
+import static ai.zuva.docai.extraction.ExtractionRequest.getStatuses;
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.equalToJson;
 import static com.github.tomakehurst.wiremock.client.WireMock.get;
@@ -15,7 +18,8 @@ import ai.zuva.docai.extraction.ExtractionResults;
 import ai.zuva.docai.files.File;
 import com.github.tomakehurst.wiremock.junit5.WireMockRuntimeInfo;
 import com.github.tomakehurst.wiremock.junit5.WireMockTest;
-import java.util.HashMap;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import org.junit.jupiter.api.Test;
 
@@ -88,19 +92,22 @@ public class ExtractionRequestTest {
 
       ExtractionRequest[] requests = ExtractionRequest.createRequests(client, files, fieldIds);
 
-      Map<String, String> extractionsQueryParams = new HashMap<>();
-      extractionsQueryParams.put("request_id", "ce7m85s2nt5r5uan68g0");
-      extractionsQueryParams.put("request_id", "ce7m85s2nt5r5uan68gg");
-      extractionsQueryParams.put("request_id", "ce7m85s2nt5r5uan68h0");
-      extractionsQueryParams.put("request_id", "ce7m85s2nt5r5uan68hg");
+      List<String> extractionIds = new ArrayList<>();
+      extractionIds.add("ce7m85s2nt5r5uan68g0");
+      extractionIds.add("ce7m85s2nt5r5uan68gg");
+      extractionIds.add("ce7m85s2nt5r5uan68h0");
+      extractionIds.add("ce7m85s2nt5r5uan68hg");
+
+      Map<String, String> extractionsQueryParams =
+          listToMapQueryParams("request_id", extractionIds);
 
       String getMultipleResponseBody =
           TestHelpers.resourceAsString(this, "multiple-status-response.json");
       stubFor(
-          get("/api/v2/extractions&" + client.mapToQueryParams(extractionsQueryParams))
+          get("/api/v2/extractions&" + mapToQueryParams(extractionsQueryParams))
               .willReturn(aResponse().withStatus(200).withBody(getMultipleResponseBody)));
 
-      ExtractionMultipleStatuses statuses = requests[0].getStatuses();
+      ExtractionMultipleStatuses statuses = getStatuses(client, extractionIds);
 
       assertEquals(statuses.numFound, 3);
       assertEquals(statuses.numErrors, 1);

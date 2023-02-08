@@ -1,5 +1,8 @@
 package ai.zuva.docai.extraction;
 
+import static ai.zuva.docai.DocAIClient.listToMapQueryParams;
+import static ai.zuva.docai.DocAIClient.mapToQueryParams;
+
 import ai.zuva.docai.BaseRequest;
 import ai.zuva.docai.DocAIClient;
 import ai.zuva.docai.exception.DocAIApiException;
@@ -14,7 +17,6 @@ import java.util.Map;
 public class ExtractionRequest extends BaseRequest {
   public final String fileId;
   public final String[] fieldIds;
-  public static List<String> extractionRequestIds = new ArrayList<>();
 
   static class ExtractionRequestBody {
 
@@ -94,7 +96,6 @@ public class ExtractionRequest extends BaseRequest {
     ExtractionRequest[] extractionRequests = new ExtractionRequest[resp.statuses.length];
     for (int i = 0; i < extractionRequests.length; i++) {
       extractionRequests[i] = new ExtractionRequest(client, resp.statuses[i]);
-      extractionRequestIds.add(extractionRequests[i].requestId);
     }
     return extractionRequests;
   }
@@ -133,15 +134,37 @@ public class ExtractionRequest extends BaseRequest {
   /**
    * Get multiple extraction statuses
    *
+   * @param client The client to use to make the request
+   * @param extractionRequests array of ExtractionRequest objects
    * @return An ExtractionMultipleStatuses object, containing the statuses of all requests
    * @throws DocAIClientException Unsuccessful response code from server
    * @throws DocAIApiException Error preparing, sending or processing the request/response
    */
-  public ExtractionMultipleStatuses getStatuses() throws DocAIClientException, DocAIApiException {
-    Map<String, String> queryParamsMap =
-        client.listToMapQueryParams("request_id", extractionRequestIds);
+  public static ExtractionMultipleStatuses getStatuses(
+      DocAIClient client, ExtractionRequest[] extractionRequests)
+      throws DocAIClientException, DocAIApiException {
+    List<String> extractionRequestIds = new ArrayList<>();
+    for (ExtractionRequest request : extractionRequests) {
+      extractionRequestIds.add(request.requestId);
+    }
+    return getStatuses(client, extractionRequestIds);
+  }
+
+  /**
+   * Get multiple extraction statuses
+   *
+   * @param client The client to use to make the request
+   * @param extractionRequestIds list of Classification Request IDs
+   * @return An ExtractionMultipleStatuses object, containing the statuses of all requests
+   * @throws DocAIClientException Unsuccessful response code from server
+   * @throws DocAIApiException Error preparing, sending or processing the request/response
+   */
+  public static ExtractionMultipleStatuses getStatuses(
+      DocAIClient client, List<String> extractionRequestIds)
+      throws DocAIClientException, DocAIApiException {
+    Map<String, String> queryParamsMap = listToMapQueryParams("request_id", extractionRequestIds);
     return client.authorizedGet(
-        "api/v2/extractions&" + client.mapToQueryParams(queryParamsMap),
+        "api/v2/extractions&" + mapToQueryParams(queryParamsMap),
         200,
         ExtractionMultipleStatuses.class);
   }

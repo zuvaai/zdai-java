@@ -1,5 +1,8 @@
 package ai.zuva.docai.language;
 
+import static ai.zuva.docai.DocAIClient.listToMapQueryParams;
+import static ai.zuva.docai.DocAIClient.mapToQueryParams;
+
 import ai.zuva.docai.BaseRequest;
 import ai.zuva.docai.DocAIClient;
 import ai.zuva.docai.exception.DocAIApiException;
@@ -12,7 +15,6 @@ import java.util.Map;
 
 public class LanguageRequest extends BaseRequest {
   public final String fileId;
-  public static List<String> languageRequestIds = new ArrayList<>();
 
   // This class is used internally to construct the JSON body for the POST /language request
   static class LanguageRequestBody {
@@ -72,7 +74,6 @@ public class LanguageRequest extends BaseRequest {
     for (int i = 0; i < languageRequests.length; i++) {
       languageRequests[i] =
           new LanguageRequest(client, resp.results[i].fileId, resp.results[i].requestId);
-      languageRequestIds.add(languageRequests[i].requestId);
     }
     return languageRequests;
   }
@@ -115,18 +116,37 @@ public class LanguageRequest extends BaseRequest {
   /**
    * Gets multiple language statuses and results
    *
+   * @param client The client to use to make the request
+   * @param languageRequests array of LanguageRequest objects
    * @return A LanguageMultipleResults object, containing the statuses of all requests and, if
    *     available, the results
    * @throws DocAIClientException Unsuccessful response code from server
    * @throws DocAIApiException Error preparing, sending or processing the request/response
    */
-  public LanguageMultipleResults getStatuses() throws DocAIClientException, DocAIApiException {
-    Map<String, String> queryParamsMap =
-        client.listToMapQueryParams("request_id", languageRequestIds);
+  public static LanguageMultipleResults getStatuses(DocAIClient client, LanguageRequest[] languageRequests)
+      throws DocAIClientException, DocAIApiException {
+    List<String> languageRequestIds = new ArrayList<>();
+    for (LanguageRequest request : languageRequests) {
+      languageRequestIds.add(request.requestId);
+    }
+    return getStatuses(client, languageRequestIds);
+  }
+
+  /**
+   * Gets multiple language statuses and results
+   *
+   * @param client The client to use to make the request
+   * @param languageRequestIds list of language Request IDs
+   * @return A LanguageMultipleResults object, containing the statuses of all requests and, if
+   *     available, the results
+   * @throws DocAIClientException Unsuccessful response code from server
+   * @throws DocAIApiException Error preparing, sending or processing the request/response
+   */
+  public static LanguageMultipleResults getStatuses(DocAIClient client, List<String> languageRequestIds)
+      throws DocAIClientException, DocAIApiException {
+    Map<String, String> queryParamsMap = listToMapQueryParams("request_id", languageRequestIds);
     return client.authorizedGet(
-        "api/v2/languages&" + client.mapToQueryParams(queryParamsMap),
-        200,
-        LanguageMultipleResults.class);
+        "api/v2/languages&" + mapToQueryParams(queryParamsMap), 200, LanguageMultipleResults.class);
   }
 
   /**

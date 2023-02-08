@@ -75,7 +75,7 @@ public class DocAIClient {
     return mediaType;
   }
 
-  public Map<String, String> listToMapQueryParams(String key, List<String> requestIds) {
+  public static Map<String, String> listToMapQueryParams(String key, List<String> requestIds) {
     Map<String, String> queryParamMap = new HashMap<>();
     for (String requestId : requestIds) {
       queryParamMap.put(key, requestId);
@@ -83,7 +83,7 @@ public class DocAIClient {
     return queryParamMap;
   }
 
-  public String mapToQueryParams(Map<String, String> queryParamMap) {
+  public static String mapToQueryParams(Map<String, String> queryParamMap) {
     StringBuilder sb = new StringBuilder();
     for (Map.Entry<String, String> param : queryParamMap.entrySet()) {
       sb.append(String.format("%s=%s", param.getKey(), param.getValue()));

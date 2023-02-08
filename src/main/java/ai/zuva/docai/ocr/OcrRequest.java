@@ -1,5 +1,8 @@
 package ai.zuva.docai.ocr;
 
+import static ai.zuva.docai.DocAIClient.listToMapQueryParams;
+import static ai.zuva.docai.DocAIClient.mapToQueryParams;
+
 import ai.zuva.docai.BaseRequest;
 import ai.zuva.docai.DocAIClient;
 import ai.zuva.docai.exception.DocAIApiException;
@@ -7,13 +10,13 @@ import ai.zuva.docai.exception.DocAIClientException;
 import ai.zuva.docai.files.File;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 public class OcrRequest extends BaseRequest {
   public final String fileId;
-  public static List<String> ocrRequestIds = new ArrayList<>();
 
   @JsonIgnoreProperties(ignoreUnknown = true)
   static class OcrStatuses {
@@ -78,7 +81,6 @@ public class OcrRequest extends BaseRequest {
     OcrRequest[] ocrRequests = new OcrRequest[resp.statuses.length];
     for (int i = 0; i < ocrRequests.length; i++) {
       ocrRequests[i] = new OcrRequest(client, resp.statuses[i]);
-      ocrRequestIds.add(ocrRequests[i].requestId);
     }
     return ocrRequests;
   }
@@ -109,14 +111,34 @@ public class OcrRequest extends BaseRequest {
   /**
    * Get multiple ocr statuses
    *
+   * @param client The client to use to make the request
+   * @param ocrRequests array of OcrRequest objects
    * @return An OcrMultipleStatuses object, containing the statuses of all requests
    * @throws DocAIClientException Unsuccessful response code from server
    * @throws DocAIApiException Error preparing, sending or processing the request/response
    */
-  public OcrMultipleStatuses getStatuses() throws DocAIClientException, DocAIApiException {
-    Map<String, String> queryParamsMap = client.listToMapQueryParams("request_id", ocrRequestIds);
+  public static OcrMultipleStatuses getStatuses(DocAIClient client, OcrRequest[] ocrRequests) throws DocAIClientException, DocAIApiException {
+    List<String> ocrRequestIds = new ArrayList<>();
+    for (OcrRequest request: ocrRequests) {
+      ocrRequestIds.add(request.requestId);
+    }
+    return getStatuses(client, ocrRequestIds);
+  }
+
+  /**
+   * Get multiple ocr statuses
+   *
+   * @param client The client to use to make the request
+   * @param ocrRequestIds list of OCR Request IDs
+   * @return An OcrMultipleStatuses object, containing the statuses of all requests
+   * @throws DocAIClientException Unsuccessful response code from server
+   * @throws DocAIApiException Error preparing, sending or processing the request/response
+   */
+  public static OcrMultipleStatuses getStatuses(DocAIClient client, List<String> ocrRequestIds)
+      throws DocAIClientException, DocAIApiException {
+    Map<String, String> queryParamsMap = listToMapQueryParams("request_id", ocrRequestIds);
     return client.authorizedGet(
-        "api/v2/ocrs&" + client.mapToQueryParams(queryParamsMap), 200, OcrMultipleStatuses.class);
+        "api/v2/ocrs&" + mapToQueryParams(queryParamsMap), 200, OcrMultipleStatuses.class);
   }
 
   /**

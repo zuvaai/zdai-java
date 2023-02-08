@@ -1,5 +1,8 @@
 package ai.zuva.docai;
 
+import static ai.zuva.docai.DocAIClient.listToMapQueryParams;
+import static ai.zuva.docai.DocAIClient.mapToQueryParams;
+import static ai.zuva.docai.classification.ClassificationRequest.getStatuses;
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.equalToJson;
 import static com.github.tomakehurst.wiremock.client.WireMock.get;
@@ -14,7 +17,8 @@ import ai.zuva.docai.classification.ClassificationResult;
 import ai.zuva.docai.files.File;
 import com.github.tomakehurst.wiremock.junit5.WireMockRuntimeInfo;
 import com.github.tomakehurst.wiremock.junit5.WireMockTest;
-import java.util.HashMap;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import org.junit.jupiter.api.Test;
 
@@ -72,19 +76,22 @@ class ClassificationRequestTest {
               .willReturn(aResponse().withStatus(202).withBody(postResponseBody)));
       ClassificationRequest[] requests = ClassificationRequest.createRequests(client, files);
 
-      Map<String, String> classificationsQueryParams = new HashMap<>();
-      classificationsQueryParams.put("request_id", "ce7m85s2nt5r5uan68g0");
-      classificationsQueryParams.put("request_id", "ce7m85s2nt5r5uan68gg");
-      classificationsQueryParams.put("request_id", "ce7m85s2nt5r5uan68h0");
-      classificationsQueryParams.put("request_id", "ce7m85s2nt5r5uan68hg");
+      List<String> classificationIds = new ArrayList<>();
+      classificationIds.add("ce7m85s2nt5r5uan68g0");
+      classificationIds.add("ce7m85s2nt5r5uan68gg");
+      classificationIds.add("ce7m85s2nt5r5uan68h0");
+      classificationIds.add("ce7m85s2nt5r5uan68hg");
+
+      Map<String, String> classificationsQueryParams =
+          listToMapQueryParams("request_id", classificationIds);
 
       String getMultipleResponseBody =
           TestHelpers.resourceAsString(this, "multiple-classification-response.json");
       stubFor(
-          get("/api/v2/classifications&" + client.mapToQueryParams(classificationsQueryParams))
+          get("/api/v2/classifications&" + mapToQueryParams(classificationsQueryParams))
               .willReturn(aResponse().withStatus(200).withBody(getMultipleResponseBody)));
 
-      ClassificationMultipleResults results = requests[0].getStatuses();
+      ClassificationMultipleResults results = getStatuses(client, classificationIds);
 
       assertEquals(results.numFound, 3);
       assertEquals(results.numErrors, 1);

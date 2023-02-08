@@ -1,5 +1,8 @@
 package ai.zuva.docai.classification;
 
+import static ai.zuva.docai.DocAIClient.listToMapQueryParams;
+import static ai.zuva.docai.DocAIClient.mapToQueryParams;
+
 import ai.zuva.docai.BaseRequest;
 import ai.zuva.docai.DocAIClient;
 import ai.zuva.docai.exception.DocAIApiException;
@@ -12,7 +15,6 @@ import java.util.Map;
 
 public class ClassificationRequest extends BaseRequest {
   public final String fileId;
-  public static List<String> classificationRequestIds = new ArrayList<>();
 
   // This class is used internally to construct the JSON body for the POST /classification request
   static class ClassificationRequestBody {
@@ -76,7 +78,6 @@ public class ClassificationRequest extends BaseRequest {
     ClassificationRequest[] classificationRequests = new ClassificationRequest[resp.results.length];
     for (int i = 0; i < classificationRequests.length; i++) {
       classificationRequests[i] = new ClassificationRequest(client, resp.results[i]);
-      classificationRequestIds.add(classificationRequests[i].requestId);
     }
     return classificationRequests;
   }
@@ -119,16 +120,39 @@ public class ClassificationRequest extends BaseRequest {
   /**
    * Get multiple classification statuses and results
    *
+   * @param client The client to use to make the request
+   * @param classificationRequests array of ClassificationRequest objects
    * @return A ClassificationMultipleResults object, containing the statuses of all requests and, if
    *     available, the results
    * @throws DocAIClientException Unsuccessful response code from server
    * @throws DocAIApiException Error preparing, sending or processing the request/response
    */
-  public ClassificationMultipleResults getStatuses()
+  public static ClassificationMultipleResults getStatuses(
+      DocAIClient client, ClassificationRequest[] classificationRequests)
       throws DocAIClientException, DocAIApiException {
-    Map<String, String> queryParamsMap = client.listToMapQueryParams("request_id", classificationRequestIds);
+    List<String> classificationRequestIds = new ArrayList<>();
+    for (ClassificationRequest request : classificationRequests) {
+      classificationRequestIds.add(request.requestId);
+    }
+    return getStatuses(client, classificationRequestIds);
+  }
+
+  /**
+   * Get multiple classification statuses and results
+   *
+   * @param client The client to use to make the request
+   * @param classificationRequestIds list of Classification Request IDs
+   * @return A ClassificationMultipleResults object, containing the statuses of all requests and, if
+   *     available, the results
+   * @throws DocAIClientException Unsuccessful response code from server
+   * @throws DocAIApiException Error preparing, sending or processing the request/response
+   */
+  public static ClassificationMultipleResults getStatuses(
+      DocAIClient client, List<String> classificationRequestIds)
+      throws DocAIClientException, DocAIApiException {
+    Map<String, String> queryParamsMap = listToMapQueryParams("request_id", classificationRequestIds);
     return client.authorizedGet(
-        "api/v2/classifications&" + client.mapToQueryParams(queryParamsMap),
+        "api/v2/classifications&" + mapToQueryParams(queryParamsMap),
         200,
         ClassificationMultipleResults.class);
   }

@@ -1,5 +1,8 @@
 package ai.zuva.docai;
 
+import static ai.zuva.docai.DocAIClient.listToMapQueryParams;
+import static ai.zuva.docai.DocAIClient.mapToQueryParams;
+import static ai.zuva.docai.language.LanguageRequest.getStatuses;
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.equalToJson;
 import static com.github.tomakehurst.wiremock.client.WireMock.get;
@@ -14,7 +17,8 @@ import ai.zuva.docai.language.LanguageRequest;
 import ai.zuva.docai.language.LanguageResult;
 import com.github.tomakehurst.wiremock.junit5.WireMockRuntimeInfo;
 import com.github.tomakehurst.wiremock.junit5.WireMockTest;
-import java.util.HashMap;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import org.junit.jupiter.api.Test;
 
@@ -68,19 +72,21 @@ public class LanguageRequestTest {
               .willReturn(aResponse().withStatus(202).withBody(postResponseBody)));
       LanguageRequest[] requests = LanguageRequest.createRequests(client, files);
 
-      Map<String, String> languagesQueryParams = new HashMap<>();
-      languagesQueryParams.put("request_id", "ce7m85s2nt5r5uan68g0");
-      languagesQueryParams.put("request_id", "ce7m85s2nt5r5uan68gg");
-      languagesQueryParams.put("request_id", "ce7m85s2nt5r5uan68h0");
-      languagesQueryParams.put("request_id", "ce7m85s2nt5r5uan68hg");
+      List<String> languageIds = new ArrayList<>();
+      languageIds.add("ce7m85s2nt5r5uan68g0");
+      languageIds.add("ce7m85s2nt5r5uan68gg");
+      languageIds.add("ce7m85s2nt5r5uan68h0");
+      languageIds.add("ce7m85s2nt5r5uan68hg");
+
+      Map<String, String> languagesQueryParams = listToMapQueryParams("request_id", languageIds);
 
       String getMultipleResponseBody =
           TestHelpers.resourceAsString(this, "multiple-language-response.json");
       stubFor(
-          get("/api/v2/languages&" + client.mapToQueryParams(languagesQueryParams))
+          get("/api/v2/languages&" + mapToQueryParams(languagesQueryParams))
               .willReturn(aResponse().withStatus(200).withBody(getMultipleResponseBody)));
 
-      LanguageMultipleResults results = requests[0].getStatuses();
+      LanguageMultipleResults results = getStatuses(client, languageIds);
 
       assertEquals(results.numFound, 3);
       assertEquals(results.numErrors, 1);
