@@ -75,10 +75,10 @@ public class DocAIClient {
     return mediaType;
   }
 
-  public Map<String, String> listToMapQueryParams(List<String> requestIds) {
+  public Map<String, String> listToMapQueryParams(String key, List<String> requestIds) {
     Map<String, String> queryParamMap = new HashMap<>();
     for (String requestId : requestIds) {
-      queryParamMap.put("request_id", requestId);
+      queryParamMap.put(key, requestId);
     }
     return queryParamMap;
   }

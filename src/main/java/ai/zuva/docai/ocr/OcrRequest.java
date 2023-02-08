@@ -114,7 +114,7 @@ public class OcrRequest extends BaseRequest {
    * @throws DocAIApiException Error preparing, sending or processing the request/response
    */
   public OcrMultipleStatuses getStatuses() throws DocAIClientException, DocAIApiException {
-    Map<String, String> queryParamsMap = client.listToMapQueryParams(ocrRequestIds);
+    Map<String, String> queryParamsMap = client.listToMapQueryParams("request_id", ocrRequestIds);
     return client.authorizedGet(
         "api/v2/ocrs&" + client.mapToQueryParams(queryParamsMap), 200, OcrMultipleStatuses.class);
   }

@@ -138,7 +138,8 @@ public class ExtractionRequest extends BaseRequest {
    * @throws DocAIApiException Error preparing, sending or processing the request/response
    */
   public ExtractionMultipleStatuses getStatuses() throws DocAIClientException, DocAIApiException {
-    Map<String, String> queryParamsMap = client.listToMapQueryParams(extractionRequestIds);
+    Map<String, String> queryParamsMap =
+        client.listToMapQueryParams("request_id", extractionRequestIds);
     return client.authorizedGet(
         "api/v2/extractions&" + client.mapToQueryParams(queryParamsMap),
         200,

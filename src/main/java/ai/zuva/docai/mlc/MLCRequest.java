@@ -119,7 +119,7 @@ public class MLCRequest extends BaseRequest {
    * @throws DocAIApiException Error preparing, sending or processing the request/response
    */
   public MLCMultipleResults getStatuses() throws DocAIClientException, DocAIApiException {
-    Map<String, String> queryParamsMap = client.listToMapQueryParams(mlcRequestIds);
+    Map<String, String> queryParamsMap = client.listToMapQueryParams("request_id", mlcRequestIds);
     return client.authorizedGet(
         "api/v2/mlcs&" + client.mapToQueryParams(queryParamsMap), 200, MLCMultipleResults.class);
   }

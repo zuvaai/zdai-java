@@ -126,7 +126,7 @@ public class ClassificationRequest extends BaseRequest {
    */
   public ClassificationMultipleResults getStatuses()
       throws DocAIClientException, DocAIApiException {
-    Map<String, String> queryParamsMap = client.listToMapQueryParams(classificationRequestIds);
+    Map<String, String> queryParamsMap = client.listToMapQueryParams("request_id", classificationRequestIds);
     return client.authorizedGet(
         "api/v2/classifications&" + client.mapToQueryParams(queryParamsMap),
         200,

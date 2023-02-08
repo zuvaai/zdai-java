@@ -121,7 +121,8 @@ public class LanguageRequest extends BaseRequest {
    * @throws DocAIApiException Error preparing, sending or processing the request/response
    */
   public LanguageMultipleResults getStatuses() throws DocAIClientException, DocAIApiException {
-    Map<String, String> queryParamsMap = client.listToMapQueryParams(languageRequestIds);
+    Map<String, String> queryParamsMap =
+        client.listToMapQueryParams("request_id", languageRequestIds);
     return client.authorizedGet(
         "api/v2/languages&" + client.mapToQueryParams(queryParamsMap),
         200,
