@@ -1,7 +1,6 @@
 package ai.zuva.docai;
 
-import static ai.zuva.docai.DocAIClient.listToMapQueryParams;
-import static ai.zuva.docai.DocAIClient.mapToQueryParams;
+import static ai.zuva.docai.DocAIClient.*;
 import static ai.zuva.docai.ocr.OcrRequest.getStatuses;
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.equalToJson;
@@ -20,7 +19,6 @@ import com.github.tomakehurst.wiremock.junit5.WireMockRuntimeInfo;
 import com.github.tomakehurst.wiremock.junit5.WireMockTest;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import org.junit.jupiter.api.Test;
 
 @WireMockTest
@@ -99,12 +97,10 @@ class OcrRequestTest {
       ocrIds.add("ce7m85s2nt5r5uan68h0");
       ocrIds.add("ce7m85s2nt5r5uan68hg");
 
-      Map<String, String> ocrsQueryParams = listToMapQueryParams("request_id", ocrIds);
-
       String getMultipleResponseBody =
           TestHelpers.resourceAsString(this, "multiple-status-response.json");
       stubFor(
-          get("/api/v2/ocrs&" + mapToQueryParams(ocrsQueryParams))
+          get("/api/v2/ocrs?" + listToQueryParams("request_id", ocrIds))
               .willReturn(aResponse().withStatus(200).withBody(getMultipleResponseBody)));
 
       OcrMultipleStatuses statuses = getStatuses(client, ocrIds);

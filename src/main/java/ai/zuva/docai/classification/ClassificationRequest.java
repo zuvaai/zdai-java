@@ -1,8 +1,5 @@
 package ai.zuva.docai.classification;
 
-import static ai.zuva.docai.DocAIClient.listToMapQueryParams;
-import static ai.zuva.docai.DocAIClient.mapToQueryParams;
-
 import ai.zuva.docai.BaseRequest;
 import ai.zuva.docai.DocAIClient;
 import ai.zuva.docai.exception.DocAIApiException;
@@ -11,7 +8,6 @@ import ai.zuva.docai.files.File;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 public class ClassificationRequest extends BaseRequest {
   public final String fileId;
@@ -150,10 +146,10 @@ public class ClassificationRequest extends BaseRequest {
   public static ClassificationMultipleResults getStatuses(
       DocAIClient client, List<String> classificationRequestIds)
       throws DocAIClientException, DocAIApiException {
-    Map<String, String> queryParamsMap =
-        listToMapQueryParams("request_id", classificationRequestIds);
     return client.authorizedGet(
-        "api/v2/classifications&" + mapToQueryParams(queryParamsMap),
+        "api/v2/classifications",
+        "request_id",
+        classificationRequestIds,
         200,
         ClassificationMultipleResults.class);
   }

@@ -1,7 +1,6 @@
 package ai.zuva.docai;
 
-import static ai.zuva.docai.DocAIClient.listToMapQueryParams;
-import static ai.zuva.docai.DocAIClient.mapToQueryParams;
+import static ai.zuva.docai.DocAIClient.*;
 import static ai.zuva.docai.extraction.ExtractionRequest.getStatuses;
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.equalToJson;
@@ -20,7 +19,6 @@ import com.github.tomakehurst.wiremock.junit5.WireMockRuntimeInfo;
 import com.github.tomakehurst.wiremock.junit5.WireMockTest;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import org.junit.jupiter.api.Test;
 
 @WireMockTest
@@ -98,13 +96,10 @@ public class ExtractionRequestTest {
       extractionIds.add("ce7m85s2nt5r5uan68h0");
       extractionIds.add("ce7m85s2nt5r5uan68hg");
 
-      Map<String, String> extractionsQueryParams =
-          listToMapQueryParams("request_id", extractionIds);
-
       String getMultipleResponseBody =
           TestHelpers.resourceAsString(this, "multiple-status-response.json");
       stubFor(
-          get("/api/v2/extractions&" + mapToQueryParams(extractionsQueryParams))
+          get("/api/v2/extractions?" + listToQueryParams("request_id", extractionIds))
               .willReturn(aResponse().withStatus(200).withBody(getMultipleResponseBody)));
 
       ExtractionMultipleStatuses statuses = getStatuses(client, extractionIds);

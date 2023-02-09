@@ -1,7 +1,6 @@
 package ai.zuva.docai;
 
-import static ai.zuva.docai.DocAIClient.listToMapQueryParams;
-import static ai.zuva.docai.DocAIClient.mapToQueryParams;
+import static ai.zuva.docai.DocAIClient.*;
 import static ai.zuva.docai.mlc.MLCRequest.getStatuses;
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.equalToJson;
@@ -78,12 +77,10 @@ public class MLCRequestTest {
       mlcIds.add("ce7m85s2nt5r5uan68h0");
       mlcIds.add("ce7m85s2nt5r5uan68hg");
 
-      Map<String, String> mlcsQueryParams = listToMapQueryParams("request_id", mlcIds);
-
       String getMultipleResponseBody =
           TestHelpers.resourceAsString(this, "multiple-mlc-response.json");
       stubFor(
-          get("/api/v2/mlcs&" + mapToQueryParams(mlcsQueryParams))
+          get("/api/v2/mlcs?" + listToQueryParams("request_id", mlcIds))
               .willReturn(aResponse().withStatus(200).withBody(getMultipleResponseBody)));
 
       MLCMultipleResults results = getStatuses(client, mlcIds);

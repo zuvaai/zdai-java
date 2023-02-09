@@ -1,7 +1,6 @@
 package ai.zuva.docai;
 
-import static ai.zuva.docai.DocAIClient.listToMapQueryParams;
-import static ai.zuva.docai.DocAIClient.mapToQueryParams;
+import static ai.zuva.docai.DocAIClient.*;
 import static ai.zuva.docai.classification.ClassificationRequest.getStatuses;
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.equalToJson;
@@ -19,7 +18,6 @@ import com.github.tomakehurst.wiremock.junit5.WireMockRuntimeInfo;
 import com.github.tomakehurst.wiremock.junit5.WireMockTest;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import org.junit.jupiter.api.Test;
 
 @WireMockTest
@@ -82,13 +80,10 @@ class ClassificationRequestTest {
       classificationIds.add("ce7m85s2nt5r5uan68h0");
       classificationIds.add("ce7m85s2nt5r5uan68hg");
 
-      Map<String, String> classificationsQueryParams =
-          listToMapQueryParams("request_id", classificationIds);
-
       String getMultipleResponseBody =
           TestHelpers.resourceAsString(this, "multiple-classification-response.json");
       stubFor(
-          get("/api/v2/classifications&" + mapToQueryParams(classificationsQueryParams))
+          get("/api/v2/classifications?" + listToQueryParams("request_id", classificationIds))
               .willReturn(aResponse().withStatus(200).withBody(getMultipleResponseBody)));
 
       ClassificationMultipleResults results = getStatuses(client, classificationIds);

@@ -1,7 +1,6 @@
 package ai.zuva.docai;
 
-import static ai.zuva.docai.DocAIClient.listToMapQueryParams;
-import static ai.zuva.docai.DocAIClient.mapToQueryParams;
+import static ai.zuva.docai.DocAIClient.*;
 import static ai.zuva.docai.language.LanguageRequest.getStatuses;
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.equalToJson;
@@ -19,7 +18,6 @@ import com.github.tomakehurst.wiremock.junit5.WireMockRuntimeInfo;
 import com.github.tomakehurst.wiremock.junit5.WireMockTest;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import org.junit.jupiter.api.Test;
 
 @WireMockTest
@@ -78,12 +76,10 @@ public class LanguageRequestTest {
       languageIds.add("ce7m85s2nt5r5uan68h0");
       languageIds.add("ce7m85s2nt5r5uan68hg");
 
-      Map<String, String> languagesQueryParams = listToMapQueryParams("request_id", languageIds);
-
       String getMultipleResponseBody =
           TestHelpers.resourceAsString(this, "multiple-language-response.json");
       stubFor(
-          get("/api/v2/languages&" + mapToQueryParams(languagesQueryParams))
+          get("/api/v2/languages?" + listToQueryParams("request_id", languageIds))
               .willReturn(aResponse().withStatus(200).withBody(getMultipleResponseBody)));
 
       LanguageMultipleResults results = getStatuses(client, languageIds);

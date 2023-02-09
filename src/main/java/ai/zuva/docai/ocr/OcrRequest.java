@@ -1,8 +1,5 @@
 package ai.zuva.docai.ocr;
 
-import static ai.zuva.docai.DocAIClient.listToMapQueryParams;
-import static ai.zuva.docai.DocAIClient.mapToQueryParams;
-
 import ai.zuva.docai.BaseRequest;
 import ai.zuva.docai.DocAIClient;
 import ai.zuva.docai.exception.DocAIApiException;
@@ -12,7 +9,6 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 public class OcrRequest extends BaseRequest {
   public final String fileId;
@@ -136,9 +132,8 @@ public class OcrRequest extends BaseRequest {
    */
   public static OcrMultipleStatuses getStatuses(DocAIClient client, List<String> ocrRequestIds)
       throws DocAIClientException, DocAIApiException {
-    Map<String, String> queryParamsMap = listToMapQueryParams("request_id", ocrRequestIds);
     return client.authorizedGet(
-        "api/v2/ocrs&" + mapToQueryParams(queryParamsMap), 200, OcrMultipleStatuses.class);
+        "api/v2/ocrs", "request_id", ocrRequestIds, 200, OcrMultipleStatuses.class);
   }
 
   /**

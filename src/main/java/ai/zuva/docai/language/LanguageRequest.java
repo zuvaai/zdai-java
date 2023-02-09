@@ -1,8 +1,5 @@
 package ai.zuva.docai.language;
 
-import static ai.zuva.docai.DocAIClient.listToMapQueryParams;
-import static ai.zuva.docai.DocAIClient.mapToQueryParams;
-
 import ai.zuva.docai.BaseRequest;
 import ai.zuva.docai.DocAIClient;
 import ai.zuva.docai.exception.DocAIApiException;
@@ -11,7 +8,6 @@ import ai.zuva.docai.files.File;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 public class LanguageRequest extends BaseRequest {
   public final String fileId;
@@ -146,9 +142,8 @@ public class LanguageRequest extends BaseRequest {
   public static LanguageMultipleResults getStatuses(
       DocAIClient client, List<String> languageRequestIds)
       throws DocAIClientException, DocAIApiException {
-    Map<String, String> queryParamsMap = listToMapQueryParams("request_id", languageRequestIds);
     return client.authorizedGet(
-        "api/v2/languages&" + mapToQueryParams(queryParamsMap), 200, LanguageMultipleResults.class);
+        "api/v2/languages", "request_id", languageRequestIds, 200, LanguageMultipleResults.class);
   }
 
   /**

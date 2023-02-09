@@ -1,8 +1,5 @@
 package ai.zuva.docai.extraction;
 
-import static ai.zuva.docai.DocAIClient.listToMapQueryParams;
-import static ai.zuva.docai.DocAIClient.mapToQueryParams;
-
 import ai.zuva.docai.BaseRequest;
 import ai.zuva.docai.DocAIClient;
 import ai.zuva.docai.exception.DocAIApiException;
@@ -12,7 +9,6 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 public class ExtractionRequest extends BaseRequest {
   public final String fileId;
@@ -162,9 +158,10 @@ public class ExtractionRequest extends BaseRequest {
   public static ExtractionMultipleStatuses getStatuses(
       DocAIClient client, List<String> extractionRequestIds)
       throws DocAIClientException, DocAIApiException {
-    Map<String, String> queryParamsMap = listToMapQueryParams("request_id", extractionRequestIds);
     return client.authorizedGet(
-        "api/v2/extractions&" + mapToQueryParams(queryParamsMap),
+        "api/v2/extractions",
+        "request_id",
+        extractionRequestIds,
         200,
         ExtractionMultipleStatuses.class);
   }

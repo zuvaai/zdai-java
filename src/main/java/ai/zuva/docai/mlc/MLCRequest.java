@@ -1,8 +1,5 @@
 package ai.zuva.docai.mlc;
 
-import static ai.zuva.docai.DocAIClient.listToMapQueryParams;
-import static ai.zuva.docai.DocAIClient.mapToQueryParams;
-
 import ai.zuva.docai.BaseRequest;
 import ai.zuva.docai.DocAIClient;
 import ai.zuva.docai.exception.DocAIApiException;
@@ -11,7 +8,6 @@ import ai.zuva.docai.files.File;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 public class MLCRequest extends BaseRequest {
   public final String fileId;
@@ -142,9 +138,8 @@ public class MLCRequest extends BaseRequest {
    */
   public static MLCMultipleResults getStatuses(DocAIClient client, List<String> mlcRequestIds)
       throws DocAIClientException, DocAIApiException {
-    Map<String, String> queryParamsMap = listToMapQueryParams("request_id", mlcRequestIds);
     return client.authorizedGet(
-        "api/v2/mlcs&" + mapToQueryParams(queryParamsMap), 200, MLCMultipleResults.class);
+        "api/v2/mlcs", "request_id", mlcRequestIds, 200, MLCMultipleResults.class);
   }
 
   /**
