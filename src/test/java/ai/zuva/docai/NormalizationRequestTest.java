@@ -34,8 +34,7 @@ public class NormalizationRequestTest {
               .willReturn(aResponse().withStatus(200).withBody(postCurrencyResponseBody)));
 
       DocAIClient client = new DocAIClient("http://localhost:" + port, "my-token");
-      CurrencyNormalizationResults currencyResult =
-          CurrencyNormalizationRequest.createRequest(client, currencyText);
+      CurrencyNormalizationResults currencyResult = Normalization.getCurrency(client, currencyText);
 
       assertEquals(currencyText, currencyResult.text);
       assertEquals(currencyValue, currencyResult.currency[0].value);
@@ -55,8 +54,7 @@ public class NormalizationRequestTest {
                   equalToJson("{\"text\":\"The contract expires 4 months after termination\"}"))
               .willReturn(aResponse().withStatus(200).withBody(postDurationResponseBody)));
 
-      DurationNormalizationResults durationResult =
-          DurationNormalizationRequest.createRequest(client, durationText);
+      DurationNormalizationResults durationResult = Normalization.getDuration(client, durationText);
 
       assertEquals(durationText, durationResult.text);
       assertEquals(durationValue, durationResult.duration[0].value);
@@ -75,8 +73,7 @@ public class NormalizationRequestTest {
                   equalToJson("{\"text\":\"The lease terminates on Monday, November 28, 2022\"}"))
               .willReturn(aResponse().withStatus(200).withBody(postDateResponseBody)));
 
-      DateNormalizationResults dateResult =
-          DateNormalizationRequest.createRequest(client, dateText);
+      DateNormalizationResults dateResult = Normalization.getDate(client, dateText);
 
       assertEquals(dateText, dateResult.text);
       assertEquals(dateDay, dateResult.date[0].day);
