@@ -73,16 +73,6 @@ public class DocAIClient {
     return mediaType;
   }
 
-  public static String listToQueryParams(String key, List<String> requestIds) {
-    StringBuilder sb = new StringBuilder();
-    for (String requestId : requestIds) {
-      sb.append(String.format("%s=%s&", key, requestId));
-    }
-    // Remove trailing '&'
-    sb.deleteCharAt(sb.length() - 1);
-    return sb.toString();
-  }
-
   private String sendRequest(Request request, int expectedStatusCode)
       throws DocAIClientException, DocAIApiException {
     try {

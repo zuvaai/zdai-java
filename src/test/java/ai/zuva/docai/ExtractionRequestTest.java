@@ -1,6 +1,6 @@
 package ai.zuva.docai;
 
-import static ai.zuva.docai.DocAIClient.*;
+import static ai.zuva.docai.TestHelpers.listToQueryParams;
 import static ai.zuva.docai.extraction.ExtractionRequest.getStatuses;
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.equalToJson;
