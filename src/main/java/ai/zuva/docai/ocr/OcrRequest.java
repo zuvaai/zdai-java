@@ -7,6 +7,8 @@ import ai.zuva.docai.exception.DocAIClientException;
 import ai.zuva.docai.files.File;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import java.util.ArrayList;
+import java.util.List;
 
 public class OcrRequest extends BaseRequest {
   public final String fileId;
@@ -99,6 +101,39 @@ public class OcrRequest extends BaseRequest {
    */
   public OcrStatus getStatus() throws DocAIClientException, DocAIApiException {
     return client.authorizedGet("api/v2/ocr/" + requestId, 200, OcrStatus.class);
+  }
+
+  /**
+   * Get multiple ocr statuses
+   *
+   * @param client The client to use to make the request
+   * @param ocrRequests array of OcrRequest objects
+   * @return An OcrMultipleStatuses object, containing the statuses of all requests
+   * @throws DocAIClientException Unsuccessful response code from server
+   * @throws DocAIApiException Error preparing, sending or processing the request/response
+   */
+  public static OcrMultipleStatuses getStatuses(DocAIClient client, OcrRequest[] ocrRequests)
+      throws DocAIClientException, DocAIApiException {
+    List<String> ocrRequestIds = new ArrayList<>();
+    for (OcrRequest request : ocrRequests) {
+      ocrRequestIds.add(request.requestId);
+    }
+    return getStatuses(client, ocrRequestIds);
+  }
+
+  /**
+   * Get multiple ocr statuses
+   *
+   * @param client The client to use to make the request
+   * @param ocrRequestIds list of OCR Request IDs
+   * @return An OcrMultipleStatuses object, containing the statuses of all requests
+   * @throws DocAIClientException Unsuccessful response code from server
+   * @throws DocAIApiException Error preparing, sending or processing the request/response
+   */
+  public static OcrMultipleStatuses getStatuses(DocAIClient client, List<String> ocrRequestIds)
+      throws DocAIClientException, DocAIApiException {
+    return client.authorizedGet(
+        "api/v2/ocrs", "request_id", ocrRequestIds, 200, OcrMultipleStatuses.class);
   }
 
   /**

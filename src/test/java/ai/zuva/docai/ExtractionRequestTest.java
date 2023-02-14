@@ -1,5 +1,7 @@
 package ai.zuva.docai;
 
+import static ai.zuva.docai.TestHelpers.listToQueryParams;
+import static ai.zuva.docai.extraction.ExtractionRequest.getStatuses;
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.equalToJson;
 import static com.github.tomakehurst.wiremock.client.WireMock.get;
@@ -9,11 +11,14 @@ import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import ai.zuva.docai.extraction.ExtractionMultipleStatuses;
 import ai.zuva.docai.extraction.ExtractionRequest;
 import ai.zuva.docai.extraction.ExtractionResults;
 import ai.zuva.docai.files.File;
 import com.github.tomakehurst.wiremock.junit5.WireMockRuntimeInfo;
 import com.github.tomakehurst.wiremock.junit5.WireMockTest;
+import java.util.ArrayList;
+import java.util.List;
 import org.junit.jupiter.api.Test;
 
 @WireMockTest
@@ -64,6 +69,51 @@ public class ExtractionRequestTest {
 
       ExtractionResults[] results = request.getResults();
       assertEquals(2, results.length);
+
+      // Testing get Multiple Extraction Statuses
+      File[] files =
+          new File[] {
+            new File(client, "ce7ks02b08o78qsc6qog"),
+            new File(client, "ce7ks3qb08o78qsc6qsg"),
+            new File(client, "ce7ks62b08o78qsc6qv0"),
+            new File(client, "ce7m85s2nt5r5uan68hg")
+          };
+
+      postRequestBody = TestHelpers.resourceAsString(this, "multiple-extraction-request.json");
+      postResponseBody =
+          TestHelpers.resourceAsString(this, "multiple-extraction-request-created.json");
+
+      stubFor(
+          post("/api/v2/extraction")
+              .withRequestBody(equalToJson(postRequestBody))
+              .willReturn(aResponse().withStatus(202).withBody(postResponseBody)));
+
+      ExtractionRequest[] requests = ExtractionRequest.createRequests(client, files, fieldIds);
+
+      List<String> extractionIds = new ArrayList<>();
+      extractionIds.add("ce7m85s2nt5r5uan68g0");
+      extractionIds.add("ce7m85s2nt5r5uan68gg");
+      extractionIds.add("ce7m85s2nt5r5uan68h0");
+      extractionIds.add("ce7m85s2nt5r5uan68hg");
+
+      String getMultipleResponseBody =
+          TestHelpers.resourceAsString(this, "multiple-status-response.json");
+      stubFor(
+          get("/api/v2/extractions?" + listToQueryParams("request_id", extractionIds))
+              .willReturn(aResponse().withStatus(200).withBody(getMultipleResponseBody)));
+
+      ExtractionMultipleStatuses statuses = getStatuses(client, extractionIds);
+
+      assertEquals(statuses.numFound, 3);
+      assertEquals(statuses.numErrors, 1);
+
+      assertEquals(
+          statuses.requestErrors.get("ce7m85s2nt5r5uan68hg").reqError.code, "request_not_found");
+
+      assertTrue(statuses.statuses.get("ce7m85s2nt5r5uan68g0").status.isComplete());
+      assertTrue(statuses.statuses.get("ce7m85s2nt5r5uan68gg").status.isProcessing());
+      assertTrue(statuses.statuses.get("ce7m85s2nt5r5uan68h0").status.isComplete());
+
     } catch (Exception e) {
       throw new RuntimeException(e);
     }

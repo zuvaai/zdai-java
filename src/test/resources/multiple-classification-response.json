@@ -1,0 +1,33 @@
+{
+  "num_found": 3,
+  "num_errors": 1,
+  "statuses": {
+    "ce7m85s2nt5r5uan68g0": {
+      "file_id": "ce7ks02b08o78qsc6qog",
+      "status": "complete",
+      "request_id": "ce7m85s2nt5r5uan68g0",
+      "classification": "Intellectual Property Agt",
+      "is_contract": true
+    },
+    "ce7m85s2nt5r5uan68gg": {
+      "file_id": "ce7ks3qb08o78qsc6qsg",
+      "status": "processing",
+      "request_id": "ce7m85s2nt5r5uan68gg"
+    },
+    "ce7m85s2nt5r5uan68h0": {
+      "file_id": "ce7ks62b08o78qsc6qv0",
+      "status": "complete",
+      "request_id": "ce7m85s2nt5r5uan68h0",
+      "classification": "Intellectual Property Agt",
+      "is_contract": true
+    }
+  },
+  "errors": {
+    "ce7m85s2nt5r5uan68hg": {
+      "error": {
+        "code": "request_not_found",
+        "message": "The specified request ID cannot be found"
+      }
+    }
+  }
+}

@@ -6,6 +6,8 @@ import ai.zuva.docai.exception.DocAIApiException;
 import ai.zuva.docai.exception.DocAIClientException;
 import ai.zuva.docai.files.File;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import java.util.ArrayList;
+import java.util.List;
 
 public class LanguageRequest extends BaseRequest {
   public final String fileId;
@@ -105,6 +107,43 @@ public class LanguageRequest extends BaseRequest {
    */
   public LanguageResult getStatus() throws DocAIClientException, DocAIApiException {
     return client.authorizedGet("api/v2/language/" + requestId, 200, LanguageResult.class);
+  }
+
+  /**
+   * Gets multiple language statuses and results
+   *
+   * @param client The client to use to make the request
+   * @param languageRequests array of LanguageRequest objects
+   * @return A LanguageMultipleResults object, containing the statuses of all requests and, if
+   *     available, the results
+   * @throws DocAIClientException Unsuccessful response code from server
+   * @throws DocAIApiException Error preparing, sending or processing the request/response
+   */
+  public static LanguageMultipleResults getStatuses(
+      DocAIClient client, LanguageRequest[] languageRequests)
+      throws DocAIClientException, DocAIApiException {
+    List<String> languageRequestIds = new ArrayList<>();
+    for (LanguageRequest request : languageRequests) {
+      languageRequestIds.add(request.requestId);
+    }
+    return getStatuses(client, languageRequestIds);
+  }
+
+  /**
+   * Gets multiple language statuses and results
+   *
+   * @param client The client to use to make the request
+   * @param languageRequestIds list of language Request IDs
+   * @return A LanguageMultipleResults object, containing the statuses of all requests and, if
+   *     available, the results
+   * @throws DocAIClientException Unsuccessful response code from server
+   * @throws DocAIApiException Error preparing, sending or processing the request/response
+   */
+  public static LanguageMultipleResults getStatuses(
+      DocAIClient client, List<String> languageRequestIds)
+      throws DocAIClientException, DocAIApiException {
+    return client.authorizedGet(
+        "api/v2/languages", "request_id", languageRequestIds, 200, LanguageMultipleResults.class);
   }
 
   /**

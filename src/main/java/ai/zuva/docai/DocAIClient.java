@@ -8,6 +8,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.List;
 import okhttp3.HttpUrl;
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
@@ -113,6 +114,51 @@ public class DocAIClient {
     Request request =
         new Request.Builder()
             .url(buildUrl(path))
+            .header("Authorization", "Bearer " + token)
+            .get()
+            .build();
+    return jsonResponseToObject(sendRequest(request, expectedStatusCode), responseType);
+  }
+
+  private HttpUrl buildUrl(String path, String queryParamKey, List<String> queryParamValues) {
+    HttpUrl.Builder builder = baseUrl.newBuilder().addPathSegments(path);
+    for (String val : queryParamValues) {
+      builder.addQueryParameter(queryParamKey, val);
+    }
+    return builder.build();
+  }
+
+  /**
+   * Makes an authorized DocAI request with query params, returning the body of the (successful)
+   * response as an object
+   *
+   * <p>This function makes a request using the specified HTTP method to the specified URI
+   * (comprised of the Client's baseURL + the given path), adding the required authorization header
+   * (using the client's token). If the status code of the response matches expectedStatusCode, the
+   * response body is parsed to the specified responseType and returned. Otherwise, a
+   * ZdaiApiException is thrown.
+   *
+   * @param path The path part of the URI to send the request to
+   * @param queryParamKey The param key for query params
+   * @param queryParamValues The param value for query params
+   * @param expectedStatusCode The status code expected for a successful response
+   * @param responseType The object type to deserialize the response into
+   * @return The response body as a String, if the request was successful
+   * @throws DocAIClientException There was a problem sending the request, such as an IOException or
+   *     InterruptedException
+   * @throws DocAIApiException The status code in the response was anything other than
+   *     expectedStatusCode
+   */
+  public <T> T authorizedGet(
+      String path,
+      String queryParamKey,
+      List<String> queryParamValues,
+      int expectedStatusCode,
+      Class<T> responseType)
+      throws DocAIClientException, DocAIApiException {
+    Request request =
+        new Request.Builder()
+            .url(buildUrl(path, queryParamKey, queryParamValues))
             .header("Authorization", "Bearer " + token)
             .get()
             .build();

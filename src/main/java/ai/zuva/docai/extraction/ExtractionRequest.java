@@ -7,6 +7,8 @@ import ai.zuva.docai.exception.DocAIClientException;
 import ai.zuva.docai.files.File;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import java.util.ArrayList;
+import java.util.List;
 
 public class ExtractionRequest extends BaseRequest {
   public final String fileId;
@@ -123,6 +125,45 @@ public class ExtractionRequest extends BaseRequest {
   public ExtractionStatus getStatus() throws DocAIClientException, DocAIApiException {
     return client.authorizedGet(
         String.format("api/v2/extraction/%s", requestId), 200, ExtractionStatus.class);
+  }
+
+  /**
+   * Get multiple extraction statuses
+   *
+   * @param client The client to use to make the request
+   * @param extractionRequests array of ExtractionRequest objects
+   * @return An ExtractionMultipleStatuses object, containing the statuses of all requests
+   * @throws DocAIClientException Unsuccessful response code from server
+   * @throws DocAIApiException Error preparing, sending or processing the request/response
+   */
+  public static ExtractionMultipleStatuses getStatuses(
+      DocAIClient client, ExtractionRequest[] extractionRequests)
+      throws DocAIClientException, DocAIApiException {
+    List<String> extractionRequestIds = new ArrayList<>();
+    for (ExtractionRequest request : extractionRequests) {
+      extractionRequestIds.add(request.requestId);
+    }
+    return getStatuses(client, extractionRequestIds);
+  }
+
+  /**
+   * Get multiple extraction statuses
+   *
+   * @param client The client to use to make the request
+   * @param extractionRequestIds list of Classification Request IDs
+   * @return An ExtractionMultipleStatuses object, containing the statuses of all requests
+   * @throws DocAIClientException Unsuccessful response code from server
+   * @throws DocAIApiException Error preparing, sending or processing the request/response
+   */
+  public static ExtractionMultipleStatuses getStatuses(
+      DocAIClient client, List<String> extractionRequestIds)
+      throws DocAIClientException, DocAIApiException {
+    return client.authorizedGet(
+        "api/v2/extractions",
+        "request_id",
+        extractionRequestIds,
+        200,
+        ExtractionMultipleStatuses.class);
   }
 
   /**

@@ -6,6 +6,8 @@ import ai.zuva.docai.exception.DocAIApiException;
 import ai.zuva.docai.exception.DocAIClientException;
 import ai.zuva.docai.files.File;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import java.util.ArrayList;
+import java.util.List;
 
 public class ClassificationRequest extends BaseRequest {
   public final String fileId;
@@ -109,6 +111,47 @@ public class ClassificationRequest extends BaseRequest {
   public ClassificationResult getStatus() throws DocAIClientException, DocAIApiException {
     return client.authorizedGet(
         "api/v2/classification/" + requestId, 200, ClassificationResult.class);
+  }
+
+  /**
+   * Get multiple classification statuses and results
+   *
+   * @param client The client to use to make the request
+   * @param classificationRequests array of ClassificationRequest objects
+   * @return A ClassificationMultipleResults object, containing the statuses of all requests and, if
+   *     available, the results
+   * @throws DocAIClientException Unsuccessful response code from server
+   * @throws DocAIApiException Error preparing, sending or processing the request/response
+   */
+  public static ClassificationMultipleResults getStatuses(
+      DocAIClient client, ClassificationRequest[] classificationRequests)
+      throws DocAIClientException, DocAIApiException {
+    List<String> classificationRequestIds = new ArrayList<>();
+    for (ClassificationRequest request : classificationRequests) {
+      classificationRequestIds.add(request.requestId);
+    }
+    return getStatuses(client, classificationRequestIds);
+  }
+
+  /**
+   * Get multiple classification statuses and results
+   *
+   * @param client The client to use to make the request
+   * @param classificationRequestIds list of Classification Request IDs
+   * @return A ClassificationMultipleResults object, containing the statuses of all requests and, if
+   *     available, the results
+   * @throws DocAIClientException Unsuccessful response code from server
+   * @throws DocAIApiException Error preparing, sending or processing the request/response
+   */
+  public static ClassificationMultipleResults getStatuses(
+      DocAIClient client, List<String> classificationRequestIds)
+      throws DocAIClientException, DocAIApiException {
+    return client.authorizedGet(
+        "api/v2/classifications",
+        "request_id",
+        classificationRequestIds,
+        200,
+        ClassificationMultipleResults.class);
   }
 
   /**
